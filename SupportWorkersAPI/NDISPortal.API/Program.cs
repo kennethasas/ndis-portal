@@ -1,6 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using NDISPortal.API.Data;
+using NDISPortal.API.Middleware;
 using NDISPortal.API.Services;
+using SupportWorkersAPI.Services.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,6 +18,9 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
+
+// Add Response Wrapping Middleware (BEFORE other middleware)
+app.UseMiddleware<ResponseWrappingMiddleware>();
 
 app.UseSwagger();
 app.UseSwaggerUI();
