@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36518.9
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Register.API", "ndis_participant_service_portal\Register.API.csproj", "{910B088E-EFCD-4B2A-911C-0046CD4EBBEE}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{910B088E-EFCD-4B2A-911C-0046CD4EBBEE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{910B088E-EFCD-4B2A-911C-0046CD4EBBEE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{910B088E-EFCD-4B2A-911C-0046CD4EBBEE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{910B088E-EFCD-4B2A-911C-0046CD4EBBEE}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {EB55126D-1FAA-4F03-9AFE-7E5286CCFD64}
+	EndGlobalSection
+EndGlobal

@@ -1,0 +1,172 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\Jimwe\\Downloads\\ndis_participant_service_portal\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{910B088E-EFCD-4B2A-911C-0046CD4EBBEE}|ndis_participant_service_portal\\Register.API.csproj|c:\\users\\jimwe\\downloads\\ndis_participant_service_portal\\ndis_participant_service_portal\\data\\applicationdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{910B088E-EFCD-4B2A-911C-0046CD4EBBEE}|ndis_participant_service_portal\\Register.API.csproj|solutionrelative:ndis_participant_service_portal\\data\\applicationdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{910B088E-EFCD-4B2A-911C-0046CD4EBBEE}|ndis_participant_service_portal\\Register.API.csproj|c:\\users\\jimwe\\downloads\\ndis_participant_service_portal\\ndis_participant_service_portal\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{910B088E-EFCD-4B2A-911C-0046CD4EBBEE}|ndis_participant_service_portal\\Register.API.csproj|solutionrelative:ndis_participant_service_portal\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{910B088E-EFCD-4B2A-911C-0046CD4EBBEE}|ndis_participant_service_portal\\Register.API.csproj|c:\\users\\jimwe\\downloads\\ndis_participant_service_portal\\ndis_participant_service_portal\\controllers\\authcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{910B088E-EFCD-4B2A-911C-0046CD4EBBEE}|ndis_participant_service_portal\\Register.API.csproj|solutionrelative:ndis_participant_service_portal\\controllers\\authcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{910B088E-EFCD-4B2A-911C-0046CD4EBBEE}|ndis_participant_service_portal\\Register.API.csproj|c:\\users\\jimwe\\downloads\\ndis_participant_service_portal\\ndis_participant_service_portal\\services\\authservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{910B088E-EFCD-4B2A-911C-0046CD4EBBEE}|ndis_participant_service_portal\\Register.API.csproj|solutionrelative:ndis_participant_service_portal\\services\\authservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{910B088E-EFCD-4B2A-911C-0046CD4EBBEE}|ndis_participant_service_portal\\Register.API.csproj|c:\\users\\jimwe\\downloads\\ndis_participant_service_portal\\ndis_participant_service_portal\\services\\iauthservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{910B088E-EFCD-4B2A-911C-0046CD4EBBEE}|ndis_participant_service_portal\\Register.API.csproj|solutionrelative:ndis_participant_service_portal\\services\\iauthservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{910B088E-EFCD-4B2A-911C-0046CD4EBBEE}|ndis_participant_service_portal\\Register.API.csproj|c:\\users\\jimwe\\downloads\\ndis_participant_service_portal\\ndis_participant_service_portal\\dto\\auth\\logindto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{910B088E-EFCD-4B2A-911C-0046CD4EBBEE}|ndis_participant_service_portal\\Register.API.csproj|solutionrelative:ndis_participant_service_portal\\dto\\auth\\logindto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{910B088E-EFCD-4B2A-911C-0046CD4EBBEE}|ndis_participant_service_portal\\Register.API.csproj|c:\\users\\jimwe\\downloads\\ndis_participant_service_portal\\ndis_participant_service_portal\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{910B088E-EFCD-4B2A-911C-0046CD4EBBEE}|ndis_participant_service_portal\\Register.API.csproj|solutionrelative:ndis_participant_service_portal\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{910B088E-EFCD-4B2A-911C-0046CD4EBBEE}|ndis_participant_service_portal\\Register.API.csproj|c:\\users\\jimwe\\downloads\\ndis_participant_service_portal\\ndis_participant_service_portal\\dto\\auth\\registerdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{910B088E-EFCD-4B2A-911C-0046CD4EBBEE}|ndis_participant_service_portal\\Register.API.csproj|solutionrelative:ndis_participant_service_portal\\dto\\auth\\registerdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 213,
+          "SelectedChildIndex": 4,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{d78612c7-9962-4b83-95d9-268046dad23a}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:1:0:{d212f56b-c48a-434c-a121-1c5d80b59b9f}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{34e76e81-ee4a-11d0-ae2e-00a0c90fffc3}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:128:0:{1fc202d4-d401-403c-9834-5b218574bb67}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "ApplicationDbContext.cs",
+              "DocumentMoniker": "C:\\Users\\Jimwe\\Downloads\\ndis_participant_service_portal\\ndis_participant_service_portal\\Data\\ApplicationDbContext.cs",
+              "RelativeDocumentMoniker": "ndis_participant_service_portal\\Data\\ApplicationDbContext.cs",
+              "ToolTip": "C:\\Users\\Jimwe\\Downloads\\ndis_participant_service_portal\\ndis_participant_service_portal\\Data\\ApplicationDbContext.cs",
+              "RelativeToolTip": "ndis_participant_service_portal\\Data\\ApplicationDbContext.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAUAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-16T04:45:17.435Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "LoginDto.cs",
+              "DocumentMoniker": "C:\\Users\\Jimwe\\Downloads\\ndis_participant_service_portal\\ndis_participant_service_portal\\DTO\\Auth\\LoginDto.cs",
+              "RelativeDocumentMoniker": "ndis_participant_service_portal\\DTO\\Auth\\LoginDto.cs",
+              "ToolTip": "C:\\Users\\Jimwe\\Downloads\\ndis_participant_service_portal\\ndis_participant_service_portal\\DTO\\Auth\\LoginDto.cs",
+              "RelativeToolTip": "ndis_participant_service_portal\\DTO\\Auth\\LoginDto.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAACAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-16T04:29:35.405Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "AuthService.cs",
+              "DocumentMoniker": "C:\\Users\\Jimwe\\Downloads\\ndis_participant_service_portal\\ndis_participant_service_portal\\Services\\AuthService.cs",
+              "RelativeDocumentMoniker": "ndis_participant_service_portal\\Services\\AuthService.cs",
+              "ToolTip": "C:\\Users\\Jimwe\\Downloads\\ndis_participant_service_portal\\ndis_participant_service_portal\\Services\\AuthService.cs",
+              "RelativeToolTip": "ndis_participant_service_portal\\Services\\AuthService.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAAdAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-16T04:10:50.872Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "IAuthService.cs",
+              "DocumentMoniker": "C:\\Users\\Jimwe\\Downloads\\ndis_participant_service_portal\\ndis_participant_service_portal\\Services\\IAuthService.cs",
+              "RelativeDocumentMoniker": "ndis_participant_service_portal\\Services\\IAuthService.cs",
+              "ToolTip": "C:\\Users\\Jimwe\\Downloads\\ndis_participant_service_portal\\ndis_participant_service_portal\\Services\\IAuthService.cs",
+              "RelativeToolTip": "ndis_participant_service_portal\\Services\\IAuthService.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAAvAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-16T04:08:28.568Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "Program.cs",
+              "DocumentMoniker": "C:\\Users\\Jimwe\\Downloads\\ndis_participant_service_portal\\ndis_participant_service_portal\\Program.cs",
+              "RelativeDocumentMoniker": "ndis_participant_service_portal\\Program.cs",
+              "ToolTip": "C:\\Users\\Jimwe\\Downloads\\ndis_participant_service_portal\\ndis_participant_service_portal\\Program.cs",
+              "RelativeToolTip": "ndis_participant_service_portal\\Program.cs",
+              "ViewState": "AgIAAAkAAAAAAAAAAAAAAAEAAAAlAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-14T16:19:00.183Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "AuthController.cs",
+              "DocumentMoniker": "C:\\Users\\Jimwe\\Downloads\\ndis_participant_service_portal\\ndis_participant_service_portal\\Controllers\\AuthController.cs",
+              "RelativeDocumentMoniker": "ndis_participant_service_portal\\Controllers\\AuthController.cs",
+              "ToolTip": "C:\\Users\\Jimwe\\Downloads\\ndis_participant_service_portal\\ndis_participant_service_portal\\Controllers\\AuthController.cs",
+              "RelativeToolTip": "ndis_participant_service_portal\\Controllers\\AuthController.cs",
+              "ViewState": "AgIAABUAAAAAAAAAAAAYwB8AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-14T13:44:24.831Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "RegisterDto.cs",
+              "DocumentMoniker": "C:\\Users\\Jimwe\\Downloads\\ndis_participant_service_portal\\ndis_participant_service_portal\\DTO\\Auth\\RegisterDto.cs",
+              "RelativeDocumentMoniker": "ndis_participant_service_portal\\DTO\\Auth\\RegisterDto.cs",
+              "ToolTip": "C:\\Users\\Jimwe\\Downloads\\ndis_participant_service_portal\\ndis_participant_service_portal\\DTO\\Auth\\RegisterDto.cs",
+              "RelativeToolTip": "ndis_participant_service_portal\\DTO\\Auth\\RegisterDto.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-14T13:41:11.03Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "appsettings.json",
+              "DocumentMoniker": "C:\\Users\\Jimwe\\Downloads\\ndis_participant_service_portal\\ndis_participant_service_portal\\appsettings.json",
+              "RelativeDocumentMoniker": "ndis_participant_service_portal\\appsettings.json",
+              "ToolTip": "C:\\Users\\Jimwe\\Downloads\\ndis_participant_service_portal\\ndis_participant_service_portal\\appsettings.json",
+              "RelativeToolTip": "ndis_participant_service_portal\\appsettings.json",
+              "ViewState": "AgIAAAYAAAAAAAAAAAAAABQAAAACAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2026-04-14T13:37:33.739Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

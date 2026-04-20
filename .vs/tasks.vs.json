@@ -1,0 +1,23 @@
+{
+  "version": "0.2.1",
+  "tasks": [
+    {
+      "taskLabel": "task-ndis-portal",
+      "appliesTo": "/",
+      "type": "launch",
+      "preLaunchTask": "dotnet nuget locals all --clear",
+      "postDebugTask": "dotnet restore --verbosity minimal",
+      "problemMatcher": "$msCompile"
+    },
+    {
+      "taskLabel": "dotnet build",
+      "appliesTo": "/",
+      "type": "process",
+      "command": "dotnet",
+      "args": [
+        "build"
+      ],
+      "problemMatcher": "$msCompile"
+    }
+  ]
+}

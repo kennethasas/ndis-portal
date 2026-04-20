@@ -1,0 +1,6 @@
+@ndis_participant_service_portal_HostAddress = http://localhost:5081
+
+GET {{ndis_participant_service_portal_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
