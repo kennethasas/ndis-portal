@@ -1,7 +1,7 @@
 using System.Text.Json;
 using Service.API.Commons;
 
-namespace Service.API.Middleware
+namespace NDISPortalErrorHandling.Middleware
 {
 
     public class ErrorHandlingMiddleware

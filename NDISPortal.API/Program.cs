@@ -3,9 +3,12 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using NdisPortal.BookingsApi.Data;
-using NdisPortal.BookingsApi.Middleware;
+using NDISPortalErrorHandling.Middleware;
 using NdisPortal.BookingsApi.Services.Implementations;
 using NdisPortal.BookingsApi.Services.Interfaces;
+using NDISPortal.API.Services.Interfaces;
+using NDISPortal.API.Services.Implementations;
+
 // Standardize your namespaces below based on where your logic moved
 using Service.API.Configurations; 
 using System.Text;
@@ -57,6 +60,7 @@ builder.Services.AddEndpointsApiExplorer();
 
 // Booking Services
 builder.Services.AddScoped<IBookingService, BookingService>();
+
 // Service/Category Services
 builder.Services.AddScoped<IServiceCategoryService, ServiceCategoryService>();
 builder.Services.AddScoped<IServiceService, ServiceService>();
@@ -123,7 +127,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 // Custom Middleware
-app.UseMiddleware<ErrorHandlingMiddleware>();
+app.UseMiddleware<ResponseWrappingMiddleware>();
 
 app.MapControllers();
 

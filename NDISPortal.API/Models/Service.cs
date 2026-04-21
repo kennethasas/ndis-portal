@@ -1,9 +1,9 @@
 using System.ComponentModel.DataAnnotations.Schema;
-
+using NDIS.API.Model;
 namespace Service.API.Model
 {
     // Fix: Rename to ServiceItem (Uppercase I) to match the rest of the app
-    public class ServiceItem
+    public class Service
     {
         public int Id { get; set; }
 
@@ -17,10 +17,10 @@ namespace Service.API.Model
         public string Description { get; set; }
 
         [Column("is_active")]
-        public bool IsActive { get; set; }
+        public bool is_active { get; set; }
 
-        public DateTime CreatedDate { get; set; }
-        public DateTime ModifiedDate { get; set; }
+        public DateTime created_date { get; set; }
+        public DateTime modified_date { get; set; }
 
         // NAVIGATION PROPERTY
         [ForeignKey("CategoryId")]

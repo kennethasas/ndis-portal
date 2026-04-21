@@ -12,6 +12,6 @@
 
         public string CategoryName { get; set; }
 
-        public bool IsActive { get; set; }
+        public bool is_active { get; set; }
     }
 }

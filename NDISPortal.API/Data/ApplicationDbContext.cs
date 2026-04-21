@@ -2,7 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using NdisPortal.BookingsApi.Models;
 using Register.API.Models;
 using Service.API.Model;
-
+using NDIS.API.Model;
 namespace NdisPortal.BookingsApi.Data
 {
     public class ApplicationDbContext : DbContext
@@ -11,7 +11,7 @@ namespace NdisPortal.BookingsApi.Data
 
         public DbSet<User> Users => Set<User>();
         public DbSet<ServiceCategory> ServiceCategories => Set<ServiceCategory>();
-        public DbSet<Service.API.Model.ServiceItem> Services => Set<ServiceItem>();
+        public DbSet<Service.API.Model.Service> Services => Set<Service>();
         public DbSet<Booking> Bookings => Set<Booking>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -19,7 +19,7 @@ namespace NdisPortal.BookingsApi.Data
             base.OnModelCreating(modelBuilder);
 
             // --- ServiceItem Relationships ---
-            modelBuilder.Entity<ServiceItem>(entity =>
+            modelBuilder.Entity<Service>(entity =>
             {
                 entity.ToTable("services"); // Explicit table name
                 entity.HasOne(s => s.ServiceCategory)
