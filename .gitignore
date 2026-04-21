@@ -1,3 +1,87 @@
-.vs/
+# =========================
+# OS FILES
+# =========================
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# =========================
+# ENVIRONMENT FILES
+# =========================
+.env
+.env.*
+*.env
+auth.json
+
+# =========================
+# BUILD / BINARIES (.NET & SSIS)
+# =========================
 bin/
 obj/
+out/
+*.dll
+*.exe
+*.pdb
+*.dtproj.user
+*.dtsConfig
+
+# =========================
+# VISUAL STUDIO / IDE
+# =========================
+.vs/
+.vscode/
+.history/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+*.patch
+
+# =========================
+# LOGS & TEMP
+# =========================
+*.log
+logs/
+*.tmp
+*.temp
+*.swp
+__pycache__/
+*.py[cod]
+
+# =========================
+# NODE / ANGULAR FRONTEND
+# =========================
+node_modules/
+.angular/
+dist/
+build/
+.cache/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# =========================
+# PACKAGE MANAGERS
+# =========================
+*.nupkg
+*.snupkg
+# Commenting out packages/ to be safe; only use if you use local NuGet storage
+# packages/
+
+# =========================
+# FILE UPLOADS / STORAGE
+# =========================
+NDISPortal.API/wwwroot/uploads/
+NDISPortal.API/wwwroot/images/
+storage/
+public/storage
+
+# =========================
+# TESTING / POSTMAN
+# =========================
+*.postman_collection.json
+*.postman_environment.json
+test-results/
+playwright-report/
+blob-report/
+playwright/.cache/
