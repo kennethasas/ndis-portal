@@ -1,0 +1,16 @@
+<aside class="sidebar">
+  <div class="brand">
+    <div class="logo-icon">NDIS</div>
+    <div class="brand-text">
+      <strong>NDIS</strong>
+      <span>Enterprise</span>
+    </div>
+  </div>
+
+  <nav class="nav-menu">
+    <a *ngFor="let item of navItems" [routerLink]="item.path" routerLinkActive="active" class="nav-item">
+      <span class="icon">{{ item.icon }}</span>
+      {{ item.label }}
+    </a>
+  </nav>
+</aside>

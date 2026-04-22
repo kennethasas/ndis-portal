@@ -1,0 +1,75 @@
+<div class="dashboard-container">
+    <main class="main-content">
+        <header class="top-bar">
+            <div class="breadcrumbs">
+                <span class="icon-home">🏠 Home</span>
+                <span class="separator">›</span>
+                <span class="current">My Bookings</span>
+            </div>
+            <div class="top-actions">
+                <button class="icon-btn">💬</button>
+                <button class="icon-btn">🔔</button>
+                <div class="user-avatar">👤</div>
+            </div>
+        </header>
+
+        <section class="content-header">
+            <h1>My Bookings</h1>
+            <div class="dropdown">
+                <button class="dropbtn">
+                    <span class="status-icon">⛶</span> Status <span class="arrow">▼</span>
+                </button>
+            </div>
+        </section>
+
+        <div class="table-card">
+            <table>
+                <thead>
+                    <tr>
+                        <th><input type="checkbox"></th>
+                        <th>Service</th>
+                        <th>Category</th>
+                        <th>Date</th>
+                        <th>Note</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><span class="drag-handle">⋮⋮</span> <input type="checkbox"></td>
+                        <td>Personal Hygiene</td>
+                        <td><span class="category-badge">Daily Personal Activities</span></td>
+                        <td>Apr 21, 2026</td>
+                        <td><button class="btn-view">👁 View</button></td>
+                        <td><span class="status-badge approved">✔ Approved</span></td>
+                    </tr>
+                    <tr>
+                        <td><span class="drag-handle">⋮⋮</span> <input type="checkbox"></td>
+                        <td>Personal Hygiene</td>
+                        <td><span class="category-badge">Daily Personal Activities</span></td>
+                        <td>Apr 21, 2026</td>
+                        <td><button class="btn-view">👁 View</button></td>
+                        <td><span class="status-badge pending">☀ Pending</span></td>
+                    </tr>
+                    <tr>
+                        <td><span class="drag-handle">⋮⋮</span> <input type="checkbox"></td>
+                        <td>Personal Hygiene</td>
+                        <td><span class="category-badge">Daily Personal Activities</span></td>
+                        <td>Apr 21, 2026</td>
+                        <td><button class="btn-view">👁 View</button></td>
+                        <td><span class="status-badge cancelled">✘ Cancelled</span></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="pagination">
+                <button class="pg-btn">‹ Previous</button>
+                <button class="pg-num">1</button>
+                <button class="pg-num active">2</button>
+                <button class="pg-num">3</button>
+                <span>...</span>
+                <button class="pg-btn">Next ›</button>
+            </div>
+        </div>
+    </main>
+</div>

@@ -1,0 +1,18 @@
+import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
+
+@Component({
+  selector: 'app-sidebar',
+  standalone: true,
+  imports: [CommonModule, RouterModule],
+  templateUrl: './sidebar.component.html',
+  styleUrl: './sidebar.component.css',
+})
+export class SidebarComponent {
+  // Navigation items array for easy maintenance
+  navItems = [
+    { label: 'Services', icon: '♡', path: '/services' },
+    { label: 'My Bookings', icon: '📖', path: '/bookings' },
+  ];
+}
