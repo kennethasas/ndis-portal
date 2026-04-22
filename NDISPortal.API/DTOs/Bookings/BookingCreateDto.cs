@@ -1,17 +1,16 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace NdisPortal.BookingsApi.DTOs;
-
-public class BookingCreateDto
+namespace NdisPortal.BookingsApi.DTOs
 {
-    [Required]
-    public int UserId { get; set; }
+    public class BookingCreateDto
+    {
+        [Required]
+        [Range(1, int.MaxValue, ErrorMessage = "serviceId is required.")]
+        public int ServiceId { get; set; }
 
-    [Required]
-    public int ServiceId { get; set; }
+        [Required]
+        public DateTime PreferredDate { get; set; }
 
-    [Required]
-    public DateTime PreferredDate { get; set; }
-
-    public string? Notes { get; set; }
+        public string? Notes { get; set; }
+    }
 }
