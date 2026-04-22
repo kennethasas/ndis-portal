@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using NDISPortal.API.Services.Interfaces;
-using Service.API.DTOs;
 using NDISPortal.API.Data;
+using Service.API.DTOs.Service;
 
 
 namespace NDISPortal.API.Services.Implementations
@@ -15,7 +15,7 @@ namespace NDISPortal.API.Services.Implementations
             _context = context;
         }
 
-        public async Task<IEnumerable<ServicesDto>> GetAllAsync(int? categoryId)
+        public async Task<IEnumerable<ServiceDto>> GetAllAsync(int? categoryId)
         {
             var query = _context.Services
                 .Include(s => s.ServiceCategory)
@@ -27,7 +27,7 @@ namespace NDISPortal.API.Services.Implementations
             }
 
             return await query
-                .Select(s => new ServicesDto
+                .Select(s => new ServiceDto
                 {
                     Id = s.Id,
                     Name = s.Name,
@@ -39,12 +39,12 @@ namespace NDISPortal.API.Services.Implementations
                 .ToListAsync();
         }
 
-        public async Task<ServicesDto?> GetByIdAsync(int id)
+        public async Task<ServiceDto?> GetByIdAsync(int id)
         {
             return await _context.Services
                 .Include(s => s.ServiceCategory)
                 .Where(s => s.Id == id && s.is_active)
-                .Select(s => new ServicesDto
+                .Select(s => new ServiceDto
                 {
                     Id = s.Id,
                     Name = s.Name,
@@ -56,7 +56,7 @@ namespace NDISPortal.API.Services.Implementations
                 .FirstOrDefaultAsync();
         }
 
-        public async Task<ServicesDto> CreateAsync(ServicesDto dto)
+        public async Task<ServiceDto> CreateAsync(CreateServiceDto dto)
         {
             var categoryExists = await _context.service_categories
                 .AnyAsync(c => c.Id == dto.CategoryId);
@@ -77,13 +77,18 @@ namespace NDISPortal.API.Services.Implementations
             _context.Services.Add(service);
             await _context.SaveChangesAsync();
 
-            dto.Id = service.Id;
-            dto.is_active = true;
-
-            return dto;
+            return new ServiceDto
+            {
+                Id = service.Id,
+                Name = service.Name,
+                Description = service.Description,
+                CategoryId = service.CategoryId,
+                CategoryName = service.ServiceCategory?.Name,
+                is_active = service.is_active
+            };
         }
 
-        public async Task<ServicesDto?> UpdateAsync(int id, ServicesDto dto)
+        public async Task<ServiceDto?> UpdateAsync(int id, UpdateServiceDto dto)
         {
             var service = await _context.Services
                 .FirstOrDefaultAsync(s => s.Id == id && s.is_active);
@@ -105,7 +110,15 @@ namespace NDISPortal.API.Services.Implementations
 
             await _context.SaveChangesAsync();
 
-            return dto;
+            return new ServiceDto
+            {
+                Id = service.Id,
+                Name = service.Name,
+                Description = service.Description,
+                CategoryId = service.CategoryId,
+                CategoryName = service.ServiceCategory?.Name,
+                is_active = service.is_active
+            };
         }
 
         public async Task<bool> DeleteAsync(int id)

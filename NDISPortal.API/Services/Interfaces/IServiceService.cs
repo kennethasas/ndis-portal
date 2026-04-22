@@ -1,13 +1,17 @@
-﻿using Service.API.DTOs;
+﻿using Service.API.DTOs.Service;
 
 namespace NDISPortal.API.Services.Interfaces
 {
     public interface IServiceService
     {
-        Task<IEnumerable<ServicesDto>> GetAllAsync(int? categoryId);
-        Task<ServicesDto?> GetByIdAsync(int id);
-        Task<ServicesDto> CreateAsync(ServicesDto dto);
-        Task<ServicesDto?> UpdateAsync(int id, ServicesDto dto);
+        Task<IEnumerable<ServiceDto>> GetAllAsync(int? categoryId);
+
+        Task<ServiceDto?> GetByIdAsync(int id);
+
+        Task<ServiceDto> CreateAsync(CreateServiceDto dto);
+
+        Task<ServiceDto?> UpdateAsync(int id, UpdateServiceDto dto);
+
         Task<bool> DeleteAsync(int id);
     }
 }

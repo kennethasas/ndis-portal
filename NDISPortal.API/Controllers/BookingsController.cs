@@ -4,7 +4,7 @@ using NdisPortal.BookingsApi.Services.Interfaces;
 
 namespace NdisPortal.BookingsApi.Controllers;
 
-[Route("api/[controller]")]
+[Route("api/bookings")]
 [ApiController]
 public class BookingsController(IBookingService bookingService) : ControllerBase
 {
