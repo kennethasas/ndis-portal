@@ -59,11 +59,8 @@ namespace NDISPortal.API.Data
                     .HasConstraintName("FK_Bookings_Services")
                     .OnDelete(DeleteBehavior.Restrict);
 
-                entity.Property(b => b.Status)
-                    .HasConversion(
-                        v => (byte)v,
-                        v => (int)v
-                    );
+            entity.Property(b => b.Status)
+                .HasColumnName("status");
 
                 entity.ToTable(t => t.HasCheckConstraint("CHK_Booking_Status", "[status] IN (0,1,2)"));
             });
