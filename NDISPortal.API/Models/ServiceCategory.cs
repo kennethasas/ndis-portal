@@ -5,7 +5,7 @@ using Service.API.Model;
 namespace NDIS.API.Model
 {
     [Table("service_categories")]
-    public class service_category
+    public class ServiceCategory
     {
         [Key]
         [Column("id")]

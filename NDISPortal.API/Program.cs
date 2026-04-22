@@ -58,14 +58,14 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 
 // Auth Service
-builder.Services.AddScoped<iauth_service, auth_service>();
+builder.Services.AddScoped<IAuthService, AuthService>();
 
 // Booking Services
-builder.Services.AddScoped<ibooking_service, booking_service>();
+builder.Services.AddScoped<IBookingService, BookingService>();
 
 // Service/Category Services
-builder.Services.AddScoped<iservice_category_service, serivice_category_service>();
-builder.Services.AddScoped<iservice_service, service_service>();
+builder.Services.AddScoped<IServiceCategoryService, ServiceCategoryService>();
+builder.Services.AddScoped<IServiceService, ServiceService>();
 
 // CORS
 builder.Services.AddCors(options =>

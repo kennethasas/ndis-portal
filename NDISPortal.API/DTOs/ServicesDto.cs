@@ -1,6 +1,6 @@
 ﻿namespace Service.API.DTOs
 {
-    public class services_dto
+    public class ServicesDto
     {
         public int Id { get; set; }
 

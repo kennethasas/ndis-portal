@@ -6,11 +6,11 @@ using NdisPortal.BookingsApi.Services.Interfaces;
 
 namespace NdisPortal.BookingsApi.Services.Implementations;
 
-public class booking_service : ibooking_service
+public class BookingService : IBookingService
 {
     private readonly application_db_context _context;
 
-    public booking_service(application_db_context context)
+    public BookingService(application_db_context context)
     {
         _context = context;
     }
@@ -39,7 +39,7 @@ public class booking_service : ibooking_service
         };
     }
 
-    public async Task<IEnumerable<booking_list_dto>> GetBookingsAsync(string? status)
+    public async Task<IEnumerable<BookingsListDto>> GetBookingsAsync(string? status)
     {
         int? statusFilter = null;
 
@@ -61,7 +61,7 @@ public class booking_service : ibooking_service
 
         var bookings = await query
             .OrderByDescending(b => b.BookingDate)
-            .Select(b => new booking_list_dto
+            .Select(b => new BookingsListDto
             {
                 Id = b.Id,
                 ServiceName = b.Service != null ? b.Service.Name : "Unknown",
@@ -75,7 +75,7 @@ public class booking_service : ibooking_service
         return bookings;
     }
 
-    public async Task<booking_response_dto?> GetBookingByIdAsync(int id)
+    public async Task<BookingResponseDto?> GetBookingByIdAsync(int id)
     {
         var booking = await _context.Bookings
             .Include(b => b.Service)
@@ -85,7 +85,7 @@ public class booking_service : ibooking_service
         if (booking == null)
             return null;
 
-        return new booking_response_dto
+        return new BookingResponseDto
         {
             Id = booking.Id,
             UserId = booking.UserId,
@@ -100,7 +100,7 @@ public class booking_service : ibooking_service
         };
     }
 
-    public async Task<booking_response_dto> CreateBookingAsync(booking_create_dto createDto)
+    public async Task<BookingResponseDto> CreateBookingAsync(BookingCreateDto createDto)
     {
         if (createDto.PreferredDate.Date < DateTime.Today)
             throw new ArgumentException("PreferredDate must be today or a future date.");
@@ -129,7 +129,7 @@ public class booking_service : ibooking_service
         _context.Bookings.Add(booking);
         await _context.SaveChangesAsync();
 
-        return new booking_response_dto
+        return new BookingResponseDto
         {
             Id = booking.Id,
             UserId = booking.UserId,
@@ -144,7 +144,7 @@ public class booking_service : ibooking_service
         };
     }
 
-    public async Task<booking_response_dto?> UpdateBookingStatusAsync(int id, booking_status_update_dto updateDto)
+    public async Task<BookingResponseDto?> UpdateBookingStatusAsync(int id, BookingStatusUpdateDto updateDto)
     {
         var booking = await _context.Bookings
             .Include(b => b.Service)
@@ -164,7 +164,7 @@ public class booking_service : ibooking_service
 
         await _context.SaveChangesAsync();
 
-        return new booking_response_dto
+        return new BookingResponseDto
         {
             Id = booking.Id,
             UserId = booking.UserId,

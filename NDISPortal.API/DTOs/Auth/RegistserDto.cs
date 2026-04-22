@@ -1,6 +1,6 @@
 ﻿namespace Register.API.DTOs.Auth
 {
-    public class register_dto
+    public class RegistserDto
     {
         public string FullName { get; set; }
         public string Email { get; set; }

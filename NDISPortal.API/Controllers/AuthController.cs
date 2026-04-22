@@ -4,17 +4,17 @@ using Register.API.Services;
 
 [ApiController]
 [Route("api/[controller]")]
-public class auth_controller : ControllerBase
+public class AuthController : ControllerBase
 {
-    private readonly iauth_service _authService;
+    private readonly IAuthService _authService;
 
-    public auth_controller(iauth_service authService)
+    public AuthController(IAuthService authService)
     {
         _authService = authService;
     }
 
     [HttpPost("register")]
-    public async Task<IActionResult> Register(register_dto dto)
+    public async Task<IActionResult> Register(RegistserDto dto)
     {
         var result = await _authService.Register(dto);
         dynamic res = result;
@@ -22,7 +22,7 @@ public class auth_controller : ControllerBase
     }
 
     [HttpPost("login")]
-    public async Task<IActionResult> Login(login_dto dto)
+    public async Task<IActionResult> Login(LoginDto dto)
     {
         var result = await _authService.Login(dto);
         dynamic res = result;

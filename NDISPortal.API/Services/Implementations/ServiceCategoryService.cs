@@ -5,19 +5,19 @@ using NDISPortal.API.Services.Interfaces;
 
 namespace NDISPortal.API.Services.Implementations
 {
-    public class serivice_category_service : iservice_category_service
+    public class ServiceCategoryService : IServiceCategoryService
     {
         private readonly application_db_context _context;
 
-        public serivice_category_service(application_db_context context)
+        public ServiceCategoryService(application_db_context context)
         {
             _context = context;
         }
 
-        public async Task<IEnumerable<service_category_dto>> GetAllAsync()
+        public async Task<IEnumerable<ServiceCategoryDto>> GetAllAsync()
         {
             return await _context.service_categories
-                .Select(c => new service_category_dto
+                .Select(c => new ServiceCategoryDto
                 {
                     Id = c.Id,
                     Name = c.Name
@@ -25,11 +25,11 @@ namespace NDISPortal.API.Services.Implementations
                 .ToListAsync();
         }
 
-        public async Task<service_category_dto?> GetByIdAsync(int id)
+        public async Task<ServiceCategoryDto?> GetByIdAsync(int id)
         {
             return await _context.service_categories
                 .Where(c => c.Id == id)
-                .Select(c => new service_category_dto
+                .Select(c => new ServiceCategoryDto
                 {
                     Id = c.Id,
                     Name = c.Name

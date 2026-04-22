@@ -6,16 +6,16 @@ using NDISPortal.API.Data;
 
 namespace NDISPortal.API.Services.Implementations
 {
-    public class service_service : iservice_service
+    public class ServiceService : IServiceService
     {
         private readonly application_db_context _context;
 
-        public service_service(application_db_context context)
+        public ServiceService(application_db_context context)
         {
             _context = context;
         }
 
-        public async Task<IEnumerable<services_dto>> GetAllAsync(int? categoryId)
+        public async Task<IEnumerable<ServicesDto>> GetAllAsync(int? categoryId)
         {
             var query = _context.Services
                 .Include(s => s.ServiceCategory)
@@ -27,7 +27,7 @@ namespace NDISPortal.API.Services.Implementations
             }
 
             return await query
-                .Select(s => new services_dto
+                .Select(s => new ServicesDto
                 {
                     Id = s.Id,
                     Name = s.Name,
@@ -39,12 +39,12 @@ namespace NDISPortal.API.Services.Implementations
                 .ToListAsync();
         }
 
-        public async Task<services_dto?> GetByIdAsync(int id)
+        public async Task<ServicesDto?> GetByIdAsync(int id)
         {
             return await _context.Services
                 .Include(s => s.ServiceCategory)
                 .Where(s => s.Id == id && s.is_active)
-                .Select(s => new services_dto
+                .Select(s => new ServicesDto
                 {
                     Id = s.Id,
                     Name = s.Name,
@@ -56,7 +56,7 @@ namespace NDISPortal.API.Services.Implementations
                 .FirstOrDefaultAsync();
         }
 
-        public async Task<services_dto> CreateAsync(services_dto dto)
+        public async Task<ServicesDto> CreateAsync(ServicesDto dto)
         {
             var categoryExists = await _context.service_categories
                 .AnyAsync(c => c.Id == dto.CategoryId);
@@ -83,7 +83,7 @@ namespace NDISPortal.API.Services.Implementations
             return dto;
         }
 
-        public async Task<services_dto?> UpdateAsync(int id, services_dto dto)
+        public async Task<ServicesDto?> UpdateAsync(int id, ServicesDto dto)
         {
             var service = await _context.Services
                 .FirstOrDefaultAsync(s => s.Id == id && s.is_active);

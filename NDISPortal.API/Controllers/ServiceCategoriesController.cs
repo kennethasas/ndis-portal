@@ -7,18 +7,18 @@ namespace Service.API.Controllers
 {
     [Route("api/service-categories")]
     [ApiController]
-    public class service_categories_controller : ControllerBase
+    public class ServiceCategoriesController : ControllerBase
     {
-        private readonly iservice_category_service _service;
+        private readonly IServiceCategoryService _service;
 
-        public service_categories_controller(iservice_category_service service)
+        public ServiceCategoriesController(IServiceCategoryService service)
         {
             _service = service;
         }
 
         // GET: api/ServiceCategories
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<service_category_dto>>> GetServiceCategories()
+        public async Task<ActionResult<IEnumerable<ServiceCategoryDto>>> GetServiceCategories()
         {
             var categories = await _service.GetAllAsync();
             return Ok(categories);
@@ -26,7 +26,7 @@ namespace Service.API.Controllers
 
         // GET: api/ServiceCategories/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<service_category_dto>> GetServiceCategory(int id)
+        public async Task<ActionResult<ServiceCategoryDto>> GetServiceCategory(int id)
         {
             var category = await _service.GetByIdAsync(id);
 

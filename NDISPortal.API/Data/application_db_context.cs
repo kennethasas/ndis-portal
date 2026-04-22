@@ -11,7 +11,7 @@ namespace NDISPortal.API.Data
         public application_db_context(DbContextOptions<application_db_context> options) : base(options) { }
 
         public DbSet<User> Users => Set<User>();
-        public DbSet<service_category> service_categories => Set<service_category>();
+        public DbSet<ServiceCategory> service_categories => Set<ServiceCategory>();
         public DbSet<ServiceItem> Services => Set<ServiceItem>();
         public DbSet<Booking> Bookings => Set<Booking>();
 
@@ -20,7 +20,7 @@ namespace NDISPortal.API.Data
             base.OnModelCreating(modelBuilder);
 
             // --- Service Category Mapping ---
-            modelBuilder.Entity<service_category>(entity =>
+            modelBuilder.Entity<ServiceCategory>(entity =>
             {
                 entity.ToTable("service_categories");
                 entity.HasKey(c => c.Id);

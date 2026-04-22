@@ -2,7 +2,7 @@
 
 namespace NdisPortal.BookingsApi.DTOs;
 
-public class booking_status_update_dto
+public class BookingStatusUpdateDto
 {
     [Required]
     [RegularExpression("^(Approved|Cancelled|1|2)$", ErrorMessage = "Status must be 'Approved', 'Cancelled', '1', or '2'")]

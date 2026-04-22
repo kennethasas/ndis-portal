@@ -9,19 +9,19 @@ using System.Text.RegularExpressions;
 
 namespace Register.API.Services
 {
-    public class auth_service : iauth_service
+    public class AuthService : IAuthService
     {
         private readonly string _connectionString;
         private readonly IConfiguration _config;
 
-        public auth_service(IConfiguration config)
+        public AuthService(IConfiguration config)
         {
             _config = config;
             _connectionString = config.GetConnectionString("DefaultConnection");
         }
 
         // REGISTER
-        public async Task<object> Register(register_dto dto)
+        public async Task<object> Register(RegistserDto dto)
         {
             if (string.IsNullOrWhiteSpace(dto.FullName) ||
                 string.IsNullOrWhiteSpace(dto.Email) ||
@@ -86,7 +86,7 @@ namespace Register.API.Services
         }
 
         // LOGIN
-        public async Task<object> Login(login_dto dto)
+        public async Task<object> Login(LoginDto dto)
         {
             if (string.IsNullOrWhiteSpace(dto.Email) ||
                 string.IsNullOrWhiteSpace(dto.Password))

@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Register.API.DTOs.Auth
 {
-    public class login_dto
+    public class LoginDto
     {
         public string Email { get; set; }
         [Required]

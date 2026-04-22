@@ -25,6 +25,6 @@ namespace Service.API.Model
 
         // NAVIGATION PROPERTY
         [ForeignKey("CategoryId")]
-        public service_category ServiceCategory { get; set; }
+        public ServiceCategory ServiceCategory { get; set; }
     }
 }

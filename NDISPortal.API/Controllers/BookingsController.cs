@@ -6,17 +6,17 @@ namespace NdisPortal.BookingsApi.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-public class bookings_controller(ibooking_service bookingService) : ControllerBase
+public class BookingsController(IBookingService bookingService) : ControllerBase
 {
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<booking_list_dto>>> GetBookings([FromQuery] string? status)
+    public async Task<ActionResult<IEnumerable<BookingsListDto>>> GetBookings([FromQuery] string? status)
     {
         var bookings = await bookingService.GetBookingsAsync(status);
         return Ok(bookings);
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<booking_response_dto>> GetBooking(int id)
+    public async Task<ActionResult<BookingResponseDto>> GetBooking(int id)
     {
         var booking = await bookingService.GetBookingByIdAsync(id);
         if (booking == null)
@@ -26,14 +26,14 @@ public class bookings_controller(ibooking_service bookingService) : ControllerBa
     }
 
     [HttpPost]
-    public async Task<ActionResult<booking_response_dto>> CreateBooking([FromBody] booking_create_dto createDto)
+    public async Task<ActionResult<BookingResponseDto>> CreateBooking([FromBody] BookingCreateDto createDto)
     {
         var result = await bookingService.CreateBookingAsync(createDto);
         return CreatedAtAction(nameof(GetBooking), new { id = result.Id }, result);
     }
 
     [HttpPut("{id}/status")]
-    public async Task<ActionResult<booking_response_dto>> UpdateBookingStatus(int id, [FromBody] booking_status_update_dto updateDto)
+    public async Task<ActionResult<BookingResponseDto>> UpdateBookingStatus(int id, [FromBody] BookingStatusUpdateDto updateDto)
     {
         var updated = await bookingService.UpdateBookingStatusAsync(id, updateDto);
 
