@@ -3,6 +3,7 @@ using NdisPortal.BookingsApi.Models;
 using Register.API.Models;
 using Service.API.Model;
 using NDIS.API.Model;
+using NDISPortal.API.Models;
 
 namespace NDISPortal.API.Data
 {
@@ -14,6 +15,7 @@ namespace NDISPortal.API.Data
         public DbSet<ServiceCategory> service_categories => Set<ServiceCategory>();
         public DbSet<ServiceItem> Services => Set<ServiceItem>();
         public DbSet<Booking> Bookings => Set<Booking>();
+        public DbSet<SupportWorker> SupportWorkers => Set<SupportWorker>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -42,6 +44,29 @@ namespace NDISPortal.API.Data
                     .OnDelete(DeleteBehavior.Restrict);
             });
 
+            // --- SupportWorker Mapping / Relationships ---
+            modelBuilder.Entity<SupportWorker>(entity =>
+            {
+                entity.ToTable("support_workers");
+
+                entity.HasKey(sw => sw.Id);
+
+                entity.Property(sw => sw.Id).HasColumnName("id");
+                entity.Property(sw => sw.ServiceId).HasColumnName("service_id");
+                entity.Property(sw => sw.FirstName).HasColumnName("first_name");
+                entity.Property(sw => sw.LastName).HasColumnName("last_name");
+                entity.Property(sw => sw.Email).HasColumnName("email");
+                entity.Property(sw => sw.Phone).HasColumnName("phone");
+                entity.Property(sw => sw.CreatedDate).HasColumnName("created_date");
+                entity.Property(sw => sw.ModifiedDate).HasColumnName("modified_date");
+
+                entity.HasOne(sw => sw.AssignedService)
+                    .WithMany()
+                    .HasForeignKey(sw => sw.ServiceId)
+                    .HasConstraintName("FK_SupportWorkers_Services")
+                    .OnDelete(DeleteBehavior.Restrict);
+            });
+
             // --- Booking Relationships ---
             modelBuilder.Entity<Booking>(entity =>
             {
@@ -60,10 +85,7 @@ namespace NDISPortal.API.Data
                     .OnDelete(DeleteBehavior.Restrict);
 
                 entity.Property(b => b.Status)
-                    .HasConversion(
-                        v => (byte)v,
-                        v => (int)v
-                    );
+                    .HasColumnName("status");
 
                 entity.ToTable(t => t.HasCheckConstraint("CHK_Booking_Status", "[status] IN (0,1,2)"));
             });
