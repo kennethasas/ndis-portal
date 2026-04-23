@@ -1,31 +1,35 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Register.API.DTOs.Auth;
 using Register.API.Services;
 
-[ApiController]
-[Route("api/[controller]")]
-public class AuthController : ControllerBase
+namespace Register.API.Controllers
 {
-    private readonly IAuthService _authService;
-
-    public AuthController(IAuthService authService)
+    [ApiController]
+    [Route("api/[controller]")]
+    public class AuthController : ControllerBase
     {
-        _authService = authService;
-    }
+        private readonly IAuthService _service;
 
-    [HttpPost("register")]
-    public async Task<IActionResult> Register(RegistserDto dto)
-    {
-        var result = await _authService.Register(dto);
-        dynamic res = result;
-        return StatusCode(res.status, res);
-    }
+        public AuthController(IAuthService service)
+        {
+            _service = service;
+        }
 
-    [HttpPost("login")]
-    public async Task<IActionResult> Login(LoginDto dto)
-    {
-        var result = await _authService.Login(dto);
-        dynamic res = result;
-        return StatusCode(res.status, res);
+        [AllowAnonymous]
+        [HttpPost("register")]
+        public async Task<IActionResult> Register(RegistserDto dto)
+        {
+            var result = await _service.Register(dto);
+            return Ok(result);
+        }
+
+        [AllowAnonymous]
+        [HttpPost("login")]
+        public async Task<IActionResult> Login(LoginDto dto)
+        {
+            var result = await _service.Login(dto);
+            return Ok(result);
+        }
     }
 }

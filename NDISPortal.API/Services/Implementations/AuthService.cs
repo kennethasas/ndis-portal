@@ -20,7 +20,6 @@ namespace Register.API.Services
             _connectionString = config.GetConnectionString("DefaultConnection");
         }
 
-        // REGISTER
         public async Task<object> Register(RegistserDto dto)
         {
             if (string.IsNullOrWhiteSpace(dto.FullName) ||
@@ -31,11 +30,27 @@ namespace Register.API.Services
                 return new { status = 400, message = "All fields are required" };
             }
 
-            var emailRegex = new Regex(@"^[^\s@]+@[^\s@]+\.[^\s@]+$");
+            var emailRegex = new Regex(@"^[a-zA-Z0-9._%+-]+@gmail\.com$", RegexOptions.IgnoreCase);
             if (!emailRegex.IsMatch(dto.Email))
             {
-                return new { status = 400, message = "Invalid email format" };
+                return new { status = 400, message = "Email must be in @gmail.com format" };
             }
+
+            var allowedRoles = new[] { "Participant", "Coordinator" };
+
+            var matchedRole = allowedRoles
+                .FirstOrDefault(r => r.Equals(dto.Role.Trim(), StringComparison.OrdinalIgnoreCase));
+
+            if (matchedRole == null)
+            {
+                return new
+                {
+                    status = 400,
+                    message = "Role must be either Participant or Coordinator"
+                };
+            }
+
+            dto.Role = matchedRole;
 
             if (dto.Password.Length < 8)
             {
@@ -47,7 +62,7 @@ namespace Register.API.Services
 
             var checkCmd = new SqlCommand(
                 "SELECT COUNT(*) FROM users WHERE email = @Email", connection);
-            checkCmd.Parameters.AddWithValue("@Email", dto.Email);
+            checkCmd.Parameters.AddWithValue("@Email", dto.Email.Trim());
 
             int exists = (int)await checkCmd.ExecuteScalarAsync();
             if (exists > 0)
@@ -69,7 +84,7 @@ namespace Register.API.Services
 
             insertCmd.Parameters.AddWithValue("@FirstName", firstName);
             insertCmd.Parameters.AddWithValue("@LastName", lastName);
-            insertCmd.Parameters.AddWithValue("@Email", dto.Email);
+            insertCmd.Parameters.AddWithValue("@Email", dto.Email.Trim());
             insertCmd.Parameters.AddWithValue("@PasswordHash", hashedPassword);
             insertCmd.Parameters.AddWithValue("@Role", dto.Role);
 
@@ -80,12 +95,11 @@ namespace Register.API.Services
                 status = 201,
                 message = "Account successfully created",
                 id = newUserId,
-                email = dto.Email,
+                email = dto.Email.Trim(),
                 role = dto.Role
             };
         }
 
-        // LOGIN
         public async Task<object> Login(LoginDto dto)
         {
             if (string.IsNullOrWhiteSpace(dto.Email) ||
@@ -103,7 +117,7 @@ namespace Register.API.Services
                 WHERE email = @Email
             ", connection);
 
-            cmd.Parameters.AddWithValue("@Email", dto.Email);
+            cmd.Parameters.AddWithValue("@Email", dto.Email.Trim());
 
             using var reader = await cmd.ExecuteReaderAsync();
 

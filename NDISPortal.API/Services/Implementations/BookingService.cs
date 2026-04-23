@@ -39,7 +39,7 @@ public class BookingService : IBookingService
         };
     }
 
-    public async Task<IEnumerable<BookingsListDto>> GetBookingsAsync(string? status)
+    public async Task<IEnumerable<BookingsListDto>> GetBookingsAsync(string? status, string role, int userId)
     {
         int? statusFilter = null;
 
@@ -48,18 +48,30 @@ public class BookingService : IBookingService
             statusFilter = ParseStatus(status);
 
             if (statusFilter == null)
-                throw new ArgumentException($"Invalid status value '{status}'. Allowed: 0/Pending, 1/Approved, 2/Cancelled.");
+                throw new ArgumentException("Invalid status value. Allowed: Pending, Approved, Cancelled.");
         }
 
         IQueryable<Booking> query = _context.Bookings
             .Include(b => b.Service)
-            .Include(b => b.User)
-            .AsQueryable();
+            .Include(b => b.User);
+
+        if (role.Equals("Participant", StringComparison.OrdinalIgnoreCase))
+        {
+            query = query.Where(b => b.UserId == userId);
+        }
+        else if (role.Equals("Coordinator", StringComparison.OrdinalIgnoreCase))
+        {
+            // all bookings
+        }
+        else
+        {
+            throw new UnauthorizedAccessException("This role is not allowed to view bookings.");
+        }
 
         if (statusFilter.HasValue)
             query = query.Where(b => b.Status == statusFilter.Value);
 
-        var bookings = await query
+        return await query
             .OrderByDescending(b => b.BookingDate)
             .Select(b => new BookingsListDto
             {
@@ -71,8 +83,6 @@ public class BookingService : IBookingService
                 Status = StatusToString(b.Status)
             })
             .ToListAsync();
-
-        return bookings;
     }
 
     public async Task<BookingResponseDto?> GetBookingByIdAsync(int id)
@@ -100,7 +110,7 @@ public class BookingService : IBookingService
         };
     }
 
-    public async Task<BookingResponseDto> CreateBookingAsync(BookingCreateDto createDto)
+    public async Task<BookingResponseDto> CreateBookingAsync(BookingCreateDto createDto, int userId)
     {
         if (createDto.PreferredDate.Date < DateTime.Today)
             throw new ArgumentException("PreferredDate must be today or a future date.");
@@ -111,13 +121,13 @@ public class BookingService : IBookingService
         if (service == null)
             throw new ArgumentException("Service not found or is not active.");
 
-        var user = await _context.Users.FindAsync(createDto.UserId);
+        var user = await _context.Users.FindAsync(userId);
         if (user == null)
-            throw new ArgumentException($"User with ID {createDto.UserId} not found.");
+            throw new ArgumentException($"User with ID {userId} not found.");
 
         var booking = new Booking
         {
-            UserId = createDto.UserId,
+            UserId = userId,
             ServiceId = createDto.ServiceId,
             BookingDate = createDto.PreferredDate.Date,
             Notes = createDto.Notes,
@@ -157,9 +167,9 @@ public class BookingService : IBookingService
         int? newStatus = ParseStatus(updateDto.Status);
 
         if (newStatus == null || (newStatus != 1 && newStatus != 2))
-            throw new ArgumentException("Invalid status value. Allowed: 1/Approved, 2/Cancelled.");
+            throw new ArgumentException("Invalid status value. Allowed: Approved or Cancelled.");
 
-        booking.Status = newStatus.Value;
+        booking.Status = (byte)newStatus.Value;
         booking.ModifiedDate = DateTime.UtcNow;
 
         await _context.SaveChangesAsync();
@@ -179,15 +189,22 @@ public class BookingService : IBookingService
         };
     }
 
-    public async Task<bool> DeleteBookingAsync(int id)
+    public async Task<bool> DeleteBookingAsync(int id, int userId)
     {
-        var booking = await _context.Bookings.FindAsync(id);
+        var booking = await _context.Bookings.FirstOrDefaultAsync(b => b.Id == id);
 
         if (booking == null)
             return false;
 
+        if (booking.UserId != userId)
+            throw new UnauthorizedAccessException("You can only delete your own bookings.");
+
+        if (booking.Status != 0)
+            throw new ArgumentException("Only pending bookings can be deleted.");
+
         _context.Bookings.Remove(booking);
         await _context.SaveChangesAsync();
+
         return true;
     }
 }

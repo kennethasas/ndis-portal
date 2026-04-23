@@ -9,26 +9,17 @@ using NDISPortal.API.Services.Implementations;
 using NDISPortal.API.Services.Interfaces;
 using NDISPortalErrorHandling.Middleware;
 using Register.API.Services;
-using Service.API.Configurations;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// ==================================================
-// 1. CONFIGURATION & SETTINGS
-// ==================================================
-builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("JwtSettings"));
-var jwtSettings = builder.Configuration.GetSection("JwtSettings").Get<JwtSettings>();
-
-// ==================================================
-// 2. DATABASE
-// ==================================================
 builder.Services.AddDbContext<application_db_context>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// ==================================================
-// 3. AUTHENTICATION & AUTHORIZATION
-// ==================================================
+var jwtKey = builder.Configuration["JwtSettings:Key"];
+var jwtIssuer = builder.Configuration["JwtSettings:Issuer"];
+var jwtAudience = builder.Configuration["JwtSettings:Audience"];
+
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -42,32 +33,25 @@ builder.Services.AddAuthentication(options =>
         ValidateAudience = true,
         ValidateLifetime = true,
         ValidateIssuerSigningKey = true,
-        ValidIssuer = jwtSettings?.Issuer,
-        ValidAudience = jwtSettings?.Audience,
+        ValidIssuer = jwtIssuer,
+        ValidAudience = jwtAudience,
         IssuerSigningKey = new SymmetricSecurityKey(
-            Encoding.UTF8.GetBytes(jwtSettings?.Key ?? "your-ultra-secret-fallback-key-32-chars"))
+            Encoding.UTF8.GetBytes(jwtKey!)
+        ),
+        RoleClaimType = System.Security.Claims.ClaimTypes.Role
     };
 });
 
 builder.Services.AddAuthorization();
 
-// ==================================================
-// 4. DEPENDENCY INJECTION
-// ==================================================
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 
-// Auth Service
 builder.Services.AddScoped<IAuthService, AuthService>();
-
-// Booking Services
 builder.Services.AddScoped<IBookingService, BookingService>();
-
-// Service/Category Services
 builder.Services.AddScoped<IServiceCategoryService, ServiceCategoryService>();
 builder.Services.AddScoped<IServiceService, ServiceService>();
 
-// CORS
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
@@ -78,9 +62,14 @@ builder.Services.AddCors(options =>
     });
 });
 
-// Swagger with JWT Security Definitions
 builder.Services.AddSwaggerGen(options =>
 {
+    options.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Title = "API",
+        Version = "v1"
+    });
+
     options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         Name = "Authorization",
@@ -107,17 +96,7 @@ builder.Services.AddSwaggerGen(options =>
     });
 });
 
-// ==================================================
-// 5. MIDDLEWARE PIPELINE
-// ==================================================
 var app = builder.Build();
-
-// Auto-create database
-using (var scope = app.Services.CreateScope())
-{
-    var context = scope.ServiceProvider.GetRequiredService<application_db_context>();
-    await context.Database.EnsureCreatedAsync();
-}
 
 if (app.Environment.IsDevelopment())
 {
@@ -128,10 +107,10 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseCors("AllowFrontend");
 
+app.UseMiddleware<error_handling_middleware>();
+
 app.UseAuthentication();
 app.UseAuthorization();
-
-app.UseMiddleware<error_handling_middleware>();
 
 app.MapControllers();
 

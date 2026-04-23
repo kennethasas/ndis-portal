@@ -1,55 +1,125 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using NdisPortal.BookingsApi.DTOs;
 using NdisPortal.BookingsApi.Services.Interfaces;
+using System.Security.Claims;
 
-namespace NdisPortal.BookingsApi.Controllers;
-
-[Route("api/[controller]")]
-[ApiController]
-public class BookingsController(IBookingService bookingService) : ControllerBase
+namespace NdisPortal.BookingsApi.Controllers
 {
-    [HttpGet]
-    public async Task<ActionResult<IEnumerable<BookingsListDto>>> GetBookings([FromQuery] string? status)
+    [Route("api/bookings")]
+    [ApiController]
+    [Authorize]
+    public class BookingsController : ControllerBase
     {
-        var bookings = await bookingService.GetBookingsAsync(status);
-        return Ok(bookings);
-    }
+        private readonly IBookingService _service;
 
-    [HttpGet("{id}")]
-    public async Task<ActionResult<BookingResponseDto>> GetBooking(int id)
-    {
-        var booking = await bookingService.GetBookingByIdAsync(id);
-        if (booking == null)
-            return NotFound($"Booking with ID {id} not found.");
+        public BookingsController(IBookingService service)
+        {
+            _service = service;
+        }
 
-        return Ok(booking);
-    }
+        [HttpGet]
+        public async Task<IActionResult> GetBookings([FromQuery] string? status)
+        {
+            var roleClaim =
+                User.FindFirst(ClaimTypes.Role)?.Value ??
+                User.FindFirst("role")?.Value;
 
-    [HttpPost]
-    public async Task<ActionResult<BookingResponseDto>> CreateBooking([FromBody] BookingCreateDto createDto)
-    {
-        var result = await bookingService.CreateBookingAsync(createDto);
-        return CreatedAtAction(nameof(GetBooking), new { id = result.Id }, result);
-    }
+            var userIdClaim =
+                User.FindFirst("userId")?.Value ??
+                User.FindFirst(ClaimTypes.NameIdentifier)?.Value ??
+                User.FindFirst("sub")?.Value;
 
-    [HttpPut("{id}/status")]
-    public async Task<ActionResult<BookingResponseDto>> UpdateBookingStatus(int id, [FromBody] BookingStatusUpdateDto updateDto)
-    {
-        var updated = await bookingService.UpdateBookingStatusAsync(id, updateDto);
+            if (string.IsNullOrWhiteSpace(roleClaim) || !int.TryParse(userIdClaim, out int userId))
+                return Unauthorized(new { message = "Missing or invalid claims." });
 
-        if (updated == null)
-            return NotFound($"Booking with ID {id} not found.");
+            var bookings = await _service.GetBookingsAsync(status, roleClaim, userId);
+            return Ok(bookings);
+        }
 
-        return Ok(updated);
-    }
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetBooking(int id)
+        {
+            var roleClaim =
+                User.FindFirst(ClaimTypes.Role)?.Value ??
+                User.FindFirst("role")?.Value;
 
-    [HttpDelete("{id}")]
-    public async Task<IActionResult> DeleteBooking(int id)
-    {
-        var deleted = await bookingService.DeleteBookingAsync(id);
-        if (!deleted)
-            return NotFound($"Booking with ID {id} not found.");
+            var userIdClaim =
+                User.FindFirst("userId")?.Value ??
+                User.FindFirst(ClaimTypes.NameIdentifier)?.Value ??
+                User.FindFirst("sub")?.Value;
 
-        return NoContent();
+            if (string.IsNullOrWhiteSpace(roleClaim) || !int.TryParse(userIdClaim, out int userId))
+                return Unauthorized(new { message = "Missing or invalid claims." });
+
+            var booking = await _service.GetBookingByIdAsync(id);
+
+            if (booking == null)
+                return NotFound(new { message = "Booking not found." });
+
+            if (roleClaim.Equals("Participant", StringComparison.OrdinalIgnoreCase) && booking.UserId != userId)
+                return Forbid();
+
+            return Ok(booking);
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Participant")]
+        public async Task<IActionResult> PostBooking(BookingCreateDto dto)
+        {
+            var userIdClaim =
+                User.FindFirst("userId")?.Value ??
+                User.FindFirst(ClaimTypes.NameIdentifier)?.Value ??
+                User.FindFirst("sub")?.Value;
+
+            if (!int.TryParse(userIdClaim, out int userId))
+                return Unauthorized(new { message = "Missing or invalid user claim." });
+
+            var created = await _service.CreateBookingAsync(dto, userId);
+            return CreatedAtAction(nameof(GetBooking), new { id = created.Id }, created);
+        }
+
+        [HttpPut("{id}/status")]
+        [Authorize(Roles = "Coordinator")]
+        public async Task<IActionResult> PutBookingStatus(int id, BookingStatusUpdateDto dto)
+        {
+            var updated = await _service.UpdateBookingStatusAsync(id, dto);
+
+            if (updated == null)
+                return NotFound(new { message = "Booking not found." });
+
+            return Ok(updated);
+        }
+
+        [HttpDelete("{id}")]
+        [Authorize(Roles = "Participant")]
+        public async Task<IActionResult> DeleteBooking(int id)
+        {
+            var userIdClaim =
+                User.FindFirst("userId")?.Value ??
+                User.FindFirst(ClaimTypes.NameIdentifier)?.Value ??
+                User.FindFirst("sub")?.Value;
+
+            if (!int.TryParse(userIdClaim, out int userId))
+                return Unauthorized(new { message = "Missing or invalid user claim." });
+
+            try
+            {
+                var result = await _service.DeleteBookingAsync(id, userId);
+
+                if (!result)
+                    return NotFound(new { message = "Booking not found." });
+
+                return NoContent();
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return StatusCode(403, new { message = ex.Message });
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
     }
 }

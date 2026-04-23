@@ -1,8 +1,9 @@
 using Microsoft.EntityFrameworkCore;
+using NDIS.API.Model;
 using NdisPortal.BookingsApi.Models;
+using NDISPortal.API.Models;
 using Register.API.Models;
 using Service.API.Model;
-using NDIS.API.Model;
 
 namespace NDISPortal.API.Data
 {
@@ -14,7 +15,7 @@ namespace NDISPortal.API.Data
         public DbSet<ServiceCategory> service_categories => Set<ServiceCategory>();
         public DbSet<ServiceItem> Services => Set<ServiceItem>();
         public DbSet<Booking> Bookings => Set<Booking>();
-
+        public DbSet<SupportWorker> SupportWorkers => Set<SupportWorker>();
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -30,10 +31,20 @@ namespace NDISPortal.API.Data
                 entity.Property(c => c.Description).HasColumnName("description");
             });
 
-            // --- ServiceItem Relationships ---
+            // --- ServiceItem Mapping ---
             modelBuilder.Entity<ServiceItem>(entity =>
             {
                 entity.ToTable("services");
+
+                entity.HasKey(s => s.Id);
+
+                entity.Property(s => s.Id).HasColumnName("id");
+                entity.Property(s => s.CategoryId).HasColumnName("category_id");
+                entity.Property(s => s.Name).HasColumnName("name");
+                entity.Property(s => s.Description).HasColumnName("description");
+                entity.Property(s => s.is_active).HasColumnName("is_active");
+                entity.Property(s => s.created_date).HasColumnName("created_date");
+                entity.Property(s => s.modified_date).HasColumnName("modified_date");
 
                 entity.HasOne(s => s.ServiceCategory)
                     .WithMany(c => c.Services)
@@ -42,10 +53,21 @@ namespace NDISPortal.API.Data
                     .OnDelete(DeleteBehavior.Restrict);
             });
 
-            // --- Booking Relationships ---
+            // --- Booking Mapping ---
             modelBuilder.Entity<Booking>(entity =>
             {
                 entity.ToTable("bookings");
+
+                entity.HasKey(b => b.Id);
+
+                entity.Property(b => b.Id).HasColumnName("id");
+                entity.Property(b => b.UserId).HasColumnName("user_id");
+                entity.Property(b => b.ServiceId).HasColumnName("service_id");
+                entity.Property(b => b.BookingDate).HasColumnName("booking_date");
+                entity.Property(b => b.Notes).HasColumnName("notes");
+                entity.Property(b => b.Status).HasColumnName("status");
+                entity.Property(b => b.CreatedDate).HasColumnName("created_date");
+                entity.Property(b => b.ModifiedDate).HasColumnName("modified_date");
 
                 entity.HasOne(b => b.User)
                     .WithMany()
@@ -58,12 +80,6 @@ namespace NDISPortal.API.Data
                     .HasForeignKey(b => b.ServiceId)
                     .HasConstraintName("FK_Bookings_Services")
                     .OnDelete(DeleteBehavior.Restrict);
-
-                entity.Property(b => b.Status)
-                    .HasConversion(
-                        v => (byte)v,
-                        v => (int)v
-                    );
 
                 entity.ToTable(t => t.HasCheckConstraint("CHK_Booking_Status", "[status] IN (0,1,2)"));
             });
