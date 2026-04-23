@@ -1,12 +1,11 @@
 ﻿using NdisPortal.BookingsApi.DTOs;
 
-namespace NdisPortal.BookingsApi.Services.Interfaces;
-
-public interface IBookingService
+namespace NdisPortal.BookingsApi.Services.Interfaces
 {
-    Task<IEnumerable<BookingsListDto>> GetBookingsAsync(string? status);
-    Task<BookingResponseDto?> GetBookingByIdAsync(int id);
-    Task<BookingResponseDto> CreateBookingAsync(BookingCreateDto createDto);
-    Task<BookingResponseDto?> UpdateBookingStatusAsync(int id, BookingStatusUpdateDto updateDto);
-    Task<bool> DeleteBookingAsync(int id);
+    public interface IBookingService
+    {
+        Task<IEnumerable<BookingsListDto>> GetBookingsAsync(int currentUserId, string currentUserRole, string? status);
+        Task<BookingResponseDto> CreateBookingAsync(int currentUserId, BookingCreateDto createDto);
+        Task<BookingResponseDto?> UpdateBookingStatusAsync(int id, BookingStatusUpdateDto updateDto);
+    }
 }

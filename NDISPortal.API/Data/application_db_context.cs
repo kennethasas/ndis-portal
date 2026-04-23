@@ -60,10 +60,7 @@ namespace NDISPortal.API.Data
                     .OnDelete(DeleteBehavior.Restrict);
 
                 entity.Property(b => b.Status)
-                    .HasConversion(
-                        v => (byte)v,
-                        v => (int)v
-                    );
+                    .HasColumnName("status");
 
                 entity.ToTable(t => t.HasCheckConstraint("CHK_Booking_Status", "[status] IN (0,1,2)"));
             });

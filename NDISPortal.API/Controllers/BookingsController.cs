@@ -1,55 +1,70 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using NdisPortal.BookingsApi.DTOs;
 using NdisPortal.BookingsApi.Services.Interfaces;
 
-namespace NdisPortal.BookingsApi.Controllers;
-
-[Route("api/[controller]")]
-[ApiController]
-public class BookingsController(IBookingService bookingService) : ControllerBase
+namespace NdisPortal.BookingsApi.Controllers
 {
-    [HttpGet]
-    public async Task<ActionResult<IEnumerable<BookingsListDto>>> GetBookings([FromQuery] string? status)
+    [Route("api/bookings")]
+    [ApiController]
+    [Authorize(Roles = "Participant,Coordinator")]
+    public class BookingsController : ControllerBase
     {
-        var bookings = await bookingService.GetBookingsAsync(status);
-        return Ok(bookings);
-    }
+        private readonly IBookingService _bookingService;
 
-    [HttpGet("{id}")]
-    public async Task<ActionResult<BookingResponseDto>> GetBooking(int id)
-    {
-        var booking = await bookingService.GetBookingByIdAsync(id);
-        if (booking == null)
-            return NotFound($"Booking with ID {id} not found.");
+        public BookingsController(IBookingService bookingService)
+        {
+            _bookingService = bookingService;
+        }
 
-        return Ok(booking);
-    }
+        // GET /api/bookings?status=Pending
+        // Authenticated - any allowed role
+        // Participant: only own bookings
+        // Coordinator: all bookings with participant name and service name
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<BookingsListDto>>> GetBookings([FromQuery] string? status)
+        {
+            var userIdClaim = User.FindFirst("userId")?.Value;
+            var role = User.FindFirst(ClaimTypes.Role)?.Value;
 
-    [HttpPost]
-    public async Task<ActionResult<BookingResponseDto>> CreateBooking([FromBody] BookingCreateDto createDto)
-    {
-        var result = await bookingService.CreateBookingAsync(createDto);
-        return CreatedAtAction(nameof(GetBooking), new { id = result.Id }, result);
-    }
+            if (string.IsNullOrWhiteSpace(userIdClaim) || !int.TryParse(userIdClaim, out int userId))
+                return Unauthorized("Invalid token: userId claim is missing.");
 
-    [HttpPut("{id}/status")]
-    public async Task<ActionResult<BookingResponseDto>> UpdateBookingStatus(int id, [FromBody] BookingStatusUpdateDto updateDto)
-    {
-        var updated = await bookingService.UpdateBookingStatusAsync(id, updateDto);
+            if (string.IsNullOrWhiteSpace(role))
+                return Unauthorized("Invalid token: role claim is missing.");
 
-        if (updated == null)
-            return NotFound($"Booking with ID {id} not found.");
+            var bookings = await _bookingService.GetBookingsAsync(userId, role, status);
+            return Ok(bookings);
+        }
 
-        return Ok(updated);
-    }
+        // POST /api/bookings
+        // Participant only
+        [HttpPost]
+        [Authorize(Roles = "Participant")]
+        public async Task<ActionResult<BookingResponseDto>> CreateBooking([FromBody] BookingCreateDto createDto)
+        {
+            var userIdClaim = User.FindFirst("userId")?.Value;
 
-    [HttpDelete("{id}")]
-    public async Task<IActionResult> DeleteBooking(int id)
-    {
-        var deleted = await bookingService.DeleteBookingAsync(id);
-        if (!deleted)
-            return NotFound($"Booking with ID {id} not found.");
+            if (string.IsNullOrWhiteSpace(userIdClaim) || !int.TryParse(userIdClaim, out int userId))
+                return Unauthorized("Invalid token: userId claim is missing.");
 
-        return NoContent();
+            var result = await _bookingService.CreateBookingAsync(userId, createDto);
+            return CreatedAtAction(nameof(GetBookings), new { id = result.Id }, result);
+        }
+
+        // PUT /api/bookings/{id}/status
+        // Coordinator only
+        [HttpPut("{id}/status")]
+        [Authorize(Roles = "Coordinator")]
+        public async Task<ActionResult<BookingResponseDto>> UpdateBookingStatus(int id, [FromBody] BookingStatusUpdateDto updateDto)
+        {
+            var updated = await _bookingService.UpdateBookingStatusAsync(id, updateDto);
+
+            if (updated == null)
+                return NotFound($"Booking with ID {id} not found.");
+
+            return Ok(updated);
+        }
     }
 }
