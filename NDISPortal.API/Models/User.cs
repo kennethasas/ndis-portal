@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace Register.API.Models
 {
@@ -20,6 +21,7 @@ namespace Register.API.Models
         public string Email { get; set; } = string.Empty;
 
         [Column("password_hash")]
+        [JsonIgnore]
         public string PasswordHash { get; set; } = string.Empty;
 
         [Column("role")]

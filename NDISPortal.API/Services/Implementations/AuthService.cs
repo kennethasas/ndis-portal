@@ -94,9 +94,11 @@ namespace Register.API.Services
             {
                 status = 201,
                 message = "Account successfully created",
-                id = newUserId,
-                email = dto.Email.Trim(),
-                role = dto.Role
+                user = new
+                {
+                    id = newUserId,
+                    role = dto.Role
+                }
             };
         }
 
@@ -178,9 +180,11 @@ namespace Register.API.Services
                 status = 200,
                 message = "Login successful",
                 token = jwt,
-                userId = userId,
-                email = email,
-                role = role
+                user = new
+                {
+                    id = userId,
+                    role = role
+                }
             };
         }
     }

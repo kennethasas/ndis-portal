@@ -18,18 +18,20 @@ namespace Register.API.Controllers
 
         [AllowAnonymous]
         [HttpPost("register")]
-        public async Task<IActionResult> Register(RegistserDto dto)
+        public async Task<IActionResult> Register([FromBody] RegistserDto dto)
         {
             var result = await _service.Register(dto);
-            return Ok(result);
+            dynamic res = result;
+            return StatusCode(res.status, res);
         }
 
         [AllowAnonymous]
         [HttpPost("login")]
-        public async Task<IActionResult> Login(LoginDto dto)
+        public async Task<IActionResult> Login([FromBody] LoginDto dto)
         {
             var result = await _service.Login(dto);
-            return Ok(result);
+            dynamic res = result;
+            return StatusCode(res.status, res);
         }
     }
 }
