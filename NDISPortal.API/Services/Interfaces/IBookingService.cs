@@ -4,9 +4,10 @@ namespace NdisPortal.BookingsApi.Services.Interfaces
 {
     public interface IBookingService
     {
-        Task<IEnumerable<BookingsListDto>> GetBookingsAsync(int currentUserId, string currentUserRole, string? status);
-        Task<BookingResponseDto> CreateBookingAsync(int currentUserId, BookingCreateDto createDto);
+        Task<IEnumerable<BookingsListDto>> GetBookingsAsync(string? status, string role, int userId);
+        Task<BookingResponseDto?> GetBookingByIdAsync(int id);
+        Task<BookingResponseDto> CreateBookingAsync(BookingCreateDto createDto, int userId);
         Task<BookingResponseDto?> UpdateBookingStatusAsync(int id, BookingStatusUpdateDto updateDto);
-        Task<string?> DeleteBookingAsync(int id, int currentUserId);
+        Task<bool> DeleteBookingAsync(int id, int userId);
     }
 }

@@ -16,27 +16,26 @@ namespace Service.API.Controllers
             _service = service;
         }
 
-        // GET: api/services
         [HttpGet]
+        [AllowAnonymous]
         public async Task<ActionResult<IEnumerable<ServicesDto>>> GetServices([FromQuery] int? categoryId)
         {
             var services = await _service.GetAllAsync(categoryId);
             return Ok(services);
         }
 
-        // GET: api/services/5
         [HttpGet("{id}")]
+        [AllowAnonymous]
         public async Task<ActionResult<ServicesDto>> GetServiceItem(int id)
         {
             var service = await _service.GetByIdAsync(id);
 
             if (service == null)
-                return NotFound();
+                return NotFound(new { message = "Service not found or inactive." });
 
             return Ok(service);
         }
 
-        // PUT: api/services/5
         [HttpPut("{id}")]
         [Authorize(Roles = "Coordinator")]
         public async Task<IActionResult> PutServiceItem(int id, ServicesDto dto)
@@ -52,17 +51,14 @@ namespace Service.API.Controllers
             return Ok(updated);
         }
 
-        // POST: api/services
         [HttpPost]
         [Authorize(Roles = "Coordinator")]
         public async Task<ActionResult<ServicesDto>> PostServiceItem(ServicesDto dto)
         {
             var created = await _service.CreateAsync(dto);
-
             return CreatedAtAction(nameof(GetServiceItem), new { id = created.Id }, created);
         }
 
-        // DELETE: api/services/5
         [HttpDelete("{id}")]
         [Authorize(Roles = "Coordinator")]
         public async Task<IActionResult> DeleteServiceItem(int id)

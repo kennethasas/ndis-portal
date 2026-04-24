@@ -1,7 +1,7 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NDISPortal.API.Services.Interfaces;
 using Service.API.DTOs;
-
 
 namespace Service.API.Controllers
 {
@@ -16,25 +16,24 @@ namespace Service.API.Controllers
             _service = service;
         }
 
-        // GET: api/ServiceCategories
         [HttpGet]
+        [AllowAnonymous]
         public async Task<ActionResult<IEnumerable<ServiceCategoryDto>>> GetServiceCategories()
         {
             var categories = await _service.GetAllAsync();
             return Ok(categories);
         }
 
-        // GET: api/ServiceCategories/5
         [HttpGet("{id}")]
+        [AllowAnonymous]
         public async Task<ActionResult<ServiceCategoryDto>> GetServiceCategory(int id)
         {
             var category = await _service.GetByIdAsync(id);
 
             if (category == null)
-                return NotFound();
+                return NotFound(new { message = "Service category not found." });
 
             return Ok(category);
         }
-
     }
 }

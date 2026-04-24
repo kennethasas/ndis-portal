@@ -1,97 +1,125 @@
-﻿using System.Security.Claims;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NdisPortal.BookingsApi.DTOs;
 using NdisPortal.BookingsApi.Services.Interfaces;
+using System.Security.Claims;
 
 namespace NdisPortal.BookingsApi.Controllers
 {
     [Route("api/bookings")]
     [ApiController]
-    [Authorize(Roles = "Participant,Coordinator")]
+    [Authorize]
     public class BookingsController : ControllerBase
     {
-        private readonly IBookingService _bookingService;
+        private readonly IBookingService _service;
 
-        public BookingsController(IBookingService bookingService)
+        public BookingsController(IBookingService service)
         {
-            _bookingService = bookingService;
+            _service = service;
         }
 
-        // GET /api/bookings?status=Pending
-        // Authenticated - any allowed role
-        // Participant: only own bookings
-        // Coordinator: all bookings with participant name and service name
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<BookingsListDto>>> GetBookings([FromQuery] string? status)
+        public async Task<IActionResult> GetBookings([FromQuery] string? status)
         {
-            var userIdClaim = User.FindFirst("userId")?.Value;
-            var role = User.FindFirst(ClaimTypes.Role)?.Value;
+            var roleClaim =
+                User.FindFirst(ClaimTypes.Role)?.Value ??
+                User.FindFirst("role")?.Value;
 
-            if (string.IsNullOrWhiteSpace(userIdClaim) || !int.TryParse(userIdClaim, out int userId))
-                return Unauthorized("Invalid token: userId claim is missing.");
+            var userIdClaim =
+                User.FindFirst("userId")?.Value ??
+                User.FindFirst(ClaimTypes.NameIdentifier)?.Value ??
+                User.FindFirst("sub")?.Value;
 
-            if (string.IsNullOrWhiteSpace(role))
-                return Unauthorized("Invalid token: role claim is missing.");
+            if (string.IsNullOrWhiteSpace(roleClaim) || !int.TryParse(userIdClaim, out int userId))
+                return Unauthorized(new { message = "Missing or invalid claims." });
 
-            var bookings = await _bookingService.GetBookingsAsync(userId, role, status);
+            var bookings = await _service.GetBookingsAsync(status, roleClaim, userId);
             return Ok(bookings);
         }
 
-        // POST /api/bookings
-        // Participant only
-        [HttpPost]
-        [Authorize(Roles = "Participant")]
-        public async Task<ActionResult<BookingResponseDto>> CreateBooking([FromBody] BookingCreateDto createDto)
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetBooking(int id)
         {
-            var userIdClaim = User.FindFirst("userId")?.Value;
+            var roleClaim =
+                User.FindFirst(ClaimTypes.Role)?.Value ??
+                User.FindFirst("role")?.Value;
 
-            if (string.IsNullOrWhiteSpace(userIdClaim) || !int.TryParse(userIdClaim, out int userId))
-                return Unauthorized("Invalid token: userId claim is missing.");
+            var userIdClaim =
+                User.FindFirst("userId")?.Value ??
+                User.FindFirst(ClaimTypes.NameIdentifier)?.Value ??
+                User.FindFirst("sub")?.Value;
 
-            var result = await _bookingService.CreateBookingAsync(userId, createDto);
-            return CreatedAtAction(nameof(GetBookings), new { id = result.Id }, result);
+            if (string.IsNullOrWhiteSpace(roleClaim) || !int.TryParse(userIdClaim, out int userId))
+                return Unauthorized(new { message = "Missing or invalid claims." });
+
+            var booking = await _service.GetBookingByIdAsync(id);
+
+            if (booking == null)
+                return NotFound(new { message = "Booking not found." });
+
+            if (roleClaim.Equals("Participant", StringComparison.OrdinalIgnoreCase) && booking.UserId != userId)
+                return Forbid();
+
+            return Ok(booking);
         }
 
-        // PUT /api/bookings/{id}/status
-        // Coordinator only
+        [HttpPost]
+        [Authorize(Roles = "Participant")]
+        public async Task<IActionResult> PostBooking(BookingCreateDto dto)
+        {
+            var userIdClaim =
+                User.FindFirst("userId")?.Value ??
+                User.FindFirst(ClaimTypes.NameIdentifier)?.Value ??
+                User.FindFirst("sub")?.Value;
+
+            if (!int.TryParse(userIdClaim, out int userId))
+                return Unauthorized(new { message = "Missing or invalid user claim." });
+
+            var created = await _service.CreateBookingAsync(dto, userId);
+            return CreatedAtAction(nameof(GetBooking), new { id = created.Id }, created);
+        }
+
         [HttpPut("{id}/status")]
         [Authorize(Roles = "Coordinator")]
-        public async Task<ActionResult<BookingResponseDto>> UpdateBookingStatus(int id, [FromBody] BookingStatusUpdateDto updateDto)
+        public async Task<IActionResult> PutBookingStatus(int id, BookingStatusUpdateDto dto)
         {
-            var updated = await _bookingService.UpdateBookingStatusAsync(id, updateDto);
+            var updated = await _service.UpdateBookingStatusAsync(id, dto);
 
             if (updated == null)
-                return NotFound($"Booking with ID {id} not found.");
+                return NotFound(new { message = "Booking not found." });
 
             return Ok(updated);
         }
 
-        // DELETE /api/bookings/{id}
-        // Participant only
-        // Participant can only delete their own bookings
-        // Can only delete bookings with status Pending
         [HttpDelete("{id}")]
         [Authorize(Roles = "Participant")]
         public async Task<IActionResult> DeleteBooking(int id)
         {
-            var userIdClaim = User.FindFirst("userId")?.Value;
+            var userIdClaim =
+                User.FindFirst("userId")?.Value ??
+                User.FindFirst(ClaimTypes.NameIdentifier)?.Value ??
+                User.FindFirst("sub")?.Value;
 
-            if (string.IsNullOrWhiteSpace(userIdClaim) || !int.TryParse(userIdClaim, out int userId))
-                return Unauthorized("Invalid token: userId claim is missing.");
+            if (!int.TryParse(userIdClaim, out int userId))
+                return Unauthorized(new { message = "Missing or invalid user claim." });
 
-            var result = await _bookingService.DeleteBookingAsync(id, userId);
+            try
+            {
+                var result = await _service.DeleteBookingAsync(id, userId);
 
-            if (result == null)
-                return NotFound($"Booking with ID {id} not found.");
+                if (!result)
+                    return NotFound(new { message = "Booking not found." });
 
-            if (result == "FORBIDDEN")
-                return Forbid();
-
-            if (result == "INVALID_STATUS")
-                return BadRequest("Booking is already Approved or Cancelled. Only Pending bookings can be deleted.");
-
-            return NoContent();
+                return NoContent();
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return StatusCode(403, new { message = ex.Message });
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
         }
     }
 }
