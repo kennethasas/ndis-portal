@@ -1,0 +1,120 @@
+/* Container remains the same */
+.dropdown-container {
+  position: relative;
+  display: inline-block;
+  font-family: 'Inter', sans-serif;
+  /* Recommended for this style */
+}
+
+.dropdown-trigger {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  padding: 0 12px;
+  /* Vertical padding handled by height */
+  height: 40px;
+  /* Fixed height for perfect vertical centering */
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-width: 100px;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.trigger-content {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 100%;
+}
+
+/* Fix for your icon alignment */
+.status-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #64748b;
+}
+
+.selected-text {
+  font-size: 14px;
+  font-weight: 500;
+  color: #0f172a;
+  margin: 0;
+  /* Critical: remove p tag default margins */
+}
+
+/* Improved Focus/Active State */
+.dropdown-trigger:hover {
+  background: #f8fafc;
+  border-color: #cbd5e1;
+}
+
+.dropdown-trigger.active {
+  border-color: #6b21a8;
+  /* Replacing 'ring' with box-shadow for that modern glow */
+  box-shadow: 0 0 0 3px rgba(107, 33, 168, 0.1);
+  outline: none;
+}
+
+/* Chevron refinements */
+.chevron {
+  display: flex;
+  align-items: center;
+  color: #64748b;
+  transition: transform 0.2s;
+}
+
+.chevron.rotated {
+  transform: rotate(180deg);
+}
+
+/* Menu Improvements */
+.dropdown-menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  /* More breathing room */
+  right: 0;
+  background: white;
+  min-width: 200px;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 6px;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+  z-index: 100;
+  animation: slideDown 0.15s ease-out;
+}
+
+.dropdown-item {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  /* Space for the checkmark */
+  padding: 8px 12px;
+  font-size: 14px;
+  border-radius: 6px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  color: #475569;
+  transition: background 0.1s;
+}
+
+.dropdown-item:hover {
+  background: #f1f5f9;
+  color: #0f172a;
+}
+
+.dropdown-item.selected {
+  background: #f3f0ff;
+  /* Light purple tint */
+  font-weight: 600;
+  color: #6b21a8;
+}
+
+.check-mark {
+  font-size: 12px;
+}

@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { BookingTableComponent } from '../../../shared/components/table/booking-table.component';
-import { StatusDropdownComponent } from '../../../shared/components/dropdown/status/status-dropdown.component';
-import { PaginationComponent } from '../../../shared/components/pagination/pagination.component';
+import { BookingTableComponent } from '../../../../shared/components/table/booking-table.component';
+import { StatusDropdownComponent } from '../../../../shared/components/dropdown/status/status-dropdown.component';
+import { PaginationComponent } from '../../../../shared/components/pagination/pagination.component';
 
 @Component({
   selector: 'app-my-bookings',

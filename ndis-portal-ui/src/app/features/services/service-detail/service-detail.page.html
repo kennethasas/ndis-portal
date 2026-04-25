@@ -1,0 +1,9 @@
+<app-service-detail-ui [title]="serviceData.title" [category]="serviceData.category"
+    [description]="serviceData.description" actionLabel="Book This Service" (backClicked)="navBack()"
+    (actionClicked)="processBooking()">
+    <div grid-content>
+        <app-service-item *ngFor="let item of includes" [label]="item.name">
+            <i [class]="item.icon"></i>
+        </app-service-item>
+    </div>
+</app-service-detail-ui>

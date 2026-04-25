@@ -1,5 +1,5 @@
 <section class="card-grid">
     <app-card-ui *ngFor="let item of services" [title]="item.service" [description]="item.description"
-        [tag]="item.category">
+        [tag]="item.category" (click)="onCardClick(item)" style="cursor: pointer;">
     </app-card-ui>
 </section>

@@ -1,0 +1,9 @@
+<div class="field-wrapper">
+    <label class="field-label">
+        {{ label }} <span *ngIf="required" class="required-star">*</span>
+    </label>
+    <div class="input-container">
+        <ng-content></ng-content>
+    </div>
+    <span class="help-text" *ngIf="helpText">{{ helpText }}</span>
+</div>

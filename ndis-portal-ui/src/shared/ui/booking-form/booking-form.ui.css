@@ -1,0 +1,49 @@
+.booking-ui-container {
+    padding: 40px;
+    font-family: 'Inter', sans-serif;
+}
+
+.breadcrumb {
+    font-size: 14px;
+    color: #6b7280;
+    margin-bottom: 32px;
+}
+
+.breadcrumb .active {
+    color: #111;
+    font-weight: 500;
+}
+
+.page-title {
+    font-size: 32px;
+    font-weight: 700;
+    margin-bottom: 48px;
+}
+
+.form-footer {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 24px;
+    margin-top: 48px;
+    padding-top: 24px;
+    border-top: 1px solid #e5e7eb;
+}
+
+.btn-submit {
+    background: #6B3293;
+    color: white;
+    border: none;
+    padding: 14px 32px;
+    border-radius: 12px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.btn-back {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #6b7280;
+    font-weight: 600;
+}

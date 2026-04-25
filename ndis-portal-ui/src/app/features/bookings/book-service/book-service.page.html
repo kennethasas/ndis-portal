@@ -1,0 +1,16 @@
+<app-booking-form-ui title="Book a Service" actionLabel="Book This Service" (back)="navBack()"
+    (submit)="confirmBooking()">
+    <div form-fields class="grid-2-col">
+        <app-form-field label="Select Service" [required]="true">
+            <app-service-dropdown [options]="services" [(value)]="bookingData.serviceId"></app-service-dropdown>
+        </app-form-field>
+
+        <app-form-field label="Preferred Date" [required]="true">
+            <app-date-picker [(value)]="bookingData.date"></app-date-picker>
+        </app-form-field>
+
+        <app-form-field label="Additional Notes" class="col-span-full">
+            <app-text-area [rows]="6" [(value)]="bookingData.notes"></app-text-area>
+        </app-form-field>
+    </div>
+</app-booking-form-ui>

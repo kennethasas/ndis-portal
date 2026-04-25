@@ -1,0 +1,26 @@
+<div class="ui-wrapper">
+    <h1 class="page-title">Service Details</h1>
+
+
+    <header class="header-section">
+        <div class="category-badge">{{ category }}</div>
+        <h1 class="main-title">{{ title }}</h1>
+
+        <div class="description-block">
+            <h3 class="label">Description</h3>
+            <p class="content">{{ description }}</p>
+        </div>
+    </header>
+
+    <section class="grid-section">
+        <h3 class="label">What This Service Includes</h3>
+        <div class="grid-layout">
+            <ng-content select="[grid-content]"></ng-content>
+        </div>
+    </section>
+
+    <footer class="action-footer">
+        <button type="button" class="btn-back" (click)="onBack()">Back</button>
+        <button type="button" class="btn-action" (click)="onAction()">{{ actionLabel }}</button>
+    </footer>
+</div>

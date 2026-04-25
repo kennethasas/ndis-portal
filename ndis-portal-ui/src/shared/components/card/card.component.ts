@@ -1,6 +1,6 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, Output, EventEmitter } from '@angular/core'; // Add Output & EventEmitter
 import { CommonModule } from '@angular/common';
-import { CardUi } from '../../../shared/ui/card/card.ui'; // Ensure this path is correct
+import { CardUi } from '../../../shared/ui/card/card.ui';
 
 @Component({
   selector: 'app-card-component',
@@ -10,6 +10,12 @@ import { CardUi } from '../../../shared/ui/card/card.ui'; // Ensure this path is
   styleUrls: ['./card.component.css'],
 })
 export class CardComponent {
-  // We accept the filtered data from the page
   @Input() services: any[] = [];
+
+  // Create an emitter to send the service data to the parent page
+  @Output() cardSelected = new EventEmitter<any>();
+
+  onCardClick(service: any) {
+    this.cardSelected.emit(service);
+  }
 }

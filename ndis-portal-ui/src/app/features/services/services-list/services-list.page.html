@@ -6,7 +6,10 @@
         </div>
     </div>
 
-    <app-card-component [services]="filteredBookings"></app-card-component>
+    <app-card-component 
+        [services]="filteredCategory" 
+        (cardSelected)="viewServiceDetail($event)">
+    </app-card-component>
 
     <div class="pagination-footer">
         <app-pagination [currentPage]="currentPage" [totalPages]="10" (pageChange)="handlePageChange($event)">

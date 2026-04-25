@@ -1,0 +1,14 @@
+<div class="booking-ui-container">
+    <h1 class="page-title">{{ title }}</h1>
+
+    <form class="booking-form-layout">
+        <div class="form-content">
+            <ng-content select="[form-fields]"></ng-content>
+        </div>
+
+        <footer class="form-footer">
+            <button type="button" class="btn-back" (click)="onBack()">Back</button>
+            <button type="button" class="btn-submit" (click)="onSubmit()">{{ actionLabel }}</button>
+        </footer>
+    </form>
+</div>

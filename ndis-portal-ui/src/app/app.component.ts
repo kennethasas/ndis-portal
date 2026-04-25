@@ -4,7 +4,8 @@ import { NavbarComponent } from '../shared/components/navbar/navbar.component';
 import { ParticipantSidebarComponent } from '../shared/components/sidebar/participant-sidebar.component';
 import { AuthService } from './core/services/auth.service';
 
-import { MyBookingsComponent } from './features/bookings/my-bookings.page';
+import { MyBookingsComponent } from './features/bookings/my-bookings/my-bookings.page';
+
 @Component({
   selector: 'app-root',
   standalone: true,
