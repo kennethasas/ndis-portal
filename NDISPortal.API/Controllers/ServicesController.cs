@@ -48,80 +48,29 @@ namespace Service.API.Controllers
 
         // POST: api/services
         // Coordinator only
+        // POST: api/services
         [HttpPost]
         [Authorize(Roles = "Coordinator")]
-        public async Task<ActionResult<ServiceDto>> PostServiceItem([FromBody] ServiceDto dto)
+        public async Task<ActionResult<ServiceDto>> PostServiceItem(CreateServiceDto dto)
         {
-            if (dto == null)
-            {
-                return BadRequest(new
-                {
-                    message = "Service data is required."
-                });
-            }
+            var created = await _service.CreateAsync(dto);
 
-            try
-            {
-                var created = await _service.CreateAsync(dto);
-
-                return CreatedAtAction(
-                    nameof(GetServiceItem),
-                    new { id = created.Id },
-                    created
-                );
-            }
-            catch (ArgumentException ex)
-            {
-                return BadRequest(new
-                {
-                    message = ex.Message
-                });
-            }
+            return CreatedAtAction(nameof(GetServiceItem), new { id = created.Id }, created);
         }
 
         // PUT: api/services/5
         // Coordinator only
         [HttpPut("{id}")]
         [Authorize(Roles = "Coordinator")]
-        public async Task<IActionResult> PutServiceItem(int id, [FromBody] ServiceDto dto)
+        public async Task<IActionResult> PutServiceItem(int id, UpdateServiceDto dto)
         {
-            if (dto == null)
-            {
-                return BadRequest(new
-                {
-                    message = "Service data is required."
-                });
-            }
 
-            if (id != dto.Id)
-            {
-                return BadRequest(new
-                {
-                    message = "Service ID in the URL does not match the ID in the request body."
-                });
-            }
+            var updated = await _service.UpdateAsync(id, dto);
 
-            try
-            {
-                var updated = await _service.UpdateAsync(id, dto);
+            if (updated == null)
+                return NotFound();
 
-                if (updated == null)
-                {
-                    return NotFound(new
-                    {
-                        message = "Service not found."
-                    });
-                }
-
-                return Ok(updated);
-            }
-            catch (ArgumentException ex)
-            {
-                return BadRequest(new
-                {
-                    message = ex.Message
-                });
-            }
+            return Ok(updated);
         }
 
         // DELETE: api/services/5

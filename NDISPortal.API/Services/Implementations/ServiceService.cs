@@ -61,7 +61,7 @@ namespace NDISPortal.API.Services.Implementations
             return service;
         }
 
-        public async Task<ServiceDto> CreateAsync(ServiceDto dto)
+        public async Task<ServiceDto> CreateAsync(CreateServiceDto dto)
         {
             if (dto.CategoryId <= 0)
             {
@@ -111,7 +111,7 @@ namespace NDISPortal.API.Services.Implementations
             return created;
         }
 
-        public async Task<ServiceDto?> UpdateAsync(int id, ServiceDto dto)
+        public async Task<ServiceDto?> UpdateAsync(int id, UpdateServiceDto dto)
         {
             var service = await _context.Services
                 .FirstOrDefaultAsync(s => s.Id == id);
@@ -142,7 +142,7 @@ namespace NDISPortal.API.Services.Implementations
             service.CategoryId = dto.CategoryId;
             service.Name = dto.Name.Trim();
             service.Description = dto.Description;
-            service.is_active = dto.IsActive;
+            service.is_active = dto.is_active;
             service.modified_date = DateTime.UtcNow;
 
             await _context.SaveChangesAsync();
