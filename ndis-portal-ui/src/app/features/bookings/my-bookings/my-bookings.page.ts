@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { BookingTableComponent } from '../../../../shared/components/table/booking-table.component';
 import { StatusDropdownComponent } from '../../../../shared/components/dropdown/status/status-dropdown.component';
@@ -14,59 +14,84 @@ import { PaginationComponent } from '../../../../shared/components/pagination/pa
     PaginationComponent,
   ],
   templateUrl: './my-bookings.page.html',
-  styleUrl: './my-bookings.page.css',
 })
-export class MyBookingsComponent {
+export class MyBookingsComponent implements OnInit {
+  // Logic State
+  bookings: any[] = [];
+  totalItems = 0;
+  totalPages = 1;
+  currentPage = 1;
+  pageSize = 10;
   activeFilter = 'all';
-  // Original source from your context
-  allBookings = [
-    {
-      service: 'Personal Hygiene',
-      category: 'Daily Personal Activities',
-      date: 'Apr 21, 2026',
-      status: 'Approved',
-    },
-    {
-      service: 'Personal Hygiene',
-      category: 'Daily Personal Activities',
-      date: 'Apr 21, 2026',
-      status: 'Pending',
-    },
-    {
-      service: 'Personal Hygiene',
-      category: 'Daily Personal Activities',
-      date: 'Apr 21, 2026',
-      status: 'Cancelled',
-    },
-  ];
+  isLoading = false;
 
-  filteredBookings = [...this.allBookings];
+  ngOnInit() {
+    this.fetchBookings();
+  }
+
+  /**
+   * This is where you would call your Angular Service
+   * Example: this.bookingService.getBookings(page, size, filter)
+   */
+  fetchBookings() {
+    this.isLoading = true;
+
+    // Simulate Backend API Call
+    console.log(
+      `Fetching: Page ${this.currentPage}, Size ${this.pageSize}, Filter ${this.activeFilter}`,
+    );
+
+    // MOCK BACKEND RESPONSE
+    // In production, replace this setTimeout with: this.http.get(...).subscribe(...)
+    setTimeout(() => {
+      this.bookings = [
+        {
+          service: 'Personal Hygiene',
+          category: 'Daily Personal Activities',
+          date: 'Apr 21, 2026',
+          status: 'Approved',
+        },
+        {
+          service: 'Personal Hygiene',
+          category: 'Daily Personal Activities',
+          date: 'Apr 21, 2026',
+          status: 'Pending',
+        },
+        {
+          service: 'Personal Hygiene',
+          category: 'Daily Personal Activities',
+          date: 'Apr 21, 2026',
+          status: 'Cancelled',
+        },
+      ];
+
+      // Backend should return total count so we can calculate pages
+      this.totalItems = 50;
+      this.totalPages = Math.ceil(this.totalItems / this.pageSize);
+      this.isLoading = false;
+    }, 500);
+  }
 
   handleStatusFilter(status: string) {
     this.activeFilter = status;
-    if (status === 'all') {
-      this.filteredBookings = [...this.allBookings];
-    } else {
-      this.filteredBookings = this.allBookings.filter(
-        (b) => b.status.toLowerCase() === status.toLowerCase(),
-      );
-    }
+    this.currentPage = 1; // Always reset to page 1 on new filter
+    this.fetchBookings();
+  }
+
+  handlePageChange(page: number) {
+    this.currentPage = page;
+    this.fetchBookings();
   }
 
   handleCancel(booking: any) {
     if (confirm('Are you sure you want to cancel this booking?')) {
+      // Typically: this.bookingService.cancel(booking.id).subscribe(() => this.fetchBookings())
       booking.status = 'Cancelled';
-      this.handleStatusFilter('all'); // Refresh view
+      console.log('Cancelled:', booking);
     }
   }
+
   handleView(booking: any) {
-    console.log('Viewing booking:', booking);
-  }
-
-  currentPage = 1;
-
-  handlePageChange(page: number) {
-    this.currentPage = page;
-    // Call your API here to fetch data for the new page
+    console.log('Viewing details for:', booking);
   }
 }

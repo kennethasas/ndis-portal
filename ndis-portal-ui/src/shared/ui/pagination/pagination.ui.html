@@ -1,5 +1,7 @@
-<nav class="pagination-container">
-    <button class="nav-btn" [disabled]="currentPage === 1" (click)="onPageClick(currentPage - 1)">
+<nav class="flex items-center justify-center gap-2 py-5 font-sans">
+    <button
+        class="inline-flex items-center justify-center h-9 px-3 gap-2 rounded-md text-sm font-medium transition-all text-slate-950 border border-transparent hover:bg-slate-100 disabled:opacity-50 disabled:cursor-not-allowed"
+        [disabled]="currentPage === 1" (click)="onPageClick(currentPage - 1)">
         <svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path
                 d="M8.84182 3.13514C9.04327 3.32401 9.05348 3.64042 9.1 3.84182L5.61852 7.5L9.1 11.1582C9.05348 11.3596 9.04327 11.676 8.84182 11.8649C8.64038 12.0537 8.32396 12.0435 8.1351 11.8421L4.1351 7.84208C3.9551 7.65208 3.9551 7.34792 4.1351 7.15792L8.1351 3.15792C8.32396 2.95646 8.64038 2.94625 8.84182 3.13514Z"
@@ -8,19 +10,25 @@
         <span>Previous</span>
     </button>
 
-    <div class="page-numbers">
+    <div class="flex items-center gap-1">
         <ng-container *ngFor="let page of pages">
-            <button *ngIf="page !== '...'; else dots" class="page-btn" [class.active]="page === currentPage"
-                (click)="onPageClick(page)">
+            <button *ngIf="page !== '...'; else dots" (click)="onPageClick(page)"
+                class="inline-flex items-center justify-center min-w-[36px] h-9 rounded-md text-sm font-medium transition-all focus:outline-none"
+                [ngClass]="page === currentPage 
+                    ? 'bg-violet-600 border border-violet-600 shadow-sm text-white' 
+                    : 'text-slate-900 hover:bg-slate-100 border border-transparent'">
                 {{ page }}
             </button>
+    
             <ng-template #dots>
-                <span class="dots">···</span>
+                <span class="px-2 text-slate-500 text-sm">···</span>
             </ng-template>
         </ng-container>
     </div>
 
-    <button class="nav-btn" [disabled]="currentPage === totalPages" (click)="onPageClick(currentPage + 1)">
+    <button
+        class="inline-flex items-center justify-center h-9 px-3 gap-2 rounded-md text-sm font-medium transition-all text-slate-950 border border-transparent hover:bg-slate-100 disabled:opacity-50 disabled:cursor-not-allowed"
+        [disabled]="currentPage === totalPages" (click)="onPageClick(currentPage + 1)">
         <span>Next</span>
         <svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path

@@ -1,5 +1,11 @@
-/* Import Inter with various weights (400=Regular, 500=Medium, 600=Semi-Bold, 700=Bold) */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+/* Import Inter with various weights (400=Regular, 500=Medium, 600=Semi-Bold, 700=Bold) */
 
 :root {
     --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -17,4 +23,11 @@ body {
     -moz-osx-font-smoothing: grayscale;
     font-feature-settings: "cv02", "cv03", "cv04", "cv11";
     /* Inter-specific legibility features */
+}
+
+/* Ensure the icon components inherit the text color of the active parent */
+.active-link app-icon-home,
+.active-link app-icon-service,
+.active-link app-icon-book {
+    @apply text-purple-700;
 }

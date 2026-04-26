@@ -18,17 +18,17 @@ import { TableComponent, TableColumn } from '../../ui/table/table.ui';
       [data]="bookings"
       (viewAction)="viewBooking.emit($event)"
       (cancelAction)="cancelBooking.emit($event)"
-    >
-    </app-table-ui>
+    ></app-table-ui>
   `,
 })
 export class BookingTableComponent implements OnChanges {
   @Input() bookings: any[] = [];
-  @Input() currentFilter: string = 'all'; // New input to track filter state
+  @Input() currentFilter: string = 'all';
   @Output() viewBooking = new EventEmitter<any>();
   @Output() cancelBooking = new EventEmitter<any>();
 
-  // Base columns always shown
+  /** * Desktop base columns
+   */
   private baseColumns: TableColumn[] = [
     { key: 'service', label: 'Service' },
     { key: 'category', label: 'Category', type: 'category' },
@@ -45,15 +45,15 @@ export class BookingTableComponent implements OnChanges {
     }
   }
 
+  /** * Action column logic: Only added when filter is 'pending'
+   */
   private updateColumns() {
     if (this.currentFilter.toLowerCase() === 'pending') {
-      // Add Action column only if it's not already there
       this.visibleColumns = [
         ...this.baseColumns,
-        { key: 'action', label: 'Action', type: 'action' },
+        { key: 'action', label: '', type: 'action' },
       ];
     } else {
-      // Revert to base columns (hides Action)
       this.visibleColumns = [...this.baseColumns];
     }
   }

@@ -5,8 +5,9 @@ import { CommonModule } from '@angular/common';
   selector: 'app-pagination-ui',
   standalone: true,
   imports: [CommonModule],
+  // Template is now inline with Tailwind classes
   templateUrl: './pagination.ui.html',
-  styleUrls: ['./pagination.ui.css'],
+  // No external CSS file needed anymore
 })
 export class PaginationUIComponent {
   @Input() currentPage: number = 1;

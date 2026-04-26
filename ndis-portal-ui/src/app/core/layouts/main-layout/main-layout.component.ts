@@ -1,13 +1,21 @@
-import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
-import { NavbarComponent } from '../../../../shared/components/navbar/navbar.component';
-import { ParticipantSidebarComponent } from '../../../../shared/components/sidebar/participant-sidebar.component';
+// File: src/app/features/layout/main-layout.component.ts
 
+import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { RouterOutlet } from '@angular/router';
+import { ParticipantSidebarComponent } from '../../../../shared/components/sidebar/sidebar.component';
+import { NavbarComponent } from '../../../../shared/components/navbar/navbar.component';
 @Component({
   selector: 'app-main-layout',
   standalone: true,
-  imports: [RouterOutlet, NavbarComponent, ParticipantSidebarComponent],
+  imports: [
+    CommonModule,
+    RouterOutlet,
+    ParticipantSidebarComponent,
+    NavbarComponent,
+  ],
   templateUrl: './main-layout.component.html',
-  styleUrl: './main-layout.component.css',
+  // This ensures the layout component itself fills the screen
+  host: { class: 'block h-screen w-full' },
 })
 export class MainLayoutComponent {}
