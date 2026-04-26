@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { SlideshowComponent } from '../../../../shared/components/slideshow/slideshow.component';
 import { InputComponent } from '../../../../shared/components/input/input.component';
+import { ErrorHandlingComponent } from '../../../../shared/components/error-handling/error-handling.component';
 
 @Component({
   selector: 'app-my-signup',
@@ -13,7 +14,8 @@ import { InputComponent } from '../../../../shared/components/input/input.compon
     FormsModule, 
     RouterModule,
     SlideshowComponent,
-    InputComponent
+    InputComponent,
+    ErrorHandlingComponent
   ],
   templateUrl: './my-signup.component.html',
   styleUrls: ['./my-signup.component.css']
@@ -28,11 +30,13 @@ export class MySignupComponent {
     role: '',
     email: '',
     password: '',
-    agreeToTerms: false
+    
   };
 
   isLoading = false;
   errorMessage = '';
+  errorType: 'error' | 'success' | 'warning' | 'info' = 'error';
+  showError = false;
 
   slideImages = [
     'assets/imagesSlideshow/2.jpg',
@@ -55,13 +59,37 @@ export class MySignupComponent {
   ];
 
   onSignUp() {
-    if (!this.signupData.agreeToTerms) {
-      this.errorMessage = 'You must agree to the terms.';
+    // Validation
+    if (!this.signupData.firstName || !this.signupData.lastName) {
+      this.errorMessage = 'First name and last name are required';
+      this.errorType = 'error';
+      this.showError = true;
+      return;
+    }
+
+    if (!this.signupData.role) {
+      this.errorMessage = 'Please select a role';
+      this.errorType = 'error';
+      this.showError = true;
+      return;
+    }
+
+    if (!this.signupData.email) {
+      this.errorMessage = 'Email is required';
+      this.errorType = 'error';
+      this.showError = true;
+      return;
+    }
+
+    if (!this.signupData.password || this.signupData.password.length < 6) {
+      this.errorMessage = 'Password must be at least 6 characters';
+      this.errorType = 'error';
+      this.showError = true;
       return;
     }
     
     this.isLoading = true;
-    this.errorMessage = '';
+    this.showError = false;
     
     console.log('User signed up:', this.signupData);
     
@@ -69,5 +97,9 @@ export class MySignupComponent {
       this.isLoading = false;
       // Logical redirect would happen here
     }, 2000);
+  }
+
+  closeError(): void {
+    this.showError = false;
   }
 }

@@ -10,9 +10,38 @@ import { BookServiceComponent } from './features/bookings/book-service/book-serv
 import { AuthLayoutComponent } from './core/layouts/auth-layout/auth-layout.component';
 import { MainLayoutComponent } from './core/layouts/main-layout/main-layout.component';
 import { AuthGuard } from './/core/guards/auth.guard';
+import { RoleGuard } from '@core/guards/role.guard';
 
 export const routes: Routes = [
-  // AUTH BRANCH: Clean Layout
+
+  // 🔒 PROTECTED ROUTES FIRST
+  {
+    path: '',
+    component: MainLayoutComponent,
+    canActivate: [AuthGuard],
+    children: [
+      {
+        path: 'services',
+        component: ServicesListComponent,
+      },
+      {
+        path: 'services/:id',
+        component: ServiceDetailPage,
+      },
+      {
+        path: 'bookings',
+        component: MyBookingsComponent,
+        canActivate: [RoleGuard],
+        data: { role: 'Participant' }
+      },
+      {
+        path: 'book-new',
+        component: BookServiceComponent,
+      },
+    ],
+  },
+
+  // 🔐 AUTH ROUTES SECOND
   {
     path: '',
     component: AuthLayoutComponent,
@@ -27,44 +56,15 @@ export const routes: Routes = [
       },
       {
         path: '',
-        redirectTo: '/signup',
+        redirectTo: 'login',
         pathMatch: 'full',
-      },
-      {
-        path: '',
-        redirectTo: '/login',
-        pathMatch: 'full',
-      },
-      // Wildcard route for 404
-      {
-        path: '**',
-        redirectTo: '/login',
-      },
+      }
     ],
   },
 
-  // PROTECTED BRANCH: Uses the Dashboard layout with Sidebar/Navbar
+  // 🌐 GLOBAL WILDCARD LAST
   {
-    path: '',
-    component: MainLayoutComponent,
-    canActivate: [AuthGuard], // Secures all dashboard children
-    children: [
-      {
-        path: 'services',
-        component: ServicesListComponent,
-      },
-      {
-        path: 'services/:id', // Dynamic route for details
-        component: ServiceDetailPage,
-      },
-      {
-        path: 'bookings',
-        component: MyBookingsComponent,
-      },
-      {
-        path: 'book-new',
-        component: BookServiceComponent,
-      },
-    ],
+    path: '**',
+    redirectTo: '/login',
   },
 ];

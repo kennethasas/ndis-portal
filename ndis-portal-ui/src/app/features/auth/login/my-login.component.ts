@@ -2,15 +2,16 @@ import { Component, HostBinding } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-import { AuthService } from '../../../core/services/auth.service';
+import { AuthService } from '../../../core/services/auth-service';
 import { SlideshowComponent } from '../../../../shared/components/slideshow/slideshow.component';
 import { InputComponent } from '../../../../shared/components/input/input.component';
+import { ErrorHandlingComponent } from '../../../../shared/components/error-handling/error-handling.component';
 
 
 @Component({
   selector: 'app-my-login',
   standalone: true,
-  imports: [FormsModule, CommonModule, SlideshowComponent, InputComponent],
+  imports: [FormsModule, CommonModule, SlideshowComponent, InputComponent, ErrorHandlingComponent],
   templateUrl: './my-login.component.html',
   styleUrls: ['./my-login.component.css'],
 })
@@ -21,6 +22,8 @@ export class MyLoginComponent {
   email: string = '';
   password: string = '';
   errorMessage: string = '';
+  errorType: 'error' | 'success' | 'warning' | 'info' = 'error';
+  showError: boolean = false;
   isLoading: boolean = false;
 
   // Slideshow images - reusable for login and signup
@@ -52,22 +55,36 @@ export class MyLoginComponent {
   onLogin() {
     if (!this.email || !this.password) {
       this.errorMessage = 'Email and password are required';
+      this.errorType = 'error';
+      this.showError = true;
       return;
     }
 
     this.isLoading = true;
-    this.errorMessage = '';
+    this.showError = false;
 
-    // 1. Use an ARROW FUNCTION () => {} to keep 'this' context
+    // Use an ARROW FUNCTION () => {} to keep 'this' context
     setTimeout(() => {
       const mockToken = 'mock-jwt-token-' + Date.now();
       const mockUserId = '123';
 
-      // 2. Use '!' if the compiler is still worried about nullability
-      this.authService!.login(mockToken, mockUserId, this.email);
-      this.isLoading = false;
+      const role = this.email.includes('admin')
+        ? 'Coordinator'
+        : 'Participant';
 
-      this.router!.navigate(['/bookings']);
+      this.authService.login(
+        mockToken,
+        mockUserId,
+        this.email,
+        role
+      );
+
+      this.isLoading = false;
+      this.router.navigate(['/bookings']);
     }, 500);
+  }
+
+  closeError(): void {
+    this.showError = false;
   }
 }

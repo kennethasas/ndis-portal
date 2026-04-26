@@ -180,4 +180,23 @@ input {
   .title-group h1 {
     font-size: 1.75rem;
   }
+
+  .image-section {
+  flex: 0 0 42%;
+  overflow: hidden;
+  height: 100%;
+  position: relative;
+  z-index: 1; /* 👈 put it behind */
+}
+
+.form-section {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #ffffff;
+  height: 100%;
+  position: relative;
+  z-index: 2; 
+}
 }

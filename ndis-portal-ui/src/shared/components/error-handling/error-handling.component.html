@@ -1,0 +1,9 @@
+<div *ngIf="isVisible" [ngClass]="getAlertClass()" class="alert-container">
+  <div class="alert-content">
+    <i [class]="getIconClass()" class="alert-icon"></i>
+    <span class="alert-message">{{ message }}</span>
+  </div>
+  <button class="alert-close" (click)="close()" aria-label="Close alert">
+    <i class="pi pi-times"></i>
+  </button>
+</div>

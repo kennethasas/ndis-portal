@@ -17,9 +17,12 @@
         </div>
       </div>
 
-      <div *ngIf="errorMessage" class="error-message">
-        {{ errorMessage }}
-      </div>
+      <app-error-handling 
+        [message]="errorMessage"
+        [type]="errorType"
+        [isVisible]="showError"
+        (closeError)="closeError()">
+      </app-error-handling>
 
       <form (ngSubmit)="onSignUp()" #signupForm="ngForm">
         <div class="input-row">
@@ -71,10 +74,6 @@
           </app-input>
         </div>
 
-        <div class="checkbox-group">
-          <input type="checkbox" id="terms" name="terms" [(ngModel)]="signupData.agreeToTerms" required>
-          <label for="terms">I agree to the terms and conditions.</label>
-        </div>
 
         <button type="submit" class="btn-signup" [disabled]="isLoading">
           {{ isLoading ? 'Creating account...' : 'Sign up' }}

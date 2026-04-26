@@ -16,9 +16,13 @@
     <p class="subtitle">We're here to help you manage your day.</p>
   </div>
 </div>
-      <div *ngIf="errorMessage" class="error-message">
-        {{ errorMessage }}
-      </div>
+      
+      <app-error-handling 
+        [message]="errorMessage"
+        [type]="errorType"
+        [isVisible]="showError"
+        (closeError)="closeError()">
+      </app-error-handling>
 
       <form (ngSubmit)="onLogin()">
         <div class="input-group">
@@ -39,10 +43,6 @@
             [(ngModel)]="password"
             [required]="true">
           </app-input>
-        </div>
-
-        <div class="forgot-link">
-          <a href="#">Forgot Password?</a>
         </div>
 
         <button type="submit" class="btn-login" [disabled]="isLoading">
