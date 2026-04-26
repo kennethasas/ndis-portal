@@ -3,15 +3,16 @@ import { CommonModule } from '@angular/common';
 import { SidebarComponent, NavItem } from '../../ui/sidebar/sidebar.ui';
 
 @Component({
-  selector: 'app-participant-sidebar',
+  selector: 'app-sidebar-component',
   standalone: true,
   imports: [CommonModule, SidebarComponent],
   template: `
-    <app-sidebar
+    <app-sidebar-ui
       [navItems]="participantLinks"
       subText="Participant Portal"
-    ></app-sidebar>
+    ></app-sidebar-ui>
   `,
+  host: { class: 'block h-full flex-none transition-all duration-300' },
 })
 export class ParticipantSidebarComponent {
   /**

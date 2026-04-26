@@ -6,15 +6,14 @@ import { BehaviorSubject, Observable } from 'rxjs';
   providedIn: 'root',
 })
 export class AuthService {
-  private isAuthenticatedSubject = new BehaviorSubject<boolean>(
-    this.hasToken(),
-  );
+  // 1. Force the initial state to 'true' so the UI thinks we are logged in
+  private isAuthenticatedSubject = new BehaviorSubject<boolean>(true);
   public isAuthenticated$ = this.isAuthenticatedSubject.asObservable();
 
   constructor(@Inject(PLATFORM_ID) private platformId: Object) {
-    // Update on initialization if in browser
     if (isPlatformBrowser(this.platformId)) {
-      this.isAuthenticatedSubject.next(this.hasToken());
+      // 2. Keep this as true for now to allow sidebar/navbar to render
+      this.isAuthenticatedSubject.next(true);
     }
   }
 
@@ -22,11 +21,10 @@ export class AuthService {
     return isPlatformBrowser(this.platformId);
   }
 
+  // 3. Temporarily bypass token check
   private hasToken(): boolean {
-    if (!this.isBrowser()) {
-      return false;
-    }
-    return !!localStorage.getItem('token');
+    // return !!localStorage.getItem('token'); // Original logic
+    return true; // Bypass: Always returns true
   }
 
   login(token: string, userId: string, email: string): void {
@@ -47,28 +45,23 @@ export class AuthService {
     this.isAuthenticatedSubject.next(false);
   }
 
+  // 4. Force this to return true so Guards and Templates allow access
   isAuthenticated(): boolean {
-    return this.hasToken();
+    return true; // Bypass: Always allow entry to the dashboard
   }
 
   getToken(): string | null {
-    if (!this.isBrowser()) {
-      return null;
-    }
+    if (!this.isBrowser()) return null;
     return localStorage.getItem('token');
   }
 
   getUserId(): string | null {
-    if (!this.isBrowser()) {
-      return null;
-    }
+    if (!this.isBrowser()) return null;
     return localStorage.getItem('userId');
   }
 
   getEmail(): string | null {
-    if (!this.isBrowser()) {
-      return null;
-    }
+    if (!this.isBrowser()) return null;
     return localStorage.getItem('email');
   }
 }

@@ -1,7 +1,7 @@
 <!-- File: src/app/shared/components/sidebar/sidebar.ui.html -->
 
 <aside
-  class="fixed left-0 top-0 h-screen bg-white border-r border-slate-200 flex flex-col p-4 transition-all duration-300 ease-in-out z-50"
+  class="h-screen bg-white border-r border-slate-200 flex flex-col p-4 transition-all duration-300 ease-in-out"
   [class.w-64]="!isCollapsed" [class.w-20]="isCollapsed">
 
   <!-- SIDEBAR HEADER -->
@@ -17,25 +17,16 @@
       <span class="font-semibold text-sm text-slate-900">NDIS</span>
       <span class="text-xs text-slate-500">{{ subText }}</span>
     </div>
-
-    <!-- TOGGLE BUTTON -->
-    <button (click)="toggleCollapse($event)"
-      class="mt-auto flex items-center justify-center p-2 rounded-lg hover:bg-slate-50 text-slate-400 hover:text-slate-600">
-      <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 transition-transform duration-300"
-        [class.rotate-180]="isCollapsed" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <path d="m15 18-6-6 6-6" />
-      </svg>
-    </button>
   </div>
 
   <!-- NAVIGATION -->
   <nav class="flex flex-col gap-1">
     <a *ngFor="let item of navItems" [routerLink]="item.path" routerLinkActive="bg-[#f3f0ff] text-[#6b21a8] font-medium"
-      (click)="onNavClick()"
+      #rla="routerLinkActive"
       class="flex items-center gap-3 p-2.5 rounded-lg text-slate-500 hover:bg-slate-50 hover:text-slate-900 transition-all group"
       [class.justify-center]="isCollapsed">
-      <!-- ICON -->
-      <div class="flex items-center justify-center min-w-[20px]">
+
+      <div class="flex items-center justify-center min-w-[20px]" [class.text-[#6b21a8]]="rla.isActive">
         <ng-container [ngSwitch]="item.icon">
           <app-icon-home *ngSwitchCase="'home'" [size]="20"></app-icon-home>
           <app-icon-service *ngSwitchCase="'services'" [size]="20"></app-icon-service>
@@ -43,7 +34,6 @@
         </ng-container>
       </div>
 
-      <!-- LABEL (hidden when collapsed) -->
       <span *ngIf="!isCollapsed" class="text-sm whitespace-nowrap">
         {{ item.label }}
       </span>

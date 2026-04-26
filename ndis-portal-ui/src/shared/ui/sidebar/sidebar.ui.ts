@@ -16,7 +16,7 @@ export interface NavItem {
 }
 
 @Component({
-  selector: 'app-sidebar',
+  selector: 'app-sidebar-ui',
   standalone: true,
   imports: [
     CommonModule,
