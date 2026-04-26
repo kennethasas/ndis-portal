@@ -7,44 +7,64 @@ import { ServiceDetailPage } from './features/services/service-detail/service-de
 import { MyBookingsComponent } from './features/bookings/my-bookings/my-bookings.page';
 import { BookServiceComponent } from './features/bookings/book-service/book-service.page';
 
+import { AuthLayoutComponent } from './core/layouts/auth-layout/auth-layout.component';
+import { MainLayoutComponent } from './core/layouts/main-layout/main-layout.component';
+import { AuthGuard } from './/core/guards/auth.guard';
+
 export const routes: Routes = [
-  {
-    path: 'signup',
-    component: MySignupComponent,
-  },
-  {
-    path: 'login',
-    component: MyLoginComponent,
-  },
+  // AUTH BRANCH: Clean Layout
   {
     path: '',
-    redirectTo: '/signup',
-    pathMatch: 'full',
+    component: AuthLayoutComponent,
+    children: [
+      {
+        path: 'signup',
+        component: MySignupComponent,
+      },
+      {
+        path: 'login',
+        component: MyLoginComponent,
+      },
+      {
+        path: '',
+        redirectTo: '/signup',
+        pathMatch: 'full',
+      },
+      {
+        path: '',
+        redirectTo: '/login',
+        pathMatch: 'full',
+      },
+      // Wildcard route for 404
+      {
+        path: '**',
+        redirectTo: '/login',
+      },
+    ],
   },
+
+  // PROTECTED BRANCH: Uses the Dashboard layout with Sidebar/Navbar
   {
     path: '',
-    redirectTo: '/login',
-    pathMatch: 'full',
-  },
-  // Wildcard route for 404
-  {
-    path: '**',
-    redirectTo: '/login',
-  },
-  {
-    path: 'services',
-    component: ServicesListComponent,
-  },
-  {
-    path: 'services/:id', // Dynamic route for details
-    component: ServiceDetailPage,
-  },
-  {
-    path: 'bookings',
-    component: MyBookingsComponent,
-  },
-  {
-    path: 'book-new',
-    component: BookServiceComponent,
+    component: MainLayoutComponent,
+    canActivate: [AuthGuard], // Secures all dashboard children
+    children: [
+      {
+        path: 'services',
+        component: ServicesListComponent,
+      },
+      {
+        path: 'services/:id', // Dynamic route for details
+        component: ServiceDetailPage,
+      },
+      {
+        path: 'bookings',
+        component: MyBookingsComponent,
+      },
+      {
+        path: 'book-new',
+        component: BookServiceComponent,
+      },
+    ],
   },
 ];

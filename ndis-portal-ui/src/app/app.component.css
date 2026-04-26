@@ -1,3 +1,10 @@
+/* Add this to app.component.css to ensure the router contents fill the space */
+router-outlet+* {
+    display: block;
+    height: 100%;
+    width: 100%;
+}
+
 .app-layout {
     display: flex;
     min-height: 100vh;
@@ -20,4 +27,19 @@
     /* High-fashion spacing for your NDIS layout */
     width: 100%;
     box-sizing: border-box;
+}
+
+/* app.component.css update */
+.app-layout.auth-mode {
+    display: block;
+    /* Change from flex to block for auth pages */
+    height: 100vh;
+}
+
+.app-layout.auth-mode .content-area {
+    margin-left: 0;
+    width: 100vw;
+    /* Force full viewport width */
+    height: 100vh;
+    /* Force full viewport height */
 }
