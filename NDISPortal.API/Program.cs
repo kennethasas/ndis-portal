@@ -9,6 +9,7 @@ using NDISPortal.API.Services.Implementations;
 using NDISPortal.API.Services.Interfaces;
 using NDISPortalErrorHandling.Middleware;
 using Register.API.Services;
+using Register.API.Services.NDISPortal.API.Services;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -51,6 +52,9 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IBookingService, BookingService>();
 builder.Services.AddScoped<IServiceCategoryService, ServiceCategoryService>();
 builder.Services.AddScoped<IServiceService, ServiceService>();
+builder.Services.AddHttpClient<IChatService, ChatService>();
+
+
 
 builder.Services.AddCors(options =>
 {

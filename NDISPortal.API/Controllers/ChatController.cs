@@ -10,17 +10,17 @@ namespace NDISPortal.API.Controllers
     [Authorize]
     public class ChatController : ControllerBase
     {
-        private readonly ichat_service _chatService;
+        private readonly IChatService _chatService;
         private readonly ILogger<ChatController> _logger;
 
-        public ChatController(ichat_service chatService, ILogger<ChatController> logger)
+        public ChatController(IChatService chatService, ILogger<ChatController> logger)
         {
             _chatService = chatService;
             _logger = logger;
         }
 
         [HttpPost]
-        public async Task<IActionResult> Chat([FromBody] chat_request_dto dto)
+        public async Task<IActionResult> Chat([FromBody] ChatRequestDto dto)
         {
             if (dto == null || string.IsNullOrWhiteSpace(dto.Message))
             {

@@ -6,20 +6,20 @@ using System.Text.Json;
 
 namespace Register.API.Services
 {
-    public class chat_service : ichat_service
+    public class ChatService : IChatService
     {
         private readonly IConfiguration _config;
         private readonly HttpClient _httpClient;
-        private readonly ILogger<chat_service> _logger;
+        private readonly ILogger<ChatService> _logger;
 
-        public chat_service(IConfiguration config, HttpClient httpClient, ILogger<chat_service> logger)
+        public ChatService(IConfiguration config, HttpClient httpClient, ILogger<ChatService> logger)
         {
             _config = config;
             _httpClient = httpClient;
             _logger = logger;
         }
 
-        public async Task<string> SendMessage(chat_request_dto dto)
+        public async Task<string> SendMessage(ChatRequestDto dto)
         {
             var environmentName = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Unknown";
             var apiKey = _config["Claude:ApiKey"]?.Trim();
