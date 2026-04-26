@@ -1,4 +1,4 @@
-import { Component, Output, EventEmitter } from '@angular/core';
+import { Component, Output, EventEmitter, Input } from '@angular/core'; //
 import { CommonModule } from '@angular/common';
 import {
   DropdownUIComponent,
@@ -14,13 +14,16 @@ import { StatusIconComponent } from '../../icons/svg-icons/status-icon';
     <app-dropdown-ui
       label="Status"
       [options]="statusOptions"
+      [selectedValue]="activeStatus"
       (onSelect)="handleSelect($event)"
     >
-      <app-icon-status icon [size]="16" class="status-icon"></app-icon-status>
+      <app-icon-status icon [size]="16"></app-icon-status>
     </app-dropdown-ui>
   `,
 })
 export class StatusDropdownComponent {
+  // FIXED: Added @Input so parent can bind [activeStatus]
+  @Input() activeStatus: string = 'all';
   @Output() statusChange = new EventEmitter<string>();
 
   statusOptions: DropdownOption[] = [

@@ -19,7 +19,6 @@ export interface DropdownOption {
   standalone: true,
   imports: [CommonModule],
   templateUrl: './dropdown.ui.html',
-  styleUrl: './dropdown.ui.css',
 })
 export class DropdownUIComponent {
   @Input() label: string = 'Select';

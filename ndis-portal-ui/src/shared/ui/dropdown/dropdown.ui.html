@@ -1,23 +1,46 @@
-<div class="dropdown-container">
-  <button type="button" class="dropdown-trigger" (click)="toggle()" [class.active]="isOpen">
-    <span class="trigger-content">
-      <ng-content select="[icon]"></ng-content>
-      <span class="selected-text">{{ label }}</span>
+<div class="relative inline-block w-full font-sans sm:w-auto">
+  <button type="button" (click)="toggle()" [ngClass]="{
+      'border-violet-600 ring-4 ring-violet-600/10 active': isOpen,
+      'border-slate-200': !isOpen
+    }"
+    class="flex items-center justify-between w-full h-10 px-3 gap-3 bg-white border rounded-lg cursor-pointer transition-all duration-200 hover:bg-slate-50 hover:border-slate-300 focus:outline-none sm:min-w-[140px]">
+
+    <span class="flex items-center gap-2 h-full">
+      <span *ngIf="showIcon" class="inline-flex items-center justify-center text-slate-500">
+        <ng-content select="[icon]"></ng-content>
+      </span>
+
+      <span class="text-sm font-medium text-slate-900 capitalize">
+        {{ label }}
+      </span>
     </span>
-    <span class="chevron" [class.rotated]="isOpen">
+
+    <span class="flex items-center text-slate-400 transition-transform duration-200" [class.rotate-180]="isOpen">
       <svg width="10" height="6" viewBox="0 0 10 6" fill="none" stroke="currentColor" stroke-width="1.5">
         <path d="M1 1L5 5L9 1" stroke-linecap="round" stroke-linejoin="round" />
       </svg>
     </span>
   </button>
 
-  <div class="dropdown-menu" *ngIf="isOpen">
+  <div *ngIf="isOpen"
+    class="absolute top-[calc(100%+8px)] right-0 w-full min-w-[200px] p-1.5 bg-white border border-slate-200 rounded-xl shadow-xl z-[100] animate-in fade-in zoom-in duration-150 sm:w-auto">
+
     <ng-container *ngFor="let option of options">
-      <div *ngIf="option.isDivider" class="divider"></div>
-      <button *ngIf="!option.isDivider" type="button" class="dropdown-item"
-        [class.selected]="option.value === selectedValue" (click)="selectOption(option)">
-        <span class="item-label">{{ option.label }}</span>
-        <span class="check-mark" *ngIf="option.value === selectedValue">✓</span>
+      <div *ngIf="option.isDivider" class="h-px my-1 bg-slate-100"></div>
+
+      <button *ngIf="!option.isDivider" type="button" (click)="selectOption(option)" [ngClass]="option.value === selectedValue 
+          ? 'bg-violet-50 text-violet-700 font-semibold' 
+          : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'"
+        class="flex items-center justify-between w-full px-3 py-2.5 text-sm rounded-lg transition-colors sm:py-2">
+
+        <span class="hidden md:block">{{ option.label }}</span>
+
+        <svg *ngIf="option.value === selectedValue" class="w-4 h-4 text-violet-600" fill="currentColor"
+          viewBox="0 0 20 20">
+          <path fill-rule="evenodd"
+            d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+            clip-rule="evenodd" />
+        </svg>
       </button>
     </ng-container>
   </div>
