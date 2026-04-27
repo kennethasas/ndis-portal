@@ -1,6 +1,0 @@
-/* Page-level container styling */
-:host {
-    display: block;
-    background-color: #ffffff;
-    min-height: 100vh;
-}

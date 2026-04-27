@@ -1,0 +1,12 @@
+<section class="grid w-full grid-cols-[repeat(auto-fill,minmax(280px,1fr))] gap-5 p-4">
+
+    <app-service-card-ui *ngFor="let item of services; trackBy: trackByServiceId" [title]="item.name"
+        [description]="item.description" [tag]="item.category" (click)="onCardClick(item)"
+        class="block w-full max-w-[320px] cursor-pointer transition-transform duration-200 hover:scale-[1.02] active:scale-95">
+    </app-service-card-ui>
+
+    <div *ngIf="services.length === 0" class="col-span-full py-10 text-center text-gray-400">
+        No services found in this category.
+    </div>
+
+</section>

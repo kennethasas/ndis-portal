@@ -4,25 +4,13 @@ import {
   DropdownUIComponent,
   DropdownOption,
 } from '../../../ui/dropdown/dropdown.ui';
-import { CategoryIconComponent } from '../../icons/svg-icons/category-icon';
+import { FilterIconComponent } from '../../icons/svg-icons/filter-icon';
 
 @Component({
   selector: 'app-category-dropdown',
   standalone: true,
-  imports: [CommonModule, DropdownUIComponent, CategoryIconComponent],
-  template: `
-    <app-dropdown-ui
-      label="Category"
-      [options]="categoryOptions"
-      (onSelect)="handleSelect($event)"
-    >
-      <app-icon-category
-        icon
-        [size]="16"
-        class="status-icon"
-      ></app-icon-category>
-    </app-dropdown-ui>
-  `,
+  imports: [CommonModule, DropdownUIComponent, FilterIconComponent],
+  templateUrl: './category-dropdown.component.html',
 })
 export class CategoryDropdownComponent {
   @Output() categoryChange = new EventEmitter<string>();

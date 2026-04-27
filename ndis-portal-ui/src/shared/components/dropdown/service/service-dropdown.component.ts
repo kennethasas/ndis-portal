@@ -7,7 +7,6 @@ import { FormsModule } from '@angular/forms';
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './service-dropdown.component.html',
-  styleUrls: ['./service-dropdown.component.css'],
 })
 export class ServiceDropdownComponent {
   @Input() value: any;

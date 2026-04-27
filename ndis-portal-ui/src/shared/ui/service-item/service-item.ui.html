@@ -1,0 +1,18 @@
+<div class="flex flex-col items-start text-left gap-6 w-full">
+
+    <div
+        class="w-fit px-3 py-1.5 text-xs border rounded-md bg-white text-slate-500 border-slate-200 capitalize">
+        <ng-content select="[category-label]"></ng-content>
+    </div>
+
+    <h3 class="text-3xl md:text-5xl lg:text-6xl font-semibold text-slate-900 leading-tight uppercase tracking-tight">
+        <ng-content select="[title-label]"></ng-content>
+    </h3>
+
+    <div class="flex flex-col items-start gap-2">
+        <span class="text-md font-bold text-slate-900">Description</span>
+        <p class="text-base md:text-lg text-slate-600 leading-relaxed max-w-4xl">
+            <ng-content select="[description-label]"></ng-content>
+        </p>
+    </div>
+</div>

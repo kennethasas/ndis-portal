@@ -2,7 +2,7 @@ import { Routes } from '@angular/router';
 import { MyLoginComponent } from './features/auth/login/my-login.component';
 import { MySignupComponent } from './features/auth/signup/my-signup.component';
 import { ServicesListComponent } from './features/services/services-list/services-list.page';
-import { ServiceDetailPage } from './features/services/service-detail/service-detail.page';
+import { ServiceDetailComponent } from './features/services/service-detail/service-detail.page';
 
 import { MyBookingsComponent } from './features/bookings/my-bookings/my-bookings.page';
 import { BookServiceComponent } from './features/bookings/book-service/book-service.page';
@@ -45,7 +45,7 @@ export const routes: Routes = [
       },
       {
         path: 'services/:id', // Dynamic route for details
-        component: ServiceDetailPage,
+        component: ServiceDetailComponent,
       },
       {
         path: 'bookings',

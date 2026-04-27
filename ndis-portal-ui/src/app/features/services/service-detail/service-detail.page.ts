@@ -1,134 +1,73 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute, Router, RouterModule } from '@angular/router'; // Import RouterModule
-import { ServiceDetailUiComponent } from '../../../../shared/ui/service-detail/service-detail.ui';
-import { ServiceDetailComponent } from '../../../../shared/components/service-detail/service-detail.component';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ApiService } from '../../../core/services/api-service';
+import { ButtonUiComponent } from '../../../../shared/ui/button/button.ui';
+import { ServiceItemComponent } from '../../../../shared/components/service-item/service-item.component';
 
+import { BookButton } from '../../../../shared/components/button/book-button/book-button.component';
+import { BackButton } from '../../../../shared/components/button/back-button/back-button.component';
 @Component({
   selector: 'app-service-detail-page',
   standalone: true,
-  imports: [
-    CommonModule,
-    RouterModule,
-    ServiceDetailUiComponent,
-    ServiceDetailComponent,
-  ],
+  // PARENT: Imports the logical components (Smart) and UI units (Dumb)
+  imports: [CommonModule, ButtonUiComponent, ServiceItemComponent, BookButton, BackButton],
   templateUrl: './service-detail.page.html',
-  styleUrls: ['./service-detail.page.css'],
 })
-export class ServiceDetailPage implements OnInit {
-  // We initialize these as empty or null
+export class ServiceDetailComponent implements OnInit {
+  // PARENT STATE: Mapped from the backend response
   serviceData: any = null;
+  // PARENT STATE: Array of features used to populate the feature grid
   includes: any[] = [];
+  // PARENT STATE: Controls the loading spinner visibility
+  isLoading = true;
 
-  // Mock Database (In a real app, this would be in a Service file or .NET API)
-  /*private servicesDatabase = [
-    {
-      id: 'personal-hygiene',
-      title: 'Personal Hygiene Assistance',
-      category: 'Daily Personal Activities',
-      description:
-        'Our compassionate professionals provide discreet and dignified assistance with daily hygiene routines...',
-      items: [
-        { name: 'Bathing Support', icon: 'pi pi-bath' },
-        { name: 'Grooming & Styling', icon: 'pi pi-user' },
-        { name: 'Oral Hygiene', icon: 'pi pi-heart' },
-        { name: 'Dressing Assistance', icon: 'pi pi-tag' },
-        { name: 'Skincare Routines', icon: 'pi pi-sparkles' },
-        { name: 'Toileting Care', icon: 'pi pi-info-circle' },
-      ],
-    },
-    {
-      id: 'Meal Preparation Support',
-      title: 'Meal Preparation Support',
-      category: 'Daily Personal Activities',
-      description:
-        'Our compassionate professionals provide discreet and dignified assistance with daily hygiene routines...',
-      items: [
-        { name: 'Bathing Support', icon: 'pi pi-bath' },
-        { name: 'Grooming & Styling', icon: 'pi pi-user' },
-        { name: 'Oral Hygiene', icon: 'pi pi-heart' },
-        { name: 'Dressing Assistance', icon: 'pi pi-tag' },
-        { name: 'Skincare Routines', icon: 'pi pi-sparkles' },
-        { name: 'Toileting Care', icon: 'pi pi-info-circle' },
-      ],
-    },
-  ];
-  */
-
-  constructor(
-  private route: ActivatedRoute,
-  private router: Router,
-  private api: ApiService 
-) {}
-
-ngOnInit() {
-  const serviceId = this.route.snapshot.paramMap.get('id');
-
-  if (serviceId) {
-    this.api.getServiceById(Number(serviceId)).subscribe({
-      next: (res: any) => {
-        console.log('✅ API SUCCESS:', res);
-
-        const data = res.Data;
-
-        this.serviceData = {
-          id: data.id,
-          title: data.name || data.title,
-          category: data.category,
-          description: data.description,
-        };
-
-        // Map items - if items exist, use them; otherwise create empty array
-        if (data.items && Array.isArray(data.items)) {
-          this.includes = data.items.map((item: any) => ({
-            name: item.name || item,
-            icon: item.icon || 'pi pi-check'
-          }));
-        } else {
-          this.includes = [];
-        }
-
-        console.log('📦 Includes:', this.includes);
-      },
-      error: (err: any) => {
-        console.error('❌ API ERROR:', err); 
-      }
-    });
-  }
-}
-
-navBack() {
-  window.history.back();
-}
-
-processBooking() {
-  // Navigate to the booking form route
-  this.router.navigate(['/book-new'], {
-    queryParams: { serviceId: this.serviceData?.id },
-  });
-}
-
-/*
-  // Inject Router into the constructor
   constructor(
     private route: ActivatedRoute,
     private router: Router,
+    private api: ApiService,
   ) {}
-    
 
   ngOnInit() {
+    // CAPTURE: Retrieve the unique ID from the URL parameter
     const serviceId = this.route.snapshot.paramMap.get('id');
-    /* const foundService = this.servicesDatabase.find((s) => s.id === serviceId);
 
-    if (foundService) {
-      this.serviceData = {
-        id: foundService.id, // Store the ID for the booking context
-        title: foundService.title,
-        category: foundService.category,
-        description: foundService.description,
-      };
-      this.includes = foundService.items;
-    }*/
+    if (serviceId) {
+      // ORCHESTRATION: Call API and map results to the page state
+      this.api.getServiceById(Number(serviceId)).subscribe({
+        next: (res: any) => {
+          const data = res.Data; // Standard backend wrapper
+
+          // MAPPING: Align API data with template property requirements
+          this.serviceData = {
+            id: data.id,
+            title: data.name || data.title,
+            category: data.category,
+            description: data.description,
+          };
+
+          // MAPPING: Ensure feature items are formatted as objects
+          this.includes = (data.items || []).map((item: any) => ({
+            name: item.name || item,
+            icon: item.icon || 'pi pi-check',
+          }));
+
+          this.isLoading = false;
+        },
+        error: () => (this.isLoading = false),
+      });
+    }
   }
+
+  // ACTION: Navigates back in the browser history
+  navBack() {
+    window.history.back();
+  }
+
+  // ACTION: Routes to booking with the service ID as a query parameter
+  processBooking() {
+    this.router.navigate(['/book-new'], {
+      queryParams: { serviceId: this.serviceData?.id },
+    });
+  }
+}

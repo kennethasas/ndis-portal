@@ -1,16 +1,27 @@
-<app-service-detail-ui 
-  *ngIf="serviceData"
-  [title]="serviceData.title" 
-  [category]="serviceData.category"
-  [description]="serviceData.description" 
-  actionLabel="Book This Service" 
-  (backClicked)="navBack()"
-  (actionClicked)="processBooking()">
+<div class="p-4 md:p-6 space-y-6 max-w-[2560px] mx-auto min-h-screen font-sans selection:bg-violet-100">
 
-  <div grid-content>
-    <app-service-item *ngFor="let item of includes" [label]="item.name">
-      <i [class]="item.icon"></i>
-    </app-service-item>
+  <header class="flex w-full items-center justify-between">
+    <h1 class="text-lg md:text-xl 2xl:text-3xl font-bold text-slate-900">
+      Service Detail
+    </h1>
+  </header>
+
+  <div *ngIf="isLoading" class="flex flex-col items-center justify-center h-[60vh] gap-4">
+    <div class="w-12 h-12 border-4 border-violet-100 border-t-violet-600 rounded-full animate-spin"></div>
+    <p class="text-slate-400 font-medium">Fetching details...</p>
   </div>
 
-</app-service-detail-ui>
+  <div *ngIf="!isLoading && serviceData" class="flex flex-col items-center justify-center py-20 px-4">
+
+  <main class="max-w-4xl w-full">
+    <app-service-item [item]="serviceData"></app-service-item>
+
+    <div class="pt-8 mt-8 flex flex-col-reverse md:flex-row items-center justify-end w-full gap-10 border-t border-slate-50">
+      <app-back-button (onClick)="navBack()"></app-back-button>
+
+      <app-book-button (onClick)="processBooking()"></app-book-button>
+    </div>
+  </main>
+
+  </div>
+</div>
