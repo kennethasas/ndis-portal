@@ -2,7 +2,7 @@
 
 namespace Register.API.DTO
 {
-    public class chat_request_dto
+    public class ChatRequestDto
     {
         [JsonPropertyName("message")]
         public string Message { get; set; } = string.Empty;

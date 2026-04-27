@@ -2,8 +2,8 @@
 
 namespace Register.API.Services.NDISPortal.API.Services
 {
-    public interface ichat_service
+    public interface IChatService
     {
-        Task<string> SendMessage(chat_request_dto dto);
+        Task<string> SendMessage(ChatRequestDto dto);
     }
 }
