@@ -6,12 +6,23 @@
         </app-status-dropdown>
     </div>
 
-    <div class="relative">
+    <!-- Error Message -->
+    <div *ngIf="errorMessage" class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
+        {{ errorMessage }}
+    </div>
+
+    <!-- No Bookings Message -->
+    <div *ngIf="!isLoading && !errorMessage && bookings.length === 0" class="text-center py-12 bg-gray-50 rounded-lg">
+        <p class="text-gray-500 text-lg">No bookings found</p>
+        <p class="text-gray-400 text-sm mt-2">Book a service to get started</p>
+    </div>
+
+    <div class="relative" *ngIf="bookings.length > 0">
         <div *ngIf="isLoading" class="absolute inset-0 bg-white/50 z-10 flex items-center justify-center">
             <span class="text-sm font-medium text-slate-500">Loading bookings...</span>
         </div>
 
-        <app-booking-table [data]="bookings" (viewAction)="handleView($event)" (cancelAction)="handleCancel($event)">
+        <app-booking-table [bookings]="bookings" [currentFilter]="activeFilter" (viewBooking)="handleView($event)" (cancelBooking)="handleCancel($event)">
         </app-booking-table>
     </div>
 

@@ -27,18 +27,8 @@ export const routes: Routes = [
       },
       {
         path: '',
-        redirectTo: '/signup',
-        pathMatch: 'full',
-      },
-      {
-        path: '',
         redirectTo: '/login',
         pathMatch: 'full',
-      },
-      // Wildcard route for 404
-      {
-        path: '**',
-        redirectTo: '/login',
       },
     ],
   },

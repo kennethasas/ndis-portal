@@ -1,16 +1,15 @@
 import { Component, HostBinding } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
-import { AuthService } from '../../../core/services/auth.service';
+import { Router, RouterModule } from '@angular/router';
+import { AuthService, LoginRequest, LoginResponse } from '../../../core/services/auth.service';
 import { SlideshowComponent } from '../../../../shared/components/slideshow/slideshow.component';
 import { InputComponent } from '../../../../shared/components/input/input.component';
-
 
 @Component({
   selector: 'app-my-login',
   standalone: true,
-  imports: [FormsModule, CommonModule, SlideshowComponent, InputComponent],
+  imports: [FormsModule, CommonModule, RouterModule, SlideshowComponent, InputComponent],
   templateUrl: './my-login.component.html',
   styleUrls: ['./my-login.component.css'],
 })
@@ -58,16 +57,52 @@ export class MyLoginComponent {
     this.isLoading = true;
     this.errorMessage = '';
 
-    // 1. Use an ARROW FUNCTION () => {} to keep 'this' context
-    setTimeout(() => {
-      const mockToken = 'mock-jwt-token-' + Date.now();
-      const mockUserId = '123';
+    const loginData: LoginRequest = {
+      email: this.email,
+      password: this.password
+    };
 
-      // 2. Use '!' if the compiler is still worried about nullability
-      this.authService!.login(mockToken, mockUserId, this.email);
-      this.isLoading = false;
+    this.authService.loginApi(loginData).subscribe({
+      next: (response: any) => {
+        this.isLoading = false;
+        console.log('Full response:', JSON.stringify(response, null, 2));
+        console.log('response.Data:', response.Data);
+        console.log('response.Success:', response.Success);
 
-      this.router!.navigate(['/bookings']);
-    }, 500);
+        // Handle wrapped response format: { Success: true, Data: { token, user, status, message } }
+        const data = response.Data || response;
+        console.log('Extracted data:', data);
+        console.log('data.token:', data?.token);
+        console.log('data.status:', data?.status);
+        console.log('data.user:', data?.user);
+
+        const status = data?.status || (response.Success ? 200 : 400);
+        const token = data?.token;
+        const user = data?.user;
+        const message = data?.message || response.Message;
+
+        if (status === 200 && token) {
+          const userId = user?.id?.toString() || '';
+          const role = user?.role || '';
+          console.log('Login SUCCESS - navigating to /services. userId:', userId, 'role:', role);
+
+          this.authService.login(token, userId, this.email, role);
+          console.log('authService.login() called');
+          this.router.navigate(['/services']).then(() => {
+            console.log('Navigation to /services completed');
+          }).catch(err => {
+            console.error('Navigation failed:', err);
+          });
+        } else {
+          console.log('Login failed - status:', status, 'token:', token);
+          this.errorMessage = message || 'Login failed. Please try again.';
+        }
+      },
+      error: (error: any) => {
+        this.isLoading = false;
+        console.error('Login error:', error);
+        this.errorMessage = error.message || 'Invalid email or password.';
+      }
+    });
   }
 }

@@ -1,9 +1,10 @@
 import { Component, HostBinding } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { SlideshowComponent } from '../../../../shared/components/slideshow/slideshow.component';
 import { InputComponent } from '../../../../shared/components/input/input.component';
+import { AuthService, RegisterRequest, RegisterResponse } from '../../../core/services/auth.service';
 
 @Component({
   selector: 'app-my-signup',
@@ -33,6 +34,12 @@ export class MySignupComponent {
 
   isLoading = false;
   errorMessage = '';
+  successMessage = '';
+
+  constructor(
+    private authService: AuthService,
+    private router: Router
+  ) {}
 
   slideImages = [
     'assets/imagesSlideshow/2.jpg',
@@ -59,15 +66,50 @@ export class MySignupComponent {
       this.errorMessage = 'You must agree to the terms.';
       return;
     }
-    
+
+    if (!this.signupData.firstName || !this.signupData.lastName) {
+      this.errorMessage = 'First name and last name are required.';
+      return;
+    }
+
+    if (!this.signupData.email) {
+      this.errorMessage = 'Email is required.';
+      return;
+    }
+
+    if (!this.signupData.password || this.signupData.password.length < 8) {
+      this.errorMessage = 'Password must be at least 8 characters.';
+      return;
+    }
+
+    if (!this.signupData.role) {
+      this.errorMessage = 'Please select a role.';
+      return;
+    }
+
     this.isLoading = true;
     this.errorMessage = '';
-    
-    console.log('User signed up:', this.signupData);
-    
-    setTimeout(() => {
-      this.isLoading = false;
-      // Logical redirect would happen here
-    }, 2000);
+    this.successMessage = '';
+
+    const registerData: RegisterRequest = {
+      fullName: `${this.signupData.firstName} ${this.signupData.lastName}`,
+      email: this.signupData.email,
+      password: this.signupData.password,
+      role: this.signupData.role.charAt(0).toUpperCase() + this.signupData.role.slice(1)
+    };
+
+    this.authService.register(registerData).subscribe({
+      next: (response: RegisterResponse) => {
+        this.isLoading = false;
+        this.successMessage = response.message || 'Account created successfully!';
+        setTimeout(() => {
+          this.router.navigate(['/login']);
+        }, 1500);
+      },
+      error: (error: any) => {
+        this.isLoading = false;
+        this.errorMessage = error.message || 'Registration failed. Please try again.';
+      }
+    });
   }
 }

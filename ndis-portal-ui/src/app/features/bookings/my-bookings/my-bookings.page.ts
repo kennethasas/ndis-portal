@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { BookingTableComponent } from '../../../../shared/components/table/booking-table.component';
 import { StatusDropdownComponent } from '../../../../shared/components/dropdown/status/status-dropdown.component';
 import { PaginationComponent } from '../../../../shared/components/pagination/pagination.component';
+import { BookingService } from '../../../core/services/booking.service';
+import { Booking, BookingViewModel } from '../../../core/models/booking.model';
 
 @Component({
   selector: 'app-my-bookings',
@@ -16,65 +18,89 @@ import { PaginationComponent } from '../../../../shared/components/pagination/pa
   templateUrl: './my-bookings.page.html',
 })
 export class MyBookingsComponent implements OnInit {
-  // Logic State
-  bookings: any[] = [];
+  bookings: BookingViewModel[] = [];
   totalItems = 0;
   totalPages = 1;
   currentPage = 1;
   pageSize = 10;
   activeFilter = 'all';
   isLoading = false;
+  errorMessage = '';
+
+  constructor(private bookingService: BookingService) {}
 
   ngOnInit() {
     this.fetchBookings();
   }
 
-  /**
-   * This is where you would call your Angular Service
-   * Example: this.bookingService.getBookings(page, size, filter)
-   */
   fetchBookings() {
     this.isLoading = true;
+    this.errorMessage = '';
 
-    // Simulate Backend API Call
-    console.log(
-      `Fetching: Page ${this.currentPage}, Size ${this.pageSize}, Filter ${this.activeFilter}`,
-    );
+    const statusFilter = this.activeFilter === 'all' ? undefined : this.activeFilter;
 
-    // MOCK BACKEND RESPONSE
-    // In production, replace this setTimeout with: this.http.get(...).subscribe(...)
-    setTimeout(() => {
-      this.bookings = [
-        {
-          service: 'Personal Hygiene',
-          category: 'Daily Personal Activities',
-          date: 'Apr 21, 2026',
-          status: 'Approved',
-        },
-        {
-          service: 'Personal Hygiene',
-          category: 'Daily Personal Activities',
-          date: 'Apr 21, 2026',
-          status: 'Pending',
-        },
-        {
-          service: 'Personal Hygiene',
-          category: 'Daily Personal Activities',
-          date: 'Apr 21, 2026',
-          status: 'Cancelled',
-        },
-      ];
+    this.bookingService.getBookings(statusFilter).subscribe({
+      next: (bookings: Booking[]) => {
+        this.isLoading = false;
+        
+        this.bookings = bookings.map(booking => this.mapToViewModel(booking));
+        this.totalItems = bookings.length;
+        this.totalPages = Math.ceil(this.totalItems / this.pageSize) || 1;
+      },
+      error: (error: Error) => {
+        this.isLoading = false;
+        this.errorMessage = error.message;
+        this.bookings = [];
+        this.totalItems = 0;
+        this.totalPages = 1;
+      }
+    });
+  }
 
-      // Backend should return total count so we can calculate pages
-      this.totalItems = 50;
-      this.totalPages = Math.ceil(this.totalItems / this.pageSize);
-      this.isLoading = false;
-    }, 500);
+  private mapToViewModel(booking: Booking): BookingViewModel {
+    const dateObj = new Date(booking.preferredDate);
+    const formattedDate = dateObj.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric'
+    });
+
+    const category = this.deriveCategory(booking.serviceName);
+
+    return {
+      id: booking.id,
+      service: booking.serviceName,
+      category: category,
+      date: formattedDate,
+      status: booking.status,
+      notes: booking.notes,
+      rawData: booking
+    };
+  }
+
+  private deriveCategory(serviceName: string): string {
+    const name = serviceName.toLowerCase();
+    if (name.includes('hygiene') || name.includes('personal') || name.includes('grooming')) {
+      return 'Daily Personal Activities';
+    }
+    if (name.includes('transport') || name.includes('travel') || name.includes('drive')) {
+      return 'Transportation';
+    }
+    if (name.includes('meal') || name.includes('food') || name.includes('cook')) {
+      return 'Meal Preparation';
+    }
+    if (name.includes('social') || name.includes('community') || name.includes('recreation')) {
+      return 'Social Participation';
+    }
+    if (name.includes('home') || name.includes('house') || name.includes('cleaning')) {
+      return 'Home Maintenance';
+    }
+    return 'Support Services';
   }
 
   handleStatusFilter(status: string) {
     this.activeFilter = status;
-    this.currentPage = 1; // Always reset to page 1 on new filter
+    this.currentPage = 1;
     this.fetchBookings();
   }
 
@@ -83,15 +109,20 @@ export class MyBookingsComponent implements OnInit {
     this.fetchBookings();
   }
 
-  handleCancel(booking: any) {
+  handleCancel(booking: BookingViewModel) {
     if (confirm('Are you sure you want to cancel this booking?')) {
-      // Typically: this.bookingService.cancel(booking.id).subscribe(() => this.fetchBookings())
-      booking.status = 'Cancelled';
-      console.log('Cancelled:', booking);
+      this.bookingService.deleteBooking(booking.id).subscribe({
+        next: () => {
+          this.fetchBookings();
+        },
+        error: (error: Error) => {
+          alert(error.message);
+        }
+      });
     }
   }
 
-  handleView(booking: any) {
-    console.log('Viewing details for:', booking);
+  handleView(booking: BookingViewModel) {
+    console.log('Viewing booking details:', booking.rawData);
   }
 }
