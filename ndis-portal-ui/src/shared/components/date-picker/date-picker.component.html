@@ -1,1 +1,7 @@
-<input type="date" [ngModel]="value" (ngModelChange)="valueChange.emit($event)">
+<app-date-picker-ui [isRequired]="required">
+    <span label-content>{{ label }}</span>
+
+    <input type="date" [ngModel]="value" [required]="required" [placeholder]="placeholder"
+        (ngModelChange)="valueChange.emit($event)"
+        class="w-full px-4 py-3.5 bg-white border border-slate-200 rounded-md text-slate-700 text-sm md:text-base outline-none transition-all focus:border-[#6B3293] focus:ring-4 focus:ring-violet-600/10 appearance-none" />
+</app-date-picker-ui>

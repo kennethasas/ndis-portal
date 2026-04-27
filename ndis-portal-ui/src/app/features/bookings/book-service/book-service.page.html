@@ -1,16 +1,33 @@
-<app-booking-form-ui title="Book a Service" actionLabel="Book This Service" (back)="navBack()"
-    (submit)="confirmBooking()">
-    <div form-fields class="grid-2-col">
-        <app-form-field label="Select Service" [required]="true">
-            <app-service-dropdown [options]="services" [(value)]="bookingData.serviceId"></app-service-dropdown>
-        </app-form-field>
+<div class="p-4 md:p-6 space-y-6 max-w-[2560px] mx-auto">
 
-        <app-form-field label="Preferred Date" [required]="true">
-            <app-date-picker [(value)]="bookingData.date"></app-date-picker>
-        </app-form-field>
-
-        <app-form-field label="Additional Notes" class="col-span-full">
-            <app-text-area [rows]="6" [(value)]="bookingData.notes"></app-text-area>
-        </app-form-field>
+    <div class="w-full max-w-4xl mb-8">
+        <h1 class="text-lg md:text-xl 2xl:text-3xl 4xl:text-5xl font-bold text-slate-900 truncate">
+            Book a Service
+        </h1>
     </div>
-</app-booking-form-ui>
+
+
+    <div class="p-4 md:p-6 flex flex-col items-center justify-center max-w-[2560px] mx-auto">
+        <div class="w-full max-w-4xl space-y-10">    
+            <div class="w-full space-y-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
+                    <app-select-service class="block w-full" [options]="services" [(value)]="bookingData.serviceId">
+                    </app-select-service>
+    
+                    <app-date-picker-component class="block w-full" [(value)]="bookingData.date">
+                    </app-date-picker-component>
+                </div>
+    
+                <app-text-area-component class="block w-full" [(value)]="bookingData.notes">
+                </app-text-area-component>
+            </div>
+            <div class="flex flex-col-reverse md:flex-row justify-end items-center gap-8 pt-6">
+                <app-back-button (onClick)="navBack()"></app-back-button>
+                <app-book-button (onClick)="confirmBooking()"></app-book-button>
+            </div>
+        </div>
+    </div>
+
+
+ 
+</div>
