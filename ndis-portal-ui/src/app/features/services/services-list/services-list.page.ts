@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import { Router } from '@angular/router';
@@ -6,6 +6,7 @@ import { Router } from '@angular/router';
 import { CardComponent } from '../../../../shared/components/card/card.component'; // Double check this path!
 import { CategoryDropdownComponent } from '../../../../shared/components/dropdown/category/category-dropdown.component';
 import { PaginationComponent } from '../../../../shared/components/pagination/pagination.component';
+import { ApiService } from '../../../core/services/api-service';
 
 @Component({
   selector: 'app-services-list',
@@ -19,12 +20,16 @@ import { PaginationComponent } from '../../../../shared/components/pagination/pa
   templateUrl: './services-list.page.html',
   styleUrl: './services-list.page.css',
 })
-export class ServicesListComponent {
-  constructor(private router: Router) {} // Inject Router
+export class ServicesListComponent implements OnInit {
+  constructor(private router: Router, private api: ApiService) {} // Inject ApiService
   currentPage = 1;
 
   activeFilter = 'all';
 
+  allCategory: any[] = [];
+
+  // Mock Database (In a real app, this would be in a Service file or .NET API)
+  /*
   allCategory = [
     {
       id: 'personal-hygiene',
@@ -46,16 +51,49 @@ export class ServicesListComponent {
       status: 'Approved',
     },
   ];
+  */
+
+  filteredCategory: any[] = [];
+
+  ngOnInit() {
+    this.loadServices();
+  }
+
+  loadServices() {
+    this.api.getServices().subscribe({
+      next: (res: any) => {
+        console.log('✅ Services Loaded:', res);
+        
+        // Map API response to component format
+        if (res.Data && Array.isArray(res.Data)) {
+          this.allCategory = res.Data.map((service: any) => ({
+            id: service.id,
+            service: service.name || service.title,
+            category: service.category,
+            description: service.description,
+            date: service.created_date ? new Date(service.created_date).toLocaleDateString('en-US', { 
+              year: 'numeric', 
+              month: 'short', 
+              day: 'numeric' 
+            }) : 'N/A',
+            status: service.is_active ? 'Approved' : 'Inactive',
+          }));
+          
+          this.filteredCategory = [...this.allCategory];
+          console.log('📋 Formatted Services:', this.allCategory);
+        }
+      },
+      error: (err: any) => {
+        console.error('❌ Error Loading Services:', err);
+      }
+    });
+  }
 
   // Navigation Function
   viewServiceDetail(service: any) {
-    // If your service data has an 'id' or you can use the service name as a slug
-    const serviceId =
-      service.id || service.service.toLowerCase().replace(/ /g, '-');
-    this.router.navigate(['/services', serviceId]);
+    // Use the service ID from the database
+    this.router.navigate(['/services', service.id]);
   }
-
-  filteredCategory = [...this.allCategory];
 
   handleCategoryFilter(category: string) {
     this.activeFilter = category;
