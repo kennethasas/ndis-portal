@@ -12,6 +12,8 @@ desktop.ini
 .env.*
 *.env
 auth.json
+appsettings.json
+appsettings.Development.json
 
 # =========================
 # BUILD / BINARIES (.NET & SSIS)
