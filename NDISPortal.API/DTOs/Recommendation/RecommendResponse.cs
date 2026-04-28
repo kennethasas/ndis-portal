@@ -2,5 +2,6 @@
 {
     public class RecommendResponse
     {
+        public List<RecommendationDto> Recommendations { get; set; }
     }
 }

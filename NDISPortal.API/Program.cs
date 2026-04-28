@@ -53,7 +53,8 @@ builder.Services.AddScoped<IBookingService, BookingService>();
 builder.Services.AddScoped<IServiceCategoryService, ServiceCategoryService>();
 builder.Services.AddScoped<IServiceService, ServiceService>();
 builder.Services.AddHttpClient<IChatService, ChatService>();
-
+builder.Services.AddHttpClient<IClaudeService, ClaudeService>();
+builder.Services.AddScoped<IRecommendationService, RecommendationService>();
 
 
 builder.Services.AddCors(options =>
