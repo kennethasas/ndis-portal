@@ -12,7 +12,7 @@ import { SelectUi } from '../../../ui/select/select.ui'; // Import the new UI sh
 export class ServiceSelectComponent {
   @Input() label: string = 'Select Service';
   @Input() value: any = ''; // Initialize as empty string to match the placeholder
-  @Input() options: { id: string; label: string }[] = [];
+  @Input() options: { id: string | number; label: string }[] = [];
   @Input() required: boolean = true;
 
   // NEW: Input for the placeholder text
