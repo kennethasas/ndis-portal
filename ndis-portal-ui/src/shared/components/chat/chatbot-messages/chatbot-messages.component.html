@@ -1,0 +1,19 @@
+<div #scrollContainer class="
+  h-full
+  overflow-y-auto
+  px-4 py-3
+  flex flex-col
+  gap-3
+  ">
+
+    <ng-container *ngIf="messages$ | async as messages">
+
+        <app-chat-message *ngFor="
+        let msg of messages;
+        trackBy: trackById
+      " [message]="msg">
+        </app-chat-message>
+
+    </ng-container>
+
+</div>
