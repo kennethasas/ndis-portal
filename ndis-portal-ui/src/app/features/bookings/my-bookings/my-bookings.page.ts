@@ -1,11 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { BookingTableComponent } from '../../../../shared/components/table/booking-table.component';
+import { BookingTableComponent } from '../../../../shared/components/table/booking-table/booking-table.component';
 import { StatusDropdownComponent } from '../../../../shared/components/dropdown/status/status-dropdown.component';
 import { PaginationComponent } from '../../../../shared/components/pagination/pagination.component';
 import { BookingService } from '../../../core/services/booking.service';
 import { Booking, BookingViewModel } from '../../../core/models/booking.model';
-// Import the generic Smart Dialog Component
 import { CancelDialogComponent } from '../../../../shared/components/dialog/cancel-dialog.component';
 
 @Component({

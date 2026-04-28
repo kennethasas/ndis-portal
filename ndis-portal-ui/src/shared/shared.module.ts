@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common'; // Fixes ngSwitch/ngClass errors
 import { TableComponent } from './ui/table/table.ui';
-import { BookingTableComponent } from './components/table/booking-table.component';
+import { BookingTableComponent } from './components/table/booking-table/booking-table.component';
 
 @NgModule({
   declarations: [],

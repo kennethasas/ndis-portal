@@ -1,7 +1,7 @@
-<button [type]="type" (click)="onClick.emit($event)"
-  [ngClass]="[variantClasses[variant], fullWidth ? 'w-full' : 'w-auto']"
-  class="inline-flex items-center justify-center gap-2 font-semibold">
-  <ng-content select="[left-icon]"></ng-content>
-  <span>{{ label }}</span>
-  <ng-content select="[right-icon]"></ng-content>
-</button>
+<button [type]="type" [ngClass]="[variantClasses[variant], fullWidth ? 'w-full' : '']" (click)="onClick.emit($event)"
+  class="flex items-center justify-center transition-all duration-200">
+  <div class="flex items-center justify-center gap-2">
+    <ng-content select="[icon]"></ng-content>
+    <span class="flex items-center">{{ label }}</span>
+  </div>
+</button> 

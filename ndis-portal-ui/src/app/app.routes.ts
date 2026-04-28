@@ -1,11 +1,16 @@
 import { Routes } from '@angular/router';
+
 import { MyLoginComponent } from './features/auth/login/my-login.component';
 import { MySignupComponent } from './features/auth/signup/my-signup.component';
+
 import { ServicesListComponent } from './features/services/services-list/services-list.page';
 import { ServiceDetailComponent } from './features/services/service-detail/service-detail.page';
-
 import { MyBookingsComponent } from './features/bookings/my-bookings/my-bookings.page';
 import { BookServiceComponent } from './features/bookings/book-service/book-service.page';
+
+import { DashboardComponent } from './features/coordinator/dashboard/dashboard.page';
+import { ManageServicesComponent } from './features/coordinator/manage-services/manage-services.page';
+// import { AllBookingsComponent } from './features/coordinator/all-bookings/all-bookings.page';
 
 import { AuthLayoutComponent } from './core/layouts/auth-layout/auth-layout.component';
 import { MainLayoutComponent } from './core/layouts/main-layout/main-layout.component';
@@ -39,12 +44,24 @@ export const routes: Routes = [
     component: MainLayoutComponent,
     canActivate: [AuthGuard], // Secures all dashboard children
     children: [
+      // Coordinator
+      {
+        path: 'dashboard',
+        component: DashboardComponent,
+      },
+
+      {
+        path: 'dashboard/services',
+        component: ManageServicesComponent,
+      },
+
+      // Paticipant Routes
       {
         path: 'services',
         component: ServicesListComponent,
       },
       {
-        path: 'services/:id', // Dynamic route for details
+        path: 'services/:id',
         component: ServiceDetailComponent,
       },
       {

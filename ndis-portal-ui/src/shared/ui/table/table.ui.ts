@@ -1,71 +1,36 @@
-import {
-  Component,
-  Input,
-  Output,
-  EventEmitter,
-  HostListener,
-  ElementRef,
-} from '@angular/core';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ViewIconComponent } from '../../components/icons/svg-icons/view-icon';
-
-export interface TableColumn {
-  key: string;
-  label: string;
-  type?: 'text' | 'category' | 'status' | 'view' | 'action';
-}
+import { TableColumn } from '../../models/table.model';
 
 @Component({
   selector: 'app-table-ui',
   standalone: true,
-  imports: [CommonModule, ViewIconComponent],
+  imports: [CommonModule],
   templateUrl: './table.ui.html',
 })
-export class TableComponent {
+export class TableUiComponent {
   @Input() columns: TableColumn[] = [];
   @Input() data: any[] = [];
+
+  // FIX: Added the missing property that caused the NG9 error
+  @Input() hasActionColumn: boolean = true;
 
   @Output() viewAction = new EventEmitter<any>();
   @Output() cancelAction = new EventEmitter<any>();
 
-  /** Tracks which row has the action menu open */
   activeMenuRow: any = null;
 
-  constructor(private eRef: ElementRef) {}
-
-  /** Helper to safely get object values */
-  getValue(row: any, key: string): any {
-    return row ? row[key] : '';
-  }
-
-  /** Helper to determine if the action menu should be visible */
-  get hasActionColumn(): boolean {
-    return this.columns.some((col) => col.type === 'action');
-  }
-
-  /** Returns Tailwind classes based on status */
-  getStatusClasses(status: string): string {
-    const s = status?.toLowerCase();
-    switch (s) {
-      case 'approved':
-        return 'text-[#289839]';
-      case 'pending':
-        return 'text-[#CF971D]';
-      case 'cancelled':
-        return 'text-[#DB4444]';
-      default:
-        return 'text-slate-700';
-    }
-  }
-
-  toggleMenu(row: any): void {
+  toggleMenu(row: any) {
     this.activeMenuRow = this.activeMenuRow === row ? null : row;
   }
 
-  @HostListener('document:click', ['$event'])
-  clickout(event: Event) {
-    if (!this.eRef.nativeElement.contains(event.target)) {
-      this.activeMenuRow = null;
-    }
+  getValue(row: any, key: string) {
+    return row[key];
+  }
+
+  getStatusClasses(status: string) {
+    return status === 'Active'
+      ? 'text-emerald-600 bg-emerald-50 border-emerald-100'
+      : 'text-slate-500 bg-slate-50 border-slate-100';
   }
 }

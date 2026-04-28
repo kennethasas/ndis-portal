@@ -1,0 +1,13 @@
+<div class="p-4 md:p-6 space-y-6 max-w-[2560px] mx-auto">
+    <div class="flex flex-row items-center justify-between gap-4 w-full">
+        <h1 class="text-lg md:text-xl font-bold text-slate-900">Manage Services</h1>
+
+        <app-add-button (onClick)="openModal()"></app-add-button>
+    </div>
+
+    <div>
+        <app-manage-services-table [bookings]="services" (onToggle)="handleToggleStatus($event)">
+        </app-manage-services-table>
+    </div>
+
+</div>
