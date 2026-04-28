@@ -6,7 +6,8 @@ import {
   OnChanges,
   SimpleChanges,
 } from '@angular/core';
-import { TableComponent, TableColumn } from '../../ui/table/table.ui';
+import { TableComponent } from '../../ui/table/table.ui';
+import { TableColumn } from '../../models/table.model';
 
 @Component({
   selector: 'app-booking-table',
@@ -30,13 +31,13 @@ export class BookingTableComponent implements OnChanges {
   /** * Desktop base columns
    */
   private baseColumns: TableColumn[] = [
-    { key: 'service', label: 'Service' },
+    // Add type: 'text' (or whatever your default switch case is)
+    { key: 'service', label: 'Service', type: 'text' },
     { key: 'category', label: 'Category', type: 'category' },
-    { key: 'date', label: 'Date' },
+    { key: 'date', label: 'Date', type: 'date' }, // Changed to 'date' to match your table.ui logic
     { key: 'view', label: 'Note', type: 'view' },
     { key: 'status', label: 'Status', type: 'status' },
   ];
-
   visibleColumns: TableColumn[] = [...this.baseColumns];
 
   ngOnChanges(changes: SimpleChanges) {

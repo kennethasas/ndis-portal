@@ -1,0 +1,8 @@
+<div class="p-4 md:p-6 space-y-6 max-w-[2560px] mx-auto">
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <app-status-card-component *ngFor="let stat of stats" [label]="stat.label" [value]="stat.value"
+            [iconClass]="stat.icon" [iconColor]="stat.color" [bgColor]="stat.bg">
+        </app-status-card-component>
+    </div>
+</div>

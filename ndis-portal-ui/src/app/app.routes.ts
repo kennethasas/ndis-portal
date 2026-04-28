@@ -10,6 +10,8 @@ import { BookServiceComponent } from './features/bookings/book-service/book-serv
 import { AuthLayoutComponent } from './core/layouts/auth-layout/auth-layout.component';
 import { MainLayoutComponent } from './core/layouts/main-layout/main-layout.component';
 import { AuthGuard } from './/core/guards/auth.guard';
+import { DashboardComponent } from './features/coordinator/dashboard/dashboard.page';
+import { ManageServicesComponent } from './features/coordinator/manage-services/manage-services.page';
 
 export const routes: Routes = [
   // AUTH BRANCH: Clean Layout
@@ -39,6 +41,17 @@ export const routes: Routes = [
     component: MainLayoutComponent,
     canActivate: [AuthGuard], // Secures all dashboard children
     children: [
+      // Coordinator
+      {
+        path: 'dashboard',
+        component: DashboardComponent,
+      },
+
+      {
+        path: 'dashboard/services',
+        component: ManageServicesComponent,
+      },
+
       {
         path: 'services',
         component: ServicesListComponent,

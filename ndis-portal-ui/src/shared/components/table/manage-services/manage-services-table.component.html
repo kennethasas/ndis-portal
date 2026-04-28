@@ -1,0 +1,6 @@
+    <app-table-ui
+      [columns]="serviceColumns"
+      [data]="bookings"
+      (viewAction)="onEdit.emit($event)"
+      (cancelAction)="onDeactivate.emit($event)"
+    ></app-table-ui>
