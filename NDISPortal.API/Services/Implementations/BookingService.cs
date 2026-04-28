@@ -259,7 +259,9 @@ namespace NdisPortal.BookingsApi.Services.Implementations
                 throw new ArgumentException("Only Pending bookings can be deleted.");
             }
 
-            _context.Bookings.Remove(booking);
+            // Soft delete: set status to Cancelled instead of removing
+            booking.Status = 2; // 2 = Cancelled
+            booking.ModifiedDate = DateTime.UtcNow;
             await _context.SaveChangesAsync();
 
             return true;
