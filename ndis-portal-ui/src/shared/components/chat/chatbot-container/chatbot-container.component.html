@@ -1,0 +1,5 @@
+<app-chat-button (buttonClick)="toggleChat()">
+</app-chat-button>
+
+<app-chat-panel *ngIf="isOpen" (close)="toggleChat()">
+</app-chat-panel>

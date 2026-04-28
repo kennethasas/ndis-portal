@@ -5,6 +5,10 @@ import { CommonModule } from '@angular/common';
 import { RouterOutlet } from '@angular/router';
 import { ParticipantSidebarComponent } from '../../../../shared/components/sidebar/sidebar.component';
 import { NavbarComponent } from '../../../../shared/components/navbar/navbar.component';
+/* Import your chatbot container */
+import { ChatbotContainerComponent }
+from '../../../../shared/components/chat/chatbot-container/chatbot-container.component';
+
 @Component({
   selector: 'app-main-layout',
   standalone: true,
@@ -13,6 +17,7 @@ import { NavbarComponent } from '../../../../shared/components/navbar/navbar.com
     RouterOutlet,
     ParticipantSidebarComponent,
     NavbarComponent,
+    ChatbotContainerComponent,
   ],
   templateUrl: './main-layout.component.html',
   // This ensures the layout component itself fills the screen
