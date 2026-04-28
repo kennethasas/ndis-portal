@@ -14,9 +14,4 @@
         <app-service-card-component [services]="filteredCategory" (cardSelected)="viewServiceDetail($event)">
         </app-service-card-component>
     </main>
-
-    <footer class="mt-4 flex items-center justify-end border-t border-gray-100 pt-6">
-        <app-pagination [currentPage]="currentPage" [totalPages]="10" (pageChange)="handlePageChange($event)">
-        </app-pagination>
-    </footer>
 </div>

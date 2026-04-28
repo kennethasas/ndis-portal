@@ -6,7 +6,6 @@ import {
   ServiceItem,
 } from '../../../../shared/components/card/service-card/service-card.component';
 import { CategoryDropdownComponent } from '../../../../shared/components/dropdown/category/category-dropdown.component';
-import { PaginationComponent } from '../../../../shared/components/pagination/pagination.component';
 import { ApiService } from '../../../core/services/api-service';
 
 @Component({
@@ -16,7 +15,6 @@ import { ApiService } from '../../../core/services/api-service';
     CommonModule,
     CardComponent,
     CategoryDropdownComponent,
-    PaginationComponent,
   ],
   templateUrl: './services-list.page.html',
 })
