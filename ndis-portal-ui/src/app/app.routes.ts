@@ -1,4 +1,6 @@
 import { Routes } from '@angular/router';
+import { AuthGuard } from './/core/guards/auth.guard';
+
 import { MyLoginComponent } from './features/auth/login/my-login.component';
 import { MySignupComponent } from './features/auth/signup/my-signup.component';
 import { ServicesListComponent } from './features/services/services-list/services-list.page';
@@ -9,9 +11,9 @@ import { BookServiceComponent } from './features/bookings/book-service/book-serv
 
 import { AuthLayoutComponent } from './core/layouts/auth-layout/auth-layout.component';
 import { MainLayoutComponent } from './core/layouts/main-layout/main-layout.component';
-import { AuthGuard } from './/core/guards/auth.guard';
 import { DashboardComponent } from './features/coordinator/dashboard/dashboard.page';
 import { ManageServicesComponent } from './features/coordinator/manage-services/manage-services.page';
+import { AllBookingsComponent } from './features/coordinator/all-bookings/all-bookings.page';
 
 export const routes: Routes = [
   // AUTH BRANCH: Clean Layout
@@ -39,34 +41,46 @@ export const routes: Routes = [
   {
     path: '',
     component: MainLayoutComponent,
-    canActivate: [AuthGuard], // Secures all dashboard children
+    canActivateChild: [AuthGuard], // Secures all dashboard children
     children: [
       // Coordinator
       {
         path: 'dashboard',
         component: DashboardComponent,
+        data: { role: 'coordinator' },
       },
 
       {
         path: 'dashboard/services',
         component: ManageServicesComponent,
+        data: { role: 'coordinator' },
+      },
+
+      {
+        path: 'dashboard/bookings',
+        component: AllBookingsComponent,
+        data: { role: 'coordinator' },
       },
 
       {
         path: 'services',
         component: ServicesListComponent,
+        data: { role: 'participant' },
       },
       {
         path: 'services/:id', // Dynamic route for details
         component: ServiceDetailComponent,
+        data: { role: 'participant' },
       },
       {
         path: 'bookings',
         component: MyBookingsComponent,
+        data: { role: 'participant' },
       },
       {
         path: 'book-new',
         component: BookServiceComponent,
+        data: { role: 'participant' },
       },
     ],
   },

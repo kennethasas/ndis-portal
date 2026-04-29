@@ -1,0 +1,50 @@
+<div class="p-4 md:p-6 space-y-6 max-w-[2560px] mx-auto">
+
+    <div class="flex flex-row items-center justify-between gap-4 w-full">
+        <h1 class="text-lg md:text-xl 2xl:text-3xl 4xl:text-5xl font-bold text-slate-900 truncate">
+            All Bookings
+        </h1>
+
+        <app-status-dropdown [activeStatus]="activeFilter" (statusChange)="handleStatusFilter($event)">
+        </app-status-dropdown>
+    </div>
+
+    <div *ngIf="errorMessage"
+        class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded text-xs 2xl:text-xl">
+        {{ errorMessage }}
+    </div>
+
+    <div *ngIf="!isLoading && !errorMessage && bookings.length === 0"
+        class="text-center py-12 bg-gray-50 rounded-lg border-2 border-dashed border-slate-200">
+        <p class="text-slate-500 text-lg 2xl:text-2xl font-medium">No bookings found</p>
+        <p class="text-slate-400 text-sm 2xl:text-lg mt-2">Try changing your filter or book a new service.</p>
+    </div>
+
+    <div class="relative" *ngIf="bookings.length > 0">
+        <div *ngIf="isLoading"
+            class="absolute inset-0 bg-white/60 z-10 flex items-center justify-center backdrop-blur-[1px] transition-all">
+            <span class="text-xs md:text-sm font-bold text-violet-600 uppercase tracking-widest animate-pulse">
+                Updating...
+            </span>
+        </div>
+
+        <app-all-booking-table [bookings]="bookings" [currentFilter]="activeFilter" (viewBooking)="handleView($event)"
+            (cancelBooking)="handleCancel($event)" (approveBooking)="handleApprove($event)">
+        </app-all-booking-table>
+    </div>
+
+    <div class="flex justify-center pt-4" *ngIf="totalPages > 1">
+        <app-pagination [currentPage]="currentPage" [totalPages]="totalPages" (pageChange)="handlePageChange($event)">
+        </app-pagination>
+    </div>
+
+    <app-cancel-dialog [isOpen]="isCancelDialogOpen" label="Are you sure you want to cancel this booking?"
+        confirmText="Yes, Cancel Booking" (closed)="closeCancelDialog()" (confirmed)="confirmCancellation()">
+
+        <div body class="space-y-4">
+            <p class="text-slate-900 font-semibold text-sm 2xl:text-2xl">
+                You will permanently cancel this scheduled booking.
+            </p>
+        </div>
+    </app-cancel-dialog>
+</div>

@@ -13,6 +13,7 @@ export interface Booking {
 
 export interface BookingViewModel {
   id: number;
+  name?: string;
   service: string;
   category: string;
   date: string;
