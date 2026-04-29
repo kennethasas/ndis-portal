@@ -11,11 +11,7 @@ import { ApiService } from '../../../core/services/api-service';
 @Component({
   selector: 'app-services-list',
   standalone: true,
-  imports: [
-    CommonModule,
-    CardComponent,
-    CategoryDropdownComponent,
-  ],
+  imports: [CommonModule, CardComponent, CategoryDropdownComponent],
   templateUrl: './services-list.page.html',
 })
 export class ServicesListComponent implements OnInit {
@@ -37,12 +33,23 @@ export class ServicesListComponent implements OnInit {
     this.api.getServices().subscribe({
       next: (res: any) => {
         if (res.Data && Array.isArray(res.Data)) {
-          this.allCategory = res.Data.map((service: any) => ({
-            id: service.id,
-            name: service.name || service.title,
-            category: service.categoryName, // Use categoryName instead of category
-            description: service.description,
-          }));
+          this.allCategory = res.Data.map((service: any) => {
+            const categoryName = service.categoryName || 'support';
+
+            const normalizedCategory = categoryName
+              .toLowerCase()
+              .replace(/\s+/g, '-');
+
+            return {
+              id: service.id,
+              name: service.name || service.title,
+              category: categoryName,
+              description: service.description,
+
+              icon: this.categoryIconMap[normalizedCategory] || 'default',
+            };
+          });
+
           this.filteredCategory = [...this.allCategory];
         }
       },
@@ -68,4 +75,13 @@ export class ServicesListComponent implements OnInit {
     this.currentPage = page;
     // Logic for API pagination would go here
   }
+  private categoryIconMap: { [key: string]: string } = {
+    healthcare: 'heart',
+    transport: 'car',
+    therapy: 'brain',
+    housing: 'home',
+    education: 'book',
+    employment: 'briefcase',
+    support: 'users',
+  };
 }

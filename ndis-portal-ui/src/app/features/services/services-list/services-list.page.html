@@ -11,7 +11,8 @@
     </header>
 
     <main>
-        <app-service-card-component [services]="filteredCategory" (cardSelected)="viewServiceDetail($event)">
+        <app-service-card-component *ngFor="let item of services; trackBy: trackByServiceId" [title]="item.name"
+            [description]="item.description" [tag]="item.category" [icon]="item.icon" (click)="onCardClick(item)">
         </app-service-card-component>
     </main>
 </div>

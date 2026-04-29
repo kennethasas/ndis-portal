@@ -1,5 +1,4 @@
-<div
-    class="group flex w-full max-w-[320px] flex-col rounded-[24px] border border-[#e9e2e2] bg-white p-6 shadow-sm transition-all hover:shadow-md">
+<div class="group flex h-full w-full max-w-[320px] flex-col rounded-[24px] border border-[#e9e2e2] bg-white p-6 shadow-sm transition-all hover:shadow-md">
 
     <div class="mb-5 flex h-10 w-10 items-center justify-center rounded-full bg-[#f3f0f5]">
         <ng-content select="[icon]">
@@ -11,11 +10,11 @@
         </ng-content>
     </div>
 
-    <div class="flex-1">
+    <div class="flex flex-1 flex-col">
         <h2 class="mb-3 text-[20px] font-semibold leading-tight text-[#001a33]">
             {{ title }}
         </h2>
-        <p class="min-h-[60px] text-sm leading-relaxed text-[#7b8da0]">
+        <p class="mt-1 flex-grow text-sm leading-relaxed text-[#7b8da0] line-clamp-2">
             {{ description }}
         </p>
     </div>
