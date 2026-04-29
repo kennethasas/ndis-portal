@@ -6,6 +6,8 @@ namespace NDISPortal.API.Services.Interfaces
     {
         Task<IEnumerable<ServiceDto>> GetAllAsync(int? categoryId);
 
+        Task<IEnumerable<ServiceDto>> GetAllIncludingInactiveAsync(int? categoryId);
+
         Task<ServiceDto?> GetByIdAsync(int id);
 
      
@@ -14,5 +16,7 @@ namespace NDISPortal.API.Services.Interfaces
         Task<ServiceDto?> UpdateAsync(int id, UpdateServiceDto dto);
 
         Task<bool> DeleteAsync(int id);
+
+        Task<ServiceDto?> ToggleActiveAsync(int id);
     }
 }

@@ -55,8 +55,15 @@ export class ServiceFormModalComponent {
   // Submit form
   submit() {
     if (this.serviceForm.valid) {
-      // Emit form data
-      this.onSave.emit(this.serviceForm.value);
+      const formValue = this.serviceForm.value;
+      // Transform to match CreateServiceDto expected by backend
+      const serviceData = {
+        name: formValue.name,
+        categoryId: parseInt(formValue.category || '0', 10), // Convert string to int
+        description: formValue.description || ''
+      };
+      // Emit transformed data
+      this.onSave.emit(serviceData);
       // Close the modal after successful save
       this.onClose.emit();
     }

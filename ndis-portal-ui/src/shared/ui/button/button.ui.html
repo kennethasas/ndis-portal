@@ -1,6 +1,7 @@
 <button [type]="type" (click)="onClick.emit($event)"
   [ngClass]="[variantClasses[variant], fullWidth ? 'w-full' : 'w-auto']"
-  class="inline-flex items-center justify-center gap-2 font-semibold">
+  class="inline-flex items-center justify-center gap-2 font-semibold"
+  [attr.data-testid]="testId || null">
   <ng-content select="[left-icon]"></ng-content>
   <span>{{ label }}</span>
   <ng-content select="[right-icon]"></ng-content>

@@ -13,9 +13,8 @@
 
     <!-- Services table -->
     <div *ngIf="!isLoading">
-        <app-manage-services-table [bookings]="services"
-          (activate)="activateService($event)"
-          (deactivate)="deactivateService($event)">
+        <app-manage-services-table [services]="services"
+          (onToggle)="toggleServiceStatus($event)">
         </app-manage-services-table>
     </div>
 </div>

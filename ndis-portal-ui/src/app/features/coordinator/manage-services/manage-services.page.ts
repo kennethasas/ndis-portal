@@ -40,42 +40,29 @@ export class ManageServicesComponent implements OnInit {
     this.loadServices();
   }
 
-  // Load services from API
+  // Load services from API (including inactive for coordinator)
   loadServices() {
-    this.api.getServices().subscribe({
+    this.api.getAllServices().subscribe({
       next: (res: any) => {
-        if (res.Data && Array.isArray(res.Data)) {
-          // Map API response to match table component expectations
-          this.services = res.Data.map((service: any) => ({
+        console.log('API Response:', res);
+        const data = res.Data || res;
+        console.log('Services data:', data);
+        if (Array.isArray(data)) {
+          this.services = data.map((service: any) => ({
             id: service.id,
             name: service.name || service.title,
             category: service.categoryName || service.category,
-            status: service.status || 'Active', // Default to Active if not provided
+            // Handle both PascalCase (C#) and camelCase (JSON)
+            isActive: service.isActive ?? service.IsActive ?? false,
           }));
+          console.log('Mapped services:', this.services);
+          console.log('Inactive services:', this.services.filter(s => !s.isActive));
         }
         this.isLoading = false;
       },
       error: (err) => {
         console.error('Error loading services:', err);
         this.isLoading = false;
-        
-        // Commented out mock data - kept for reference
-        /*
-        this.services = [
-          {
-            id: 1,
-            name: 'Web Development',
-            category: 'IT Services',
-            status: 'Active',
-          },
-          {
-            id: 2,
-            name: 'Logo Design',
-            category: 'Graphics',
-            status: 'Inactive',
-          },
-        ];
-        */
       }
     });
   }
@@ -88,6 +75,7 @@ export class ManageServicesComponent implements OnInit {
 
   // Save new service
   saveNewService(formData: any) {
+    console.log('Creating service with data:', formData);
     // Call API to create new service
     this.api.createService(formData).subscribe({
       next: (res: any) => {
@@ -101,37 +89,17 @@ export class ManageServicesComponent implements OnInit {
       },
       error: (err) => {
         console.error('Error creating service:', err);
-        // Optionally show error message to user
+        console.error('Error details:', err.error);
+        alert('Failed to create service: ' + (err.error?.Message || err.message || 'Unknown error'));
       }
     });
   }
 
-  // Activate a service by setting its status to 'Active'
-  // Activate a service by setting its status to 'Active'
-  // Accepts either a service id (number) or a service object emitted from the table component.
-  activateService(service: any) {
-    const serviceId = typeof service === 'number' ? service : service?.id;
-    if (serviceId == null) {
-      console.error('Unable to activate service: invalid id', service);
-      return;
-    }
-    this.api.updateService(serviceId, { status: 'Active' }).subscribe({
+  // Toggle service active status
+  toggleServiceStatus(event: { id: number; isActive: boolean }) {
+    this.api.toggleServiceActive(event.id).subscribe({
       next: () => this.loadServices(),
-      error: (err) => console.error('Error activating service:', err)
-    });
-  }
-
-  // Deactivate a service by setting its status to 'Inactive'
-  // Accepts either a service id (number) or a service object.
-  deactivateService(service: any) {
-    const serviceId = typeof service === 'number' ? service : service?.id;
-    if (serviceId == null) {
-      console.error('Unable to deactivate service: invalid id', service);
-      return;
-    }
-    this.api.updateService(serviceId, { status: 'Inactive' }).subscribe({
-      next: () => this.loadServices(),
-      error: (err) => console.error('Error deactivating service:', err)
+      error: (err) => console.error('Error toggling service status:', err)
     });
   }
 }

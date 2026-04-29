@@ -27,6 +27,16 @@ namespace Service.API.Controllers
             return Ok(services);
         }
 
+        // GET: api/services/all
+        // Coordinator only - returns all services including inactive
+        [HttpGet("all")]
+        [Authorize(Roles = "Coordinator")]
+        public async Task<ActionResult<IEnumerable<ServiceDto>>> GetAllServices([FromQuery] int? categoryId)
+        {
+            var services = await _service.GetAllIncludingInactiveAsync(categoryId);
+            return Ok(services);
+        }
+
         // GET: api/services/5
         // Public endpoint - returns one active service
         [HttpGet("{id}")]
@@ -91,6 +101,22 @@ namespace Service.API.Controllers
             }
 
             return NoContent();
+        }
+
+        // PATCH: api/services/5/toggle-active
+        // Coordinator only - toggles is_active between true and false
+        [HttpPatch("{id}/toggle-active")]
+        [Authorize(Roles = "Coordinator")]
+        public async Task<IActionResult> ToggleActive(int id)
+        {
+            var updated = await _service.ToggleActiveAsync(id);
+
+            if (updated == null)
+            {
+                return NotFound(new { message = "Service not found." });
+            }
+
+            return Ok(updated);
         }
     }
 }

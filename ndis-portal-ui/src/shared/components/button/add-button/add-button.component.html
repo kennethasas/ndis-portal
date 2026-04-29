@@ -1,5 +1,5 @@
 <!-- The 'ghost' variant will now consume only the space of the text/icon -->
-<app-button-ui variant="ghost" label="New Service" (onClick)="onClick.emit($event)">
+<app-button-ui variant="ghost" label="New Service" (onClick)="onClick.emit($event)" [testId]="'add-service-btn'">
 
   <app-icon-plus left-icon class="w-5 h-5 flex items-center justify-center">
   </app-icon-plus>

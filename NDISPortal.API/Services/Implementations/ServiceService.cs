@@ -42,6 +42,32 @@ namespace NDISPortal.API.Services.Implementations
             return services;
         }
 
+        public async Task<IEnumerable<ServiceDto>> GetAllIncludingInactiveAsync(int? categoryId)
+        {
+            var query = _context.Services
+                .Include(s => s.ServiceCategory)
+                .AsQueryable();
+
+            if (categoryId.HasValue)
+            {
+                query = query.Where(s => s.CategoryId == categoryId.Value);
+            }
+
+            var services = await query
+                .Select(s => new ServiceDto
+                {
+                    Id = s.Id,
+                    CategoryId = s.CategoryId,
+                    CategoryName = s.ServiceCategory != null ? s.ServiceCategory.Name : string.Empty,
+                    Name = s.Name,
+                    Description = s.Description,
+                    IsActive = s.is_active
+                })
+                .ToListAsync();
+
+            return services;
+        }
+
         public async Task<ServiceDto?> GetByIdAsync(int id)
         {
             var service = await _context.Services
@@ -180,6 +206,38 @@ namespace NDISPortal.API.Services.Implementations
             await _context.SaveChangesAsync();
 
             return true;
+        }
+
+        public async Task<ServiceDto?> ToggleActiveAsync(int id)
+        {
+            var service = await _context.Services
+                .FirstOrDefaultAsync(s => s.Id == id);
+
+            if (service == null)
+            {
+                return null;
+            }
+
+            service.is_active = !service.is_active;
+            service.modified_date = DateTime.UtcNow;
+
+            await _context.SaveChangesAsync();
+
+            var updated = await _context.Services
+                .Include(s => s.ServiceCategory)
+                .Where(s => s.Id == service.Id)
+                .Select(s => new ServiceDto
+                {
+                    Id = s.Id,
+                    CategoryId = s.CategoryId,
+                    CategoryName = s.ServiceCategory != null ? s.ServiceCategory.Name : string.Empty,
+                    Name = s.Name,
+                    Description = s.Description,
+                    IsActive = s.is_active
+                })
+                .FirstOrDefaultAsync();
+
+            return updated;
         }
     }
 }

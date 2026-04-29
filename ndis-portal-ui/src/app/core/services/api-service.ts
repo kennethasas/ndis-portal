@@ -89,6 +89,59 @@ export class ApiService {
     );
   }
 
+  // Decode JWT token to see claims
+  private decodeToken(token: string): any {
+    try {
+      const base64Url = token.split('.')[1];
+      const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+      const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+      }).join(''));
+      return JSON.parse(jsonPayload);
+    } catch (e) {
+      return null;
+    }
+  }
+
+  // Get all services including inactive (coordinator only)
+  getAllServices(): Observable<any> {
+    const headers = this.getAuthHeaders();
+    const token = localStorage.getItem('token');
+    console.log('getAllServices - Token:', token);
+    
+    // Decode and log the token claims
+    if (token) {
+      const decoded = this.decodeToken(token);
+      console.log('Decoded JWT claims:', decoded);
+      console.log('Role claim:', decoded?.role || decoded?.Role || decoded?.['http://schemas.microsoft.com/ws/2008/06/identity/claims/role']);
+    }
+    
+    return this.http.get<any>(`${this.apiUrl}/all`, { headers }).pipe(
+      map((response: any) => {
+        if (response && response.Data) {
+          return response;
+        }
+        return response;
+      }),
+      catchError((error: any) => {
+        console.error('getAllServices - Error:', error);
+        console.error('getAllServices - Error status:', error.status);
+        console.error('getAllServices - Error body:', error.error);
+        return throwError(() => new Error('Failed to load all services.'));
+      })
+    );
+  }
+
+  // Toggle service active status (coordinator only)
+  toggleServiceActive(id: number): Observable<any> {
+    const headers = this.getAuthHeaders();
+    return this.http.patch<any>(`${this.apiUrl}/${id}/toggle-active`, {}, { headers }).pipe(
+      catchError((error: any) => {
+        return throwError(() => new Error('Failed to toggle service status.'));
+      })
+    );
+  }
+
   deleteService(id: number): Observable<any> {
     return this.http.delete<any>(`${this.apiUrl}/${id}`).pipe(
       catchError((error: any) => {
