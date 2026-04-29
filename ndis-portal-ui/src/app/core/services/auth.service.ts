@@ -45,7 +45,7 @@ export class AuthService {
 
   constructor(
     @Inject(PLATFORM_ID) private platformId: Object,
-    private http: HttpClient
+    private http: HttpClient,
   ) {
     if (isPlatformBrowser(this.platformId)) {
       const token = localStorage.getItem('token');
@@ -62,22 +62,24 @@ export class AuthService {
   }
 
   register(data: RegisterRequest): Observable<RegisterResponse> {
-    return this.http.post<RegisterResponse>(`${this.apiUrl}/auth/register`, data)
+    return this.http
+      .post<RegisterResponse>(`${this.apiUrl}/auth/register`, data)
       .pipe(
         catchError((error: any) => {
           // Pass through the complete error object to the components
           return throwError(() => error);
-        })
+        }),
       );
   }
 
   loginApi(data: LoginRequest): Observable<LoginResponse> {
-    return this.http.post<LoginResponse>(`${this.apiUrl}/auth/login`, data)
+    return this.http
+      .post<LoginResponse>(`${this.apiUrl}/auth/login`, data)
       .pipe(
         catchError((error: any) => {
           // Pass through the complete error object to the components
           return throwError(() => error);
-        })
+        }),
       );
   }
 
@@ -124,7 +126,10 @@ export class AuthService {
   }
 
   getRole(): string | null {
-    if (!this.isBrowser()) return null;
-    return localStorage.getItem('role');
+    const role = localStorage.getItem('role');
+
+    if (!role) return null;
+
+    return role.toLowerCase();
   }
 }

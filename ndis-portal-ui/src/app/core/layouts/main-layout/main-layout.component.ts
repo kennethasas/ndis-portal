@@ -3,7 +3,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterOutlet } from '@angular/router';
-import { ParticipantSidebarComponent } from '../../../../shared/components/sidebar/sidebar.component';
+import { SidebarComponent } from '../../../../shared/components/sidebar/sidebar.component';
 import { NavbarComponent } from '../../../../shared/components/navbar/navbar.component';
 /* Import your chatbot container */
 import { ChatbotContainerComponent }
@@ -15,7 +15,7 @@ from '../../../../shared/components/chat/chatbot-container/chatbot-container.com
   imports: [
     CommonModule,
     RouterOutlet,
-    ParticipantSidebarComponent,
+    SidebarComponent,
     NavbarComponent,
     ChatbotContainerComponent,
   ],

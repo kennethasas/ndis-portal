@@ -100,12 +100,17 @@ export class MyLoginComponent {
         if (status === 200 && token) {
           const userId = user?.id?.toString() || '';
           const role = user?.role || '';
-          console.log('Login SUCCESS - navigating to /services. userId:', userId, 'role:', role);
+          console.log('Login SUCCESS. userId:', userId, 'role:', role);
 
           this.authService.login(token, userId, this.email, role);
           console.log('authService.login() called');
-          this.router.navigate(['/services']).then(() => {
-            console.log('Navigation to /services completed');
+
+          // Redirect based on role
+          const redirectPath = role?.toLowerCase() === 'coordinator' ? '/dashboard' : '/services';
+          console.log('Redirecting to:', redirectPath);
+
+          this.router.navigate([redirectPath]).then(() => {
+            console.log('Navigation to', redirectPath, 'completed');
           }).catch(err => {
             console.error('Navigation failed:', err);
           });
