@@ -60,7 +60,7 @@ export class ServicesListComponent implements OnInit {
       category === 'all'
         ? [...this.allCategory]
         : this.allCategory.filter(
-            (s) => s.category.toLowerCase() === category.toLowerCase(),
+            (s) => s.category.toLowerCase().replace(/\s+/g, '-') === category,
           );
   }
 

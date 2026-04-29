@@ -19,6 +19,7 @@ namespace NDISPortal.API.Controllers
             _logger = logger;
         }
 
+        [AllowAnonymous]
         [HttpPost]
         public async Task<IActionResult> Chat([FromBody] ChatRequestDto dto)
         {

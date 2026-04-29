@@ -72,8 +72,43 @@ export class MySignupComponent {
       return;
     }
 
-    if (!this.signupData.email) {
+    const trimmedEmail = this.signupData.email.trim();
+    
+    if (!trimmedEmail) {
       this.errorMessage = 'Email is required.';
+      return;
+    }
+    
+    if (trimmedEmail.length > 50) {
+      this.errorMessage = 'Email must be 50 characters or less';
+      return;
+    }
+    
+    if (!trimmedEmail.includes('@')) {
+      this.errorMessage = 'Email must contain @ symbol';
+      return;
+    }
+    
+    if (!trimmedEmail.toLowerCase().endsWith('.com')) {
+      this.errorMessage = 'Email must end with .com';
+      return;
+    }
+    
+    const parts = trimmedEmail.split('@');
+    if (parts.length !== 2) {
+      this.errorMessage = 'Email must contain exactly one @ symbol';
+      return;
+    }
+    
+    const domain = parts[1].toLowerCase();
+    if (domain !== parts[1]) {
+      this.errorMessage = 'Domain part of email must be lowercase';
+      return;
+    }
+    
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-z0-9.-]+\.com$/;
+    if (!emailRegex.test(trimmedEmail)) {
+      this.errorMessage = 'Please enter a valid email address (e.g., user@domain.com)';
       return;
     }
 

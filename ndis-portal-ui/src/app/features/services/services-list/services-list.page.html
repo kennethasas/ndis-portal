@@ -6,7 +6,7 @@
         </h1>
 
         <div class="flex items-center justify-end">
-            <app-category-dropdown (categoryChange)="handleCategoryFilter($event)"></app-category-dropdown>
+            <app-category-dropdown [services]="allCategory" (categoryChange)="handleCategoryFilter($event)"></app-category-dropdown>
         </div>
     </header>
 

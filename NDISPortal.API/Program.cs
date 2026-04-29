@@ -52,9 +52,8 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IBookingService, BookingService>();
 builder.Services.AddScoped<IServiceCategoryService, ServiceCategoryService>();
 builder.Services.AddScoped<IServiceService, ServiceService>();
-builder.Services.AddHttpClient<IChatService, ChatService>();
-
-
+builder.Services.AddHttpClient();
+builder.Services.AddScoped<IChatService, ChatService>();
 
 builder.Services.AddCors(options =>
 {
