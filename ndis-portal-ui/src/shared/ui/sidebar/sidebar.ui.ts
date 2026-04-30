@@ -27,7 +27,7 @@ export interface NavItem {
   ],
   templateUrl: './sidebar.ui.html',
 })
-export class SidebarComponent implements OnInit, OnDestroy {
+export class SidebarUi implements OnInit, OnDestroy {
   @Input() navItems: NavItem[] = [];
   @Input() subText: string = 'Enterprise';
 
@@ -43,6 +43,8 @@ export class SidebarComponent implements OnInit, OnDestroy {
     /**
      * Subscribe to global sidebar state
      */
+    console.log('SidebarUi navItems:', this.navItems);
+
     this.sub.add(
       this.sidebarService.collapsed$.subscribe((state) => {
         this.isCollapsed = state;

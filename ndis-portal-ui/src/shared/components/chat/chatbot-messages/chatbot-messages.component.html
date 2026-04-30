@@ -14,6 +14,14 @@
       " [message]="msg">
         </app-chat-message>
 
+        <!-- Loading Indicator -->
+        <div *ngIf="loading$ | async" class="flex items-center gap-2 text-gray-500 text-sm">
+          <div class="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
+          <div class="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style="animation-delay: 0.1s"></div>
+          <div class="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style="animation-delay: 0.2s"></div>
+          <span>Assistant is typing...</span>
+        </div>
+
     </ng-container>
 
 </div>

@@ -16,12 +16,14 @@ import { ChatMessageComponent } from '../../../../shared/components/chat/chatbot
 })
 export class ChatMessagesComponent implements AfterViewInit {
   messages$!: Observable<ChatMessage[]>;
+  loading$!: Observable<boolean>;
 
   @ViewChild('scrollContainer')
   scrollContainer!: ElementRef;
 
   constructor(private chat: ChatService) {
     this.messages$ = this.chat.messages$;
+    this.loading$ = this.chat.loading$;
   }
 
   /**

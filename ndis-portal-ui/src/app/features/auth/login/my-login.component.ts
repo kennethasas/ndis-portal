@@ -58,10 +58,41 @@ export class MyLoginComponent {
       return;
     }
 
-    // Validate email format
-    const emailRegex = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
-    if (!emailRegex.test(this.email.trim())) {
-      this.errorMessage = 'Please enter a valid Gmail email address';
+    // Validate email format: must have @, end with .com, lowercase domain
+    const trimmedEmail = this.email.trim();
+    
+    if (trimmedEmail.length > 50) {
+      this.errorMessage = 'Email must be 50 characters or less';
+      return;
+    }
+    
+    if (!trimmedEmail.includes('@')) {
+      this.errorMessage = 'Email must contain @ symbol';
+      return;
+    }
+    
+    if (!trimmedEmail.toLowerCase().endsWith('.com')) {
+      this.errorMessage = 'Email must end with .com';
+      return;
+    }
+    
+    // Check domain is lowercase
+    const parts = trimmedEmail.split('@');
+    if (parts.length !== 2) {
+      this.errorMessage = 'Email must contain exactly one @ symbol';
+      return;
+    }
+    
+    const domain = parts[1].toLowerCase();
+    if (domain !== parts[1]) {
+      this.errorMessage = 'Domain part of email must be lowercase';
+      return;
+    }
+    
+    // Final regex validation
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-z0-9.-]+\.com$/;
+    if (!emailRegex.test(trimmedEmail)) {
+      this.errorMessage = 'Please enter a valid email address (e.g., user@domain.com)';
       return;
     }
 
@@ -100,12 +131,17 @@ export class MyLoginComponent {
         if (status === 200 && token) {
           const userId = user?.id?.toString() || '';
           const role = user?.role || '';
-          console.log('Login SUCCESS - navigating to /services. userId:', userId, 'role:', role);
+          console.log('Login SUCCESS. userId:', userId, 'role:', role);
 
           this.authService.login(token, userId, this.email, role);
           console.log('authService.login() called');
-          this.router.navigate(['/services']).then(() => {
-            console.log('Navigation to /services completed');
+
+          // Redirect based on role
+          const redirectPath = role?.toLowerCase() === 'coordinator' ? '/dashboard' : '/services';
+          console.log('Redirecting to:', redirectPath);
+
+          this.router.navigate([redirectPath]).then(() => {
+            console.log('Navigation to', redirectPath, 'completed');
           }).catch(err => {
             console.error('Navigation failed:', err);
           });

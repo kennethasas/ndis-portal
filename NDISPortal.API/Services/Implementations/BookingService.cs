@@ -266,5 +266,18 @@ namespace NdisPortal.BookingsApi.Services.Implementations
 
             return true;
         }
+
+        public async Task<BookingStatsDto> GetBookingStatsAsync()
+        {
+            var bookings = await _context.Bookings.ToListAsync();
+
+            return new BookingStatsDto
+            {
+                TotalBookings = bookings.Count,
+                Pending = bookings.Count(b => b.Status == 0),
+                Approved = bookings.Count(b => b.Status == 1),
+                Cancelled = bookings.Count(b => b.Status == 2)
+            };
+        }
     }
 }

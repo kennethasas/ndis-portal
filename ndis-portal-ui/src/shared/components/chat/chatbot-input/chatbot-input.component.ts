@@ -15,7 +15,10 @@ export class ChatInputComponent {
   constructor(private chat: ChatService) {}
 
   send() {
-    this.chat.sendMessage(this.text);
-    this.text = '';
+    console.log('[ChatInput] Sending message:', this.text);
+    if (this.text.trim()) {
+      this.chat.sendMessage(this.text);
+      this.text = '';
+    }
   }
 }

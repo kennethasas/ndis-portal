@@ -1,4 +1,4 @@
-import { Component, Output, EventEmitter } from '@angular/core';
+import { Component, Output, EventEmitter, Input, OnChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   DropdownUIComponent,
@@ -12,17 +12,40 @@ import { FilterIconComponent } from '../../icons/svg-icons/filter-icon';
   imports: [CommonModule, DropdownUIComponent, FilterIconComponent],
   templateUrl: './category-dropdown.component.html',
 })
-export class CategoryDropdownComponent {
+export class CategoryDropdownComponent implements OnChanges {
   @Output() categoryChange = new EventEmitter<string>();
+  @Input() services: any[] = [];
 
+  selectedValue = 'all';
   categoryOptions: DropdownOption[] = [
     { label: 'All Categories', value: 'all' },
-    { label: 'Personal Hygiene', value: 'hygiene' },
-    { label: 'Daily Activities', value: 'activities' },
-    { label: 'Transport', value: 'transport' },
   ];
 
+  ngOnChanges() {
+    this.updateCategoryOptions();
+  }
+
+  updateCategoryOptions() {
+    if (!this.services || this.services.length === 0) return;
+
+    const uniqueCategories = new Set<string>();
+    this.services.forEach(service => {
+      if (service.category) {
+        uniqueCategories.add(service.category);
+      }
+    });
+
+    this.categoryOptions = [
+      { label: 'All Categories', value: 'all' },
+      ...Array.from(uniqueCategories).map(category => ({
+        label: category,
+        value: category.toLowerCase().replace(/\s+/g, '-')
+      }))
+    ];
+  }
+
   handleSelect(value: string) {
+    this.selectedValue = value;
     this.categoryChange.emit(value);
   }
 }

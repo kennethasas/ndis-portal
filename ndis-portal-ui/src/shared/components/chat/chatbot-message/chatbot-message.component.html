@@ -28,11 +28,12 @@
 
   <div class="
     max-w-[75%]
-    px-4 py-2
+    px-4 py-3
     rounded-2xl
     text-sm
     break-words
     shadow-sm
+    leading-relaxed
     " [ngClass]="{
 
       'bg-gray-100 text-gray-800 rounded-bl-none':
@@ -43,7 +44,7 @@
 
     }">
 
-        {{ message.content }}
+        <div [innerHTML]="formatMessage(message.content)"></div>
 
     </div>
 

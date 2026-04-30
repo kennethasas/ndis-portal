@@ -3,6 +3,8 @@ using Register.API.Services.NDISPortal.API.Services;
 using Microsoft.Extensions.Configuration;
 using System.Text;
 using System.Text.Json;
+using NDISPortal.API.Services.Interfaces;
+using NDISPortal.API.Data;
 
 namespace Register.API.Services
 {
@@ -11,12 +13,27 @@ namespace Register.API.Services
         private readonly IConfiguration _config;
         private readonly HttpClient _httpClient;
         private readonly ILogger<ChatService> _logger;
+        private readonly IServiceService _serviceService;
+        private readonly IServiceCategoryService _categoryService;
+        private readonly IBookingService _bookingService;
+        private readonly application_db_context _context;
 
-        public ChatService(IConfiguration config, HttpClient httpClient, ILogger<ChatService> logger)
+        public ChatService(
+            IConfiguration config,
+            HttpClient httpClient,
+            ILogger<ChatService> logger,
+            IServiceService serviceService,
+            IServiceCategoryService categoryService,
+            IBookingService bookingService,
+            application_db_context context)
         {
             _config = config;
             _httpClient = httpClient;
             _logger = logger;
+            _serviceService = serviceService;
+            _categoryService = categoryService;
+            _bookingService = bookingService;
+            _context = context;
         }
 
         public async Task<string> SendMessage(ChatRequestDto dto)
@@ -59,7 +76,7 @@ namespace Register.API.Services
             _httpClient.DefaultRequestHeaders.Add("x-api-key", apiKey);
             _httpClient.DefaultRequestHeaders.Add("anthropic-version", "2023-06-01");
 
-            var systemPrompt = BuildSystemPrompt();
+            var systemPrompt = await BuildSystemPromptAsync();
 
             var messages = new List<object>();
 
@@ -148,9 +165,19 @@ namespace Register.API.Services
             return reply;
         }
 
-        private static string BuildSystemPrompt()
+        private async Task<string> BuildSystemPromptAsync()
         {
-            return """
+            try
+            {
+                // Fetch service categories
+                var categories = await _categoryService.GetAllAsync();
+                var categoryList = string.Join("\n", categories.Select(c => $"- {c.Name}"));
+
+                // Fetch services
+                var services = await _serviceService.GetAllAsync(null);
+                var serviceList = string.Join("\n", services.Select(s => $"- {s.Name} (Category: {s.CategoryName})"));
+
+                return $"""
 You are a friendly and helpful support assistant for an NDIS (National Disability Insurance Scheme) participant service portal.
 
 Your role is to:
@@ -161,11 +188,10 @@ Your role is to:
 - Provide general information about the NDIS
 
 Available service categories in this portal:
-- Daily Personal Activities
-- Community Access
-- Therapy Supports
-- Respite Care
-- Support Coordination
+{categoryList}
+
+Available services in this portal:
+{serviceList}
 
 You must always:
 - Use plain, clear, and friendly language
@@ -196,6 +222,37 @@ Style:
 - Avoid jargon where possible
 - Keep each answer brief and easy to follow
 """;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error building system prompt with database data");
+                // Fallback to static prompt if database fetch fails
+                return """
+You are a friendly and helpful support assistant for an NDIS (National Disability Insurance Scheme) participant service portal.
+
+Your role is to:
+- Help participants understand the available support services
+- Explain what each service category means in plain language
+- Guide participants through how to make a booking
+- Answer general questions about how the portal works
+- Provide general information about the NDIS
+
+You must always:
+- Use plain, clear, and friendly language
+- Be patient and supportive
+- Keep responses concise — no more than 3 short paragraphs
+- Only answer questions related to the NDIS or this portal
+- If the user is unsure what to do next, suggest contacting their Support Coordinator or the portal support team
+
+You must never:
+- Provide medical advice
+- Provide legal advice
+- Provide financial or tax advice
+- Make specific recommendations about a participant's NDIS plan
+- Ask for, collect, store, or reveal personal or sensitive information
+- Answer unrelated topics
+""";
+            }
         }
 
         private static string? GetGuardrailReply(string message)

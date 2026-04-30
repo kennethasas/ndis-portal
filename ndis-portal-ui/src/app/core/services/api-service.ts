@@ -8,6 +8,7 @@ import { environment } from '../../../environments/environment';
 })
 export class ApiService {
   private apiUrl = `${environment.apiUrl}/services`;
+  private bookingsApiUrl = `${environment.apiUrl}/bookings`;
 
   constructor(private http: HttpClient) {}
 
@@ -93,6 +94,36 @@ export class ApiService {
     return this.http.delete<any>(`${this.apiUrl}/${id}`).pipe(
       catchError((error: any) => {
         return throwError(() => new Error('Failed to delete service. Please try again.'));
+      })
+    );
+  }
+
+  // Get booking stats (coordinator only)
+  getBookingStats(): Observable<any> {
+    const headers = this.getAuthHeaders();
+    return this.http.get<any>(`${this.bookingsApiUrl}/stats`, { headers }).pipe(
+      catchError((error: any) => {
+        return throwError(() => new Error('Failed to load booking stats.'));
+      })
+    );
+  }
+
+  // Get all bookings (coordinator only)
+  getBookings(): Observable<any> {
+    const headers = this.getAuthHeaders();
+    return this.http.get<any>(this.bookingsApiUrl, { headers }).pipe(
+      catchError((error: any) => {
+        return throwError(() => new Error('Failed to load bookings.'));
+      })
+    );
+  }
+
+  // Update booking status - Approve or Cancel (coordinator only)
+  updateBookingStatus(id: number, status: 'Approved' | 'Cancelled'): Observable<any> {
+    const headers = this.getAuthHeaders();
+    return this.http.put<any>(`${this.bookingsApiUrl}/${id}/status`, { status }, { headers }).pipe(
+      catchError((error: any) => {
+        return throwError(() => new Error(`Failed to ${status.toLowerCase()} booking.`));
       })
     );
   }

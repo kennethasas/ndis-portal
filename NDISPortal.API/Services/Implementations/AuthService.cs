@@ -38,15 +38,44 @@ namespace Register.API.Services
                 return new { status = 400, message = $"Email must be 50 characters or less. Current length: {trimmedEmail.Length}" };
             }
 
-            // Email regex: any username + @ + lowercase domain + .com
+            // Validate email format: must have @ and end with .com
+            if (!trimmedEmail.Contains("@"))
+            {
+                return new { status = 400, message = "Email must contain @ symbol" };
+            }
+            
+            if (!trimmedEmail.EndsWith(".com", StringComparison.OrdinalIgnoreCase))
+            {
+                return new { status = 400, message = "Email must end with .com" };
+            }
+            
+            // Split email into parts
+            var parts = trimmedEmail.Split('@');
+            if (parts.Length != 2)
+            {
+                return new { status = 400, message = "Email must contain exactly one @ symbol" };
+            }
+            
+            var username = parts[0];
+            var domain = parts[1];
+            
+            Console.WriteLine($"Email validation - Username: '{username}', Domain: '{domain}'");
+            
+            // Check domain is lowercase (before .com)
+            var domainWithoutCom = domain.Replace(".com", "");
+            if (domainWithoutCom != domainWithoutCom.ToLower())
+            {
+                return new { status = 400, message = "Domain part of email must be lowercase" };
+            }
+            
+            // Final regex validation
             var emailRegex = new Regex(@"^[a-zA-Z0-9._%+-]+@[a-z0-9.-]+\.com$");
-            Console.WriteLine($"Testing email: '{trimmedEmail}' (length: {trimmedEmail.Length}) against regex: ^[a-zA-Z0-9._%+-]+@[a-z0-9.-]+\\.com$");
-            Console.WriteLine($"Email matches regex: {emailRegex.IsMatch(trimmedEmail)}");
-
             if (!emailRegex.IsMatch(trimmedEmail))
             {
-                return new { status = 400, message = $"Email validation failed. Email: '{trimmedEmail}'. Must be in format: user@domain.com with lowercase domain after @ and max 50 characters" };
+                return new { status = 400, message = $"Email format invalid. Email: '{trimmedEmail}'. Must be user@domain.com with lowercase domain" };
             }
+            
+            Console.WriteLine($"Email validation passed for: '{trimmedEmail}'");
 
             var allowedRoles = new[] { "Participant", "Coordinator" };
 
@@ -120,6 +149,49 @@ namespace Register.API.Services
                 string.IsNullOrWhiteSpace(dto.Password))
             {
                 return new { status = 400, message = "Email and Password are required" };
+            }
+
+            var trimmedEmail = dto.Email.Trim();
+
+            // Check email length (max 50 characters)
+            if (trimmedEmail.Length > 50)
+            {
+                return new { status = 400, message = $"Email must be 50 characters or less. Current length: {trimmedEmail.Length}" };
+            }
+
+            // Validate email format: must have @ and end with .com
+            if (!trimmedEmail.Contains("@"))
+            {
+                return new { status = 400, message = "Email must contain @ symbol" };
+            }
+            
+            if (!trimmedEmail.EndsWith(".com", StringComparison.OrdinalIgnoreCase))
+            {
+                return new { status = 400, message = "Email must end with .com" };
+            }
+            
+            // Split email into parts
+            var parts = trimmedEmail.Split('@');
+            if (parts.Length != 2)
+            {
+                return new { status = 400, message = "Email must contain exactly one @ symbol" };
+            }
+            
+            var username = parts[0];
+            var domain = parts[1];
+            
+            // Check domain is lowercase (before .com)
+            var domainWithoutCom = domain.Replace(".com", "");
+            if (domainWithoutCom != domainWithoutCom.ToLower())
+            {
+                return new { status = 400, message = "Domain part of email must be lowercase" };
+            }
+            
+            // Final regex validation
+            var emailRegex = new Regex(@"^[a-zA-Z0-9._%+-]+@[a-z0-9.-]+\.com$");
+            if (!emailRegex.IsMatch(trimmedEmail))
+            {
+                return new { status = 400, message = $"Email format invalid. Email: '{trimmedEmail}'. Must be user@domain.com with lowercase domain" };
             }
 
             using var connection = new SqlConnection(_connectionString);

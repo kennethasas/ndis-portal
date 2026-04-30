@@ -246,5 +246,15 @@ namespace NdisPortal.BookingsApi.Controllers
             return User.FindFirst(ClaimTypes.Role)?.Value ??
                    User.FindFirst("role")?.Value;
         }
+
+        // GET /api/bookings/stats
+        // Coordinator only - returns booking counts by status
+        [HttpGet("stats")]
+        [Authorize(Roles = "Coordinator")]
+        public async Task<IActionResult> GetBookingStats()
+        {
+            var stats = await _service.GetBookingStatsAsync();
+            return Ok(stats);
+        }
     }
 }
