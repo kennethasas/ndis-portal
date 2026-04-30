@@ -52,7 +52,10 @@ export class SidebarComponent {
   get filteredLinks(): NavItem[] {
     const userRole = this.authService.getRole();
     console.log('Current User Role from Storage:', userRole); // CHECK THIS IN THE BROWSER CONSOLE
-    return this.allLinks.filter((link) => link.role === userRole);
+    // Case-insensitive comparison
+    return this.allLinks.filter((link) =>
+      userRole && link.role.toLowerCase() === userRole.toLowerCase()
+    );
   }
 
   /**
@@ -60,6 +63,6 @@ export class SidebarComponent {
    */
   get currentSubText(): string {
     const role = this.authService.getRole();
-    return role === 'coordinator' ? 'Coordinator Portal' : 'Participant Portal';
+    return role?.toLowerCase() === 'coordinator' ? 'Coordinator Portal' : 'Participant Portal';
   }
 }

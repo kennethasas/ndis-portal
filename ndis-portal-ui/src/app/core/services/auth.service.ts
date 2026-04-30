@@ -126,10 +126,6 @@ export class AuthService {
   }
 
   getRole(): string | null {
-    const role = localStorage.getItem('role');
-
-    if (!role) return null;
-
-    return role.toLowerCase();
+    return localStorage.getItem('role');
   }
 }

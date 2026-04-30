@@ -19,7 +19,8 @@ export const AuthGuard: CanActivateFn = (route, state) => {
   const userRole = authService.getRole(); // Calls the method in your AuthService
 
   // If the route requires a role, but the user's role doesn't match, block them
-  if (requiredRole && userRole !== requiredRole) {
+  // Case-insensitive comparison to handle both 'Coordinator' and 'coordinator'
+  if (requiredRole && userRole?.toLowerCase() !== requiredRole.toLowerCase()) {
     console.log(
       `AuthGuard: ROLE DENIED - Needed ${requiredRole}, but user is ${userRole}`,
     );
