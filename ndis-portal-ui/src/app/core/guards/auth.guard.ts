@@ -9,8 +9,8 @@ export const AuthGuard: CanActivateFn = (route, state) => {
   // 1. Existing Logic: Check if user is logged in
   console.log('AuthGuard checking... URL:', state.url);
   if (!authService.isAuthenticated()) {
-    console.log('AuthGuard: DENY access, redirecting to /login');
-    return router.parseUrl('/login');
+    console.log('AuthGuard: DENY access, redirecting to /forbidden');
+    return router.parseUrl('/forbidden');
   }
 
   // 2. New Logic: Check for specific role requirement
@@ -23,7 +23,7 @@ export const AuthGuard: CanActivateFn = (route, state) => {
     console.log(
       `AuthGuard: ROLE DENIED - Needed ${requiredRole}, but user is ${userRole}`,
     );
-    return router.parseUrl('/login'); // Redirect to a 'no access' page
+    return router.parseUrl('/forbidden'); // Redirect to a 'no access' page
   }
 
   console.log('AuthGuard: ALLOW access');

@@ -14,6 +14,9 @@ import { MainLayoutComponent } from './core/layouts/main-layout/main-layout.comp
 import { DashboardComponent } from './features/coordinator/dashboard/dashboard.page';
 import { ManageServicesComponent } from './features/coordinator/manage-services/manage-services.page';
 import { AllBookingsComponent } from './features/coordinator/all-bookings/all-bookings.page';
+
+import  { ForbiddenComponent } from '../shared/components/error/forbidden/forbidden.component'
+
 export const routes: Routes = [
   // AUTH BRANCH: Clean Layout
   {
@@ -83,4 +86,13 @@ export const routes: Routes = [
       },
     ],
   },
+
+  {
+    path: 'forbidden',
+    component: ForbiddenComponent,
+    title: '403 - Access Denied',
+  },
+
+  // Optional: Redirect unknown paths to a 404 or your 403
+  { path: '**', redirectTo: 'forbidden' },
 ];
