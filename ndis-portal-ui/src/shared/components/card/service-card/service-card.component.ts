@@ -7,7 +7,7 @@ export interface ServiceItem {
   name: string;
   category: string;
   description: string;
-  icon: string; // keep this
+  icon: string; 
 }
 
 @Component({
@@ -18,15 +18,13 @@ export interface ServiceItem {
 })
 export class CardComponent {
   @Input() services: ServiceItem[] = [];
-  @Input() icon: string = 'default';
-
   @Output() cardSelected = new EventEmitter<ServiceItem>();
 
   onCardClick(service: ServiceItem) {
     this.cardSelected.emit(service);
   }
 
-  trackByServiceId(index: number, item: ServiceItem): string | number {
+  trackByServiceId(index: number, item: ServiceItem) {
     return item.id;
   }
 }
