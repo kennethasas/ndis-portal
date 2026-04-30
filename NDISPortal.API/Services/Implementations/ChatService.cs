@@ -5,6 +5,7 @@ using System.Text;
 using System.Text.Json;
 using NDISPortal.API.Services.Interfaces;
 using NDISPortal.API.Data;
+using NdisPortal.BookingsApi.Services.Interfaces;
 
 namespace Register.API.Services
 {

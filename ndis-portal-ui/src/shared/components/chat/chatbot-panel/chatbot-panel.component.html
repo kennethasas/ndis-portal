@@ -49,7 +49,7 @@
         </div>
 
         <!-- Close -->
-        <button (click)="close.emit()" class="text-slate=700  text-lg">
+        <button (click)="close.emit()" class="text-slate=700 text-lg">
             ✕
         </button>
 
@@ -67,6 +67,23 @@
 
     </div>
 
+
+    <!-- BOOK SERVICE BUTTON - shows when service detected -->
+    <button *ngIf="detectedService" (click)="onBookService()" class="
+        mx-4 mt-3 mb-1
+        bg-[#6B3293] text-white
+        px-4 py-2
+        rounded-md
+        text-sm font-medium
+        hover:bg-[#5a2a7d]
+        transition-all duration-200
+        shadow-lg
+        hover:shadow-xl
+        transform hover:-translate-y-0.5
+        animate-fade-in
+    ">
+        Book {{ detectedService.name }}
+    </button>
 
     <!-- INPUT -->
     <div class="
