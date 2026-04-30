@@ -1,124 +1,222 @@
-<!-- REUSABLE ACTION MENU TEMPLATE -->
+<!-- ==========================================
+     GLOBAL ACTION MENU TEMPLATE (MUST BE TOP)
+     ========================================== -->
+
 <ng-template #actionMenu let-row="row">
+
   <div class="relative">
+
+    <!-- Toggle Button -->
     <button (click)="toggleMenu(row)"
       class="p-1 text-slate-400 hover:text-slate-600 rounded-lg transition-all focus:outline-none">
       <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
-        <path
-          d="M9.5 13a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z" />
+
+        <path d="M9.5 13a1.5 1.5 0 1 1-3 0
+             1.5 1.5 0 0 1 3 0zm0-5
+             a1.5 1.5 0 1 1-3 0
+             1.5 1.5 0 0 1 3 0zm0-5
+             a1.5 1.5 0 1 1-3 0
+             1.5 1.5 0 0 1 3 0z" />
       </svg>
+
     </button>
 
+    <!-- Dropdown -->
     <div *ngIf="activeMenuRow === row"
-      class="absolute right-0 z-[100] bg-white border border-slate-200 rounded-md p-1 min-w-[120px] shadow-lg animate-in fade-in zoom-in duration-150">
+      class="absolute right-0 z-[100] bg-white border border-slate-200 rounded-md p-1 min-w-[120px] shadow-lg">
 
-      <!-- Multi-action support[cite: 11] -->
+      <!-- Multi-actions -->
       <ng-container *ngIf="getActionConfig() as customActions; else defaultAction">
+
         <button *ngFor="let act of customActions" (click)="emitAction(row, act.actionKey)"
           [ngClass]="act.class || 'text-slate-600 hover:bg-slate-50'"
           class="w-full flex items-center gap-3 p-2 text-xs rounded-md text-left font-medium">
           {{ act.label }}
         </button>
+
       </ng-container>
 
-      <!-- Fallback single action -->
+      <!-- Single fallback -->
       <ng-template #defaultAction>
+
         <button (click)="emitAction(row)"
           class="w-full flex items-center gap-3 p-2 text-xs text-rose-500 hover:bg-rose-50 rounded-md text-left font-medium">
           {{ getActionLabel() }}
         </button>
+
       </ng-template>
+
     </div>
+
   </div>
+
 </ng-template>
 
 <!-- ==========================================
-     MOBILE VIEW (Dynamic Column Rendering)
+     MOBILE VIEW (Optimized Layout — No Crowding)
      ========================================== -->
+
 <div class="block md:hidden space-y-4 px-1">
+
+  <!-- Card -->
   <div *ngFor="let row of data" class="bg-white border rounded-xl shadow-sm overflow-hidden">
 
-    <!-- Header: Action Menu (Always at the top right if exists) -->
+    <!-- ==========================================
+         HEADER — ACTION MENU
+         ========================================== -->
+
     <div class="flex justify-end items-center p-3 border-b border-slate-100">
+
       <div *ngIf="hasActionColumn">
-        <ng-container *ngTemplateOutlet="actionMenu; context: {row: row}"></ng-container>
+
+        <ng-container *ngTemplateOutlet="actionMenu; context: { row: row }">
+        </ng-container>
+
       </div>
+
     </div>
 
-    <!-- Body: Only renders columns defined in the 'columns' input -->
-    <div class="divide-y divide-slate-50">
-      <ng-container *ngFor="let col of columns">
-        <!-- Skip 'action' column in the list as it's in the header -->
-        <div *ngIf="col.type !== 'action'" class="flex justify-between p-3 text-sm">
-          <span class="text-slate-500">{{ col.label }}</span>
+    <!-- ==========================================
+         BODY — COLUMN DATA
+         ========================================== -->
 
-          <!-- Dynamic Content based on Type -->
-          <div [ngSwitch]="col.type" class="text-right ml-4">
-            <!-- Status Type -->
+    <div class="divide-y divide-slate-50">
+
+      <ng-container *ngFor="let col of columns">
+
+        <!-- Skip action column -->
+        <div *ngIf="col.type !== 'action'" class="flex items-start gap-3 p-3 text-sm">
+
+          <!-- ==========================================
+               LABEL (Fixed width)
+               ========================================== -->
+
+          <span class="text-slate-500 w-1/3 shrink-0 text-xs">
+            {{ col.label }}
+          </span>
+
+          <!-- ==========================================
+               VALUE (Flexible width)
+               ========================================== -->
+
+          <div [ngSwitch]="col.type" class="flex-1 text-right min-w-0">
+
+            <!-- ===========================
+                 STATUS
+                 =========================== -->
+
             <div *ngSwitchCase="'status'" [ngClass]="getStatusClasses(getValue(row, col.key))"
-              class="px-2.5 py-0.5 border rounded-md text-xs font-medium flex items-center gap-2 inline-flex">
+              class="px-2 py-0.5 border rounded-md text-xs font-medium flex items-center gap-2 inline-flex max-w-full">
+
               <svg width="6" height="6" viewBox="0 0 10 10" fill="currentColor">
                 <circle cx="5" cy="5" r="5" />
               </svg>
+
               {{ getValue(row, col.key) }}
+
             </div>
 
-            <!-- Category/Badge Type -->
+            <!-- ===========================
+                 CATEGORY / BADGE
+                 =========================== -->
+
             <span *ngSwitchCase="'category'"
-              class="inline-block px-2.5 py-1 text-xs font-medium border rounded-md bg-slate-50 text-slate-600">
+              class="inline-block px-2 py-1 text-xs font-medium border rounded-md bg-slate-50 text-slate-600 max-w-full truncate">
               {{ getValue(row, col.key) }}
             </span>
 
-            <!-- View/Note Type -->
+            <!-- ===========================
+                 VIEW BUTTON
+                 =========================== -->
+
             <button *ngSwitchCase="'view'" (click)="viewAction.emit(row)"
-              class="text-violet-600 font-medium hover:underline">
+              class="text-violet-600 font-medium hover:underline text-sm">
               View Note
             </button>
 
-            <!-- Default Text/Service/Name -->
-            <span *ngSwitchDefault class="text-slate-900 font-semibold truncate max-w-[150px] block">
+            <!-- ===========================
+                 DATE
+                 =========================== -->
+
+            <span *ngSwitchCase="'date'" class="text-slate-600 whitespace-nowrap text-sm">
               {{ getValue(row, col.key) }}
             </span>
+
+            <!-- ===========================
+                 NAME
+                 =========================== -->
+
+            <span *ngSwitchCase="'name'" class="text-slate-900 font-semibold truncate block">
+              {{ getValue(row, col.key) }}
+            </span>
+
+            <!-- ===========================
+                 SERVICE
+                 =========================== -->
+
+            <span *ngSwitchCase="'service'" class="text-slate-900 font-semibold truncate block">
+              {{ getValue(row, col.key) }}
+            </span>
+
+            <!-- ===========================
+                 DEFAULT TEXT
+                 =========================== -->
+
+            <span *ngSwitchDefault class="text-slate-900 font-semibold truncate block">
+              {{ getValue(row, col.key) }}
+            </span>
+
           </div>
+
         </div>
+
       </ng-container>
+
     </div>
+
   </div>
+
 </div>
 
-<!-- ==========================================
-     DESKTOP VIEW (Improved Spacing & Centering)
-     ========================================== -->
-<div class="hidden md:block w-full bg-white rounded-md overflow-hidden">
-  <table class="w-full text-sm border-collapse table-fixed"> <!-- Added table-fixed for precise width control -->
+<!-- DESKTOP VIEW -->
+<div class="hidden md:block w-full bg-white rounded-md overflow-x-auto">
+  <!-- IMPORTANT: Keep table-fixed -->
+<table class="min-w-full w-max text-sm border-collapse table-auto">
     <thead>
       <tr class="bg-slate-50/50">
+
         <!-- Checkbox placeholder -->
         <th class="w-12 p-3 border-b border-slate-100"></th>
 
-        <!-- Dynamic Headers with flexible width[cite: 19] -->
-        <th *ngFor="let col of columns" [style.width]="col.key === 'name' || col.key === 'service' ? '35%' : 
-                         col.type === 'status' ? '150px' : 
-                         col.type === 'action' ? '80px' : 'auto'"
+        <!-- FIXED: Dynamic width logic -->
+        <th *ngFor="let col of columns" [ngClass]="getColumnClass(col)"
           class="p-3 text-left border-b border-slate-100 text-slate-900 font-semibold text-sm"
-          [class.text-center]="col.type === 'action'"> <!-- Center Action Header -->
+          [class.text-center]="col.type === 'action'">
           {{ col.label }}
         </th>
+
       </tr>
     </thead>
 
     <tbody class="divide-y divide-slate-100">
+
       <tr *ngFor="let row of data" class="group transition-colors duration-150 hover:bg-slate-50/80">
+
+        <!-- Checkbox placeholder -->
         <td class="p-3 text-center border-b border-slate-100"></td>
 
-        <td *ngFor="let col of columns" class="p-3 align-middle border-b border-slate-100 overflow-visible"
-          [class.text-center]="col.type === 'action'"> <!-- Center Action Cell content -->
+        <!-- Dynamic Cells -->
+        <td *ngFor="let col of columns" [ngClass]="getColumnClass(col)"
+          class="p-3 align-middle border-b border-slate-100 overflow-visible" [class.text-center]="col.type === 'action'">
 
           <ng-container [ngSwitch]="col.type">
-            <!-- Name/Service -->
+
+            <!-- Name -->
             <span *ngSwitchCase="'name'" class="text-slate-900 font-semibold block truncate">
               {{ getValue(row, col.key) }}
             </span>
+
+            <!-- Service -->
             <span *ngSwitchCase="'service'" class="text-slate-900 font-semibold block truncate">
               {{ getValue(row, col.key) }}
             </span>
@@ -130,7 +228,7 @@
 
             <!-- Category -->
             <span *ngSwitchCase="'category'"
-              class="inline-block px-3 py-1 text-xs font-normal border rounded-md bg-white text-slate-500 border-slate-200 whitespace-nowrap">
+              class="inline-block px-3 py-1 text-xs border rounded-md bg-white text-slate-500 border-slate-200 whitespace-nowrap">
               {{ getValue(row, col.key) }}
             </span>
 
@@ -141,6 +239,7 @@
               <svg width="8" height="8" viewBox="0 0 10 10" fill="currentColor">
                 <circle cx="5" cy="5" r="5" />
               </svg>
+
               {{ getValue(row, col.key) }}
             </div>
 
@@ -148,17 +247,11 @@
             <div *ngSwitchCase="'view'" class="flex items-center">
               <button (click)="viewAction.emit(row)"
                 class="inline-flex items-center gap-2 px-3 py-1 border rounded-md text-xs hover:bg-slate-50">
-                <svg class="w-3 h-3 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                  stroke-width="2">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                  <path stroke-linecap="round" stroke-linejoin="round"
-                    d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                </svg>
                 View
               </button>
             </div>
 
-            <!-- Action Menu (Centered) -->
+            <!-- Action -->
             <div *ngSwitchCase="'action'" class="inline-flex justify-center w-full">
               <ng-container *ngTemplateOutlet="actionMenu; context: {row: row}"></ng-container>
             </div>
@@ -167,10 +260,18 @@
             <span *ngSwitchDefault class="text-slate-900 block truncate">
               {{ getValue(row, col.key) }}
             </span>
+
           </ng-container>
+
         </td>
+
       </tr>
+
     </tbody>
+
   </table>
+
+  <!-- Prevent layout collapse -->
   <div *ngIf="data && data.length <= 2" class="h-32"></div>
+
 </div>
