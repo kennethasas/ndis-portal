@@ -1,0 +1,34 @@
+<div (click)="onCardClick()" class="
+  group flex h-full w-full max-w-[320px] flex-col rounded-[24px] border border-[#6F2C91]/20 bg-gradient-to-br from-[#6F2C91]/5 to-[#6F2C91]/10 p-6 shadow-sm transition-all hover:shadow-md hover:scale-[1.02] active:scale-95 cursor-pointer
+  ">
+
+  <div class="mb-5 flex h-10 w-10 items-center justify-center rounded-full text-white bg-[#6F2C91]">
+    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+    </svg>
+  </div>
+
+  <div class="flex flex-1 flex-col">
+    <h2 class="mb-3 text-[20px] font-semibold leading-tight text-[#6F2C91]">
+      Find the Right Service
+    </h2>
+    <p class="mt-1 flex-grow text-sm leading-relaxed text-[#7b8da0] line-clamp-2">
+      Not sure which service you need? Let our AI assistant help you find the perfect match based on your specific needs and goals.
+    </p>
+  </div>
+
+  <div class="mt-6 flex items-center justify-between border-t border-[#6F2C91]/20 pt-4">
+    <span class="rounded-lg border border-[#6F2C91]/30 px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-[#6F2C91]">
+      AI Powered
+    </span>
+
+    <button class="flex h-9 w-9 items-center justify-center rounded-full bg-[#6F2C91] transition-colors group-hover:bg-[#5a189a]"
+            aria-label="Get recommendations">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"
+           stroke-linecap="round" stroke-linejoin="round" class="transition-transform group-hover:translate-x-1">
+        <line x1="5" y1="12" x2="19" y2="12"></line>
+        <polyline points="12 5 19 12 12 19"></polyline>
+      </svg>
+    </button>
+  </div>
+</div>

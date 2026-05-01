@@ -1,9 +1,10 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, AfterViewInit, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ChatMessage } from '../../../models/chat-message.model';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { ChatIconComponent } from '../../icons/svg-icons/chat-icon';
+import { ChatService } from '../../../../app/core/services/chatbot.service';
 
 @Component({
   selector: 'app-chat-message',
@@ -11,10 +12,33 @@ import { ChatIconComponent } from '../../icons/svg-icons/chat-icon';
   imports: [CommonModule, FormsModule, ChatIconComponent],
   templateUrl: './chatbot-message.component.html',
 })
-export class ChatMessageComponent {
+export class ChatMessageComponent implements AfterViewInit {
   @Input() message!: ChatMessage;
 
-  constructor(private sanitizer: DomSanitizer) {}
+  constructor(
+    private sanitizer: DomSanitizer,
+    private chatService: ChatService,
+    private elementRef: ElementRef
+  ) {}
+
+  ngAfterViewInit() {
+    // Add click event listeners for AI service buttons
+    if (this.message.content.includes('ai-service-buttons')) {
+      setTimeout(() => {
+        const buttons = this.elementRef.nativeElement.querySelectorAll('.ai-service-btn');
+        buttons.forEach((button: HTMLButtonElement) => {
+          button.addEventListener('click', (event: Event) => {
+            event.preventDefault();
+            const serviceType = button.getAttribute('data-service');
+            const serviceText = button.textContent?.trim();
+            if (serviceText) {
+              this.chatService.sendMessage(serviceText);
+            }
+          });
+        });
+      }, 0);
+    }
+  }
 
   /**
    * Check if bot message
@@ -29,7 +53,13 @@ export class ChatMessageComponent {
   formatMessage(content: string): SafeHtml {
     if (!content) return this.sanitizer.bypassSecurityTrustHtml('');
 
-    // Escape HTML to prevent XSS
+    // Check if this is an AI recommendation message with buttons
+    if (content.includes('ai-service-buttons')) {
+      // For AI recommendation messages, allow the specific HTML structure
+      return this.sanitizer.bypassSecurityTrustHtml(content);
+    }
+
+    // Escape HTML to prevent XSS for regular messages
     let formatted = content
       .replace(/&/g, '&amp;')
       .replace(/</g, '&lt;')

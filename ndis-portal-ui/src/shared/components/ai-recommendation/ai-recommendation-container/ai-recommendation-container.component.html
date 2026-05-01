@@ -1,0 +1,7 @@
+<ng-container *ngIf="showRecommendationButton">
+  <app-ai-recommendation-button (buttonClick)="toggleRecommendationPanel()">
+  </app-ai-recommendation-button>
+
+  <app-ai-recommendation-panel *ngIf="isOpen" (close)="closeRecommendationPanel()">
+  </app-ai-recommendation-panel>
+</ng-container>

@@ -22,13 +22,32 @@ interface ChatRequest {
   conversationHistory: { role: string; content: string }[];
 }
 
+interface AiRecommendationRequest {
+  message: string;
+}
+
+interface AiRecommendationResponse {
+  recommendations: {
+    serviceId: number;
+    serviceName: string;
+    categoryName: string;
+    description: string;
+    reason: string;
+    confidence: number;
+  }[];
+  isOutOfScope: boolean;
+  outOfScopeMessage?: string;
+}
+
 @Injectable({
   providedIn: 'root',
 })
 export class ChatService {
   private storageKey = 'chat_history';
   private apiUrl = `${environment.apiUrl}/chat`;
+  private aiRecommendationUrl = `${environment.apiUrl}/ai/recommend-services`;
   private minimumTypingMs = 500;
+  private isAiRecommendationMode = false;
 
   private messagesSubject = new BehaviorSubject<ChatMessage[]>([]);
   
@@ -90,9 +109,15 @@ export class ChatService {
     this.messagesSubject.next(updatedMessages);
     this.saveMessages(updatedMessages);
 
-    // Call backend API
-    console.log('[ChatService] Calling API...');
-    this.callChatApi(text, updatedMessages);
+    // Check if this is an AI recommendation request
+    if (this.isAiRecommendationRequest(text) || this.isAiRecommendationMode) {
+      console.log('[ChatService] Calling AI recommendation API...');
+      this.callAiRecommendationApi(text);
+    } else {
+      // Call regular chat API
+      console.log('[ChatService] Calling regular chat API...');
+      this.callChatApi(text, updatedMessages);
+    }
   }
 
   /**
@@ -187,6 +212,165 @@ export class ChatService {
   }
 
   /**
+   * Check if the message is an AI recommendation request
+   */
+  private isAiRecommendationRequest(text: string): boolean {
+    const aiKeywords = [
+      'daily personal activities',
+      'community access',
+      'therapy supports',
+      'support coordination',
+      'respite care',
+      'find the right service',
+      'recommend services',
+      'service recommendation'
+    ];
+    
+    return aiKeywords.some(keyword => 
+      text.toLowerCase().includes(keyword.toLowerCase())
+    );
+  }
+
+  /**
+   * Call AI recommendation API
+   */
+  private callAiRecommendationApi(message: string) {
+    const typingStartedAt = Date.now();
+    this.loadingSubject.next(true);
+    console.log('[ChatService] callAiRecommendationApi - API URL:', this.aiRecommendationUrl);
+
+    const request: AiRecommendationRequest = {
+      message: message.trim()
+    };
+
+    this.http.post<AiRecommendationResponse>(this.aiRecommendationUrl, request)
+      .pipe(
+        catchError(error => {
+          console.error('[ChatService] AI recommendation API error:', error);
+          return of({
+            recommendations: [],
+            isOutOfScope: true,
+            outOfScopeMessage: 'Sorry, I am temporarily unable to provide service recommendations. Please try again later or contact your Support Coordinator for assistance.'
+          });
+        })
+      )
+      .subscribe(response => {
+        const elapsed = Date.now() - typingStartedAt;
+        const remainingDelay = Math.max(this.minimumTypingMs - elapsed, 0);
+
+        setTimeout(() => {
+          console.log('[ChatService] AI recommendation API response received:', response);
+          
+          if (response.isOutOfScope) {
+            // Handle out-of-scope response
+            const botMessage: ChatMessage = {
+              id: Date.now().toString(),
+              role: 'assistant',
+              content: response.outOfScopeMessage || 'Sorry, your request is outside the scope of our available NDIS services.',
+              timestamp: new Date(),
+            };
+
+            const updatedMessages = [...this.messagesSubject.value, botMessage];
+            this.messagesSubject.next(updatedMessages);
+            this.saveMessages(updatedMessages);
+          } else if (response.recommendations && response.recommendations.length > 0) {
+            // Format recommendations as a nice response
+            const recommendationsText = this.formatRecommendations(response.recommendations);
+            const botMessage: ChatMessage = {
+              id: Date.now().toString(),
+              role: 'assistant',
+              content: `Based on your needs, I found the following services that might be perfect for you:\n\n${recommendationsText}\n\nWould you like more information about any of these services, or would you like me to help you with something else?`,
+              timestamp: new Date(),
+            };
+
+            const updatedMessages = [...this.messagesSubject.value, botMessage];
+            this.messagesSubject.next(updatedMessages);
+            this.saveMessages(updatedMessages);
+          } else {
+            // No recommendations found
+            const botMessage: ChatMessage = {
+              id: Date.now().toString(),
+              role: 'assistant',
+              content: "I couldn't find any specific services matching your needs. Could you tell me more about your situation, or would you like me to help you explore our available service categories?",
+              timestamp: new Date(),
+            };
+
+            const updatedMessages = [...this.messagesSubject.value, botMessage];
+            this.messagesSubject.next(updatedMessages);
+            this.saveMessages(updatedMessages);
+          }
+
+          this.loadingSubject.next(false);
+        }, remainingDelay);
+      });
+  }
+
+  /**
+   * Format AI recommendations into readable text
+   */
+  private formatRecommendations(recommendations: any[]): string {
+    return recommendations.map((rec, index) => {
+      return `${index + 1}. **${rec.serviceName}** (${rec.categoryName})\n   ${rec.reason}\n   *Confidence: ${Math.round(rec.confidence * 100)}%*`;
+    }).join('\n\n');
+  }
+
+  /**
+   * Initialize chat with AI recommendation context
+   */
+  initializeAiRecommendation(): void {
+    if (!this.isParticipant()) {
+      console.log('[ChatService] Access denied - only participants can use chat');
+      return;
+    }
+
+    this.isAiRecommendationMode = true;
+
+    const aiWelcomeMessage: ChatMessage = {
+      id: Date.now().toString(),
+      role: 'assistant',
+      content: `Let's find the perfect services for you
+
+Tell us what areas of daily life you need support with, and we'll recommend the most relevant services.
+
+What areas of daily life do you need support with?
+
+<div class="ai-service-buttons" style="display: flex; flex-direction: column; gap: 8px; margin: 12px 0;">
+  <button class="ai-service-btn" data-service="daily-activities" style="background: #6F2C91; color: white; border: none; padding: 12px 16px; border-radius: 8px; cursor: pointer; font-size: 14px; text-align: left; transition: background 0.2s;">
+    Daily personal activities
+  </button>
+  <button class="ai-service-btn" data-service="community-access" style="background: #6F2C91; color: white; border: none; padding: 12px 16px; border-radius: 8px; cursor: pointer; font-size: 14px; text-align: left; transition: background 0.2s;">
+    Community access and social activities
+  </button>
+  <button class="ai-service-btn" data-service="therapy-supports" style="background: #6F2C91; color: white; border: none; padding: 12px 16px; border-radius: 8px; cursor: pointer; font-size: 14px; text-align: left; transition: background 0.2s;">
+    Therapy supports
+  </button>
+  <button class="ai-service-btn" data-service="support-coordination" style="background: #6F2C91; color: white; border: none; padding: 12px 16px; border-radius: 8px; cursor: pointer; font-size: 14px; text-align: left; transition: background 0.2s;">
+    Support coordination
+  </button>
+  <button class="ai-service-btn" data-service="respite-care" style="background: #6F2C91; color: white; border: none; padding: 12px 16px; border-radius: 8px; cursor: pointer; font-size: 14px; text-align: left; transition: background 0.2s;">
+    Respite care
+  </button>
+</div>
+
+<style>
+.ai-service-btn:hover {
+  background: #5a189a !important;
+}
+.ai-service-btn:active {
+  transform: scale(0.98);
+}
+</style>
+
+Click on any button above, or tell me in your own words what you need help with!`,
+      timestamp: new Date(),
+    };
+
+    this.messagesSubject.next([aiWelcomeMessage]);
+    this.saveMessages([aiWelcomeMessage]);
+    console.log('[ChatService] AI recommendation initialized');
+  }
+
+  /**
    * Clear chat history - called when user logs in
    */
   clearHistory(): void {
@@ -195,6 +379,7 @@ export class ChatService {
     }
 
     this.messagesSubject.next([]);
+    this.isAiRecommendationMode = false;
     console.log('[ChatService] Chat history cleared');
   }
 }
