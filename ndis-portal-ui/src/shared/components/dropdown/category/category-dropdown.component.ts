@@ -10,7 +10,17 @@ import { FilterIconComponent } from '../../icons/svg-icons/filter-icon';
   selector: 'app-category-dropdown',
   standalone: true,
   imports: [CommonModule, DropdownUIComponent, FilterIconComponent],
-  templateUrl: './category-dropdown.component.html',
+  template: `
+    <app-dropdown-ui
+      variant="variant1"
+      label="Category"
+      [options]="categoryOptions"
+      [selectedValue]="selectedValue"
+      (onSelect)="handleSelect($event)"
+    >
+      <app-icon-filter icon [size]="16"></app-icon-filter>
+    </app-dropdown-ui>
+  `,
 })
 export class CategoryDropdownComponent implements OnChanges {
   @Output() categoryChange = new EventEmitter<string>();
@@ -26,21 +36,16 @@ export class CategoryDropdownComponent implements OnChanges {
   }
 
   updateCategoryOptions() {
-    if (!this.services || this.services.length === 0) return;
-
-    const uniqueCategories = new Set<string>();
-    this.services.forEach(service => {
-      if (service.category) {
-        uniqueCategories.add(service.category);
-      }
-    });
-
+    if (!this.services?.length) return;
+    const uniqueCategories = [
+      ...new Set(this.services.map((s) => s.category).filter(Boolean)),
+    ];
     this.categoryOptions = [
       { label: 'All Categories', value: 'all' },
-      ...Array.from(uniqueCategories).map(category => ({
-        label: category,
-        value: category.toLowerCase().replace(/\s+/g, '-')
-      }))
+      ...uniqueCategories.map((cat) => ({
+        label: cat,
+        value: cat.toLowerCase().replace(/\s+/g, '-'),
+      })),
     ];
   }
 

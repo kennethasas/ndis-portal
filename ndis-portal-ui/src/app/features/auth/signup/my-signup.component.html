@@ -1,93 +1,89 @@
-<div class="signup-page">
-  <div class="image-section">
-    <app-slideshow 
-      [images]="slideImages" 
-      [interval]="5000" 
-      alt="NDIS Support Services">
+<div class="flex flex-col md:flex-row-reverse h-screen w-full overflow-hidden">
+
+  <!-- Image/Slideshow Section -->
+  <div class="w-full md:w-1/2 h-1/4 md:h-full relative">
+    <app-slideshow class="block w-full h-full" [images]="slideImages" [interval]="5000" alt="NDIS Support Services">
     </app-slideshow>
   </div>
 
-  <div class="form-section">
-    <div class="form-container">
-      <div class="header">
-        <div class="logo-placeholder"></div>
+  <!-- Form Section -->
+  <div class="form-section flex-1 flex justify-center items-center p-5 md:p-6 bg-white overflow-y-auto">
+    <div class="form-container w-full max-w-[420px]">
+
+      <!-- Header & Logo -->
+      <div class="header flex items-center gap-4 mb-8">
+        <div class="logo-placeholder w-[60px] h-[60px] bg-[#e2d5d5] rounded-full shrink-0"></div>
         <div class="title-group">
-          <h1>Create an account</h1>
-          <p class="subtitle">Start your journey toward personalized care.</p>
+          <h1 class="m-0 text-lg md:text-3xl font-bold text-gray-800">Create an account</h1>
+          <p class="mt-1 text-gray-500 text-sm md:text-base">Start your journey toward personalized care.</p>
         </div>
       </div>
 
-      <form (ngSubmit)="onSignUp()" #signupForm="ngForm">
-        <div class="input-row">
-          <div class="input-group">
-            <app-input
-              type="text"
-              placeholder="First Name"
-              name="firstName"
-              [(ngModel)]="signupData.firstName"
-              [required]="true">
+      <form (ngSubmit)="onSignUp()" #signupForm="ngForm" class="space-y-4">
+
+        <!-- Name Row -->
+        <div class="flex flex-col md:flex-row gap-4">
+          <div class="flex-1">
+            <app-input type="text" placeholder="First Name" name="firstName" [(ngModel)]="signupData.firstName"
+              [required]="true" class="w-full">
             </app-input>
           </div>
-          <div class="input-group">
-            <app-input
-              type="text"
-              placeholder="Last Name"
-              name="lastName"
-              [(ngModel)]="signupData.lastName"
-              [required]="true">
+          <div class="flex-1">
+            <app-input type="text" placeholder="Last Name" name="lastName" [(ngModel)]="signupData.lastName"
+              [required]="true" class="w-full">
             </app-input>
           </div>
         </div>
 
-        <div class="input-group">
-          <select name="role" [(ngModel)]="signupData.role" required class="select-input">
-            <option value="" disabled selected>Role</option>
-            <option value="participant">Participant</option>
-            <option value="coordinator">Coordinator</option>
-          </select>
-        </div>
+        <!-- Role Select -->
+        <app-role-dropdown [(ngModel)]="signupData.role" required></app-role-dropdown>
 
+
+        <!-- Email -->
         <div class="input-group">
-          <app-input
-            type="email"
-            placeholder="Email"
-            name="email"
-            [(ngModel)]="signupData.email"
-            [required]="true">
+          <app-input type="email" placeholder="Email" name="email" [(ngModel)]="signupData.email" [required]="true"
+            class="w-full">
           </app-input>
         </div>
 
+        <!-- Password -->
         <div class="input-group">
-          <app-input
-            type="password"
-            placeholder="Password"
-            name="password"
-            [(ngModel)]="signupData.password"
-            [required]="true">
-          </app-input>
+          <app-password-field type="password" placeholder="Password" name="password" [(ngModel)]="signupData.password"
+            [required]="true" class="w-full">
+          </app-password-field>
         </div>
 
-        <div class="checkbox-group">
-          <input type="checkbox" id="terms" name="terms" [(ngModel)]="signupData.agreeToTerms" required>
+        <!-- Checkbox -->
+        <div class="checkbox-group flex items-center gap-[10px] my-5 text-sm text-gray-700">
+          <input type="checkbox" id="terms" name="terms" [(ngModel)]="signupData.agreeToTerms" required
+            class="w-4 h-4 accent-[#6F2C91]">
           <label for="terms">I agree to the terms and conditions.</label>
         </div>
 
-        <button type="submit" class="btn-signup" [disabled]="isLoading">
+        <!-- Submit Button -->
+        <button type="submit"
+          class="w-full p-[14px] rounded-lg bg-[#6F2C91] hover:bg-[#5a189a] disabled:bg-[#b193d3] text-white font-semibold text-base transition-colors duration-300 cursor-pointer disabled:cursor-not-allowed"
+          [disabled]="isLoading">
           {{ isLoading ? 'Creating account...' : 'Sign up' }}
         </button>
       </form>
 
-      <p class="footer-text">
-        Already have an account? <a routerLink="/login" class="login-link">Log in</a>
+      <p class="footer-text text-center mt-5 text-sm">
+        Already have an account?
+        <a routerLink="/login" class="text-[#6F2C91] font-bold no-underline hover:underline">Log in</a>
       </p>
 
-      <div *ngIf="errorMessage" class="error-message">
+      <!-- Messages -->
+      <div *ngIf="errorMessage"
+        class="error-message mt-4 p-3 md:p-4 bg-red-100 text-red-600 rounded-lg border-l-4 border-red-600 text-sm font-medium shadow-sm animate-in fade-in slide-in-from-top-2">
         {{ errorMessage }}
       </div>
 
-      <div *ngIf="successMessage" class="success-message">
+      <div *ngIf="successMessage"
+        class="success-message mt-4 p-3 md:p-4 bg-emerald-100 text-emerald-700 rounded-lg border-l-4 border-emerald-600 text-sm font-medium shadow-sm animate-in fade-in slide-in-from-top-2">
         {{ successMessage }}
       </div>
+
     </div>
   </div>
 </div>

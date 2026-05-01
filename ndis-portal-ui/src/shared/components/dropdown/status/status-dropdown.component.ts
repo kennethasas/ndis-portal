@@ -11,6 +11,7 @@ import { FilterIconComponent } from '../../icons/svg-icons/filter-icon';
   imports: [CommonModule, DropdownUIComponent, FilterIconComponent],
   template: `
     <app-dropdown-ui
+      variant="variant1"
       label="Status"
       [options]="statusOptions"
       [selectedValue]="activeStatus"
@@ -21,7 +22,6 @@ import { FilterIconComponent } from '../../icons/svg-icons/filter-icon';
   `,
 })
 export class StatusDropdownComponent {
-  // FIXED: Added @Input so parent can bind [activeStatus]
   @Input() activeStatus: string = 'all';
   @Output() statusChange = new EventEmitter<string>();
 
