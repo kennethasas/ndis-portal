@@ -1,59 +1,71 @@
-<div class="login-page">
-  <div class="image-section">
-    <app-slideshow 
-      [images]="slideImages"
-      [interval]="5000"
-      alt="NDIS Support Services">
+<!-- Main Layout -->
+<div class="flex min-h-screen w-screen font-sans overflow-auto max-md:flex-col">
+
+  <!-- Image Side -->
+  <div class="flex-none w-[42%] overflow-hidden h-screen max-md:w-full max-md:h-[22vh] max-md:min-h-[140px]">
+    <app-slideshow class="block w-full h-full" [images]="slideImages" [interval]="5000" alt="NDIS Support Services">
     </app-slideshow>
   </div>
 
-  <div class="form-section">
-    <div class="form-container">
-      <div class="header">
-  <div class="logo-placeholder"></div>
-  <div class="title-group">
-    <h1>Welcome back</h1>
-    <p class="subtitle">We're here to help you manage your day.</p>
-  </div>
-</div>
+  <!-- Form Side -->
+  <div class="flex-1 flex justify-center items-start md:items-center bg-white px-4 py-6">
 
-      <form (ngSubmit)="onLogin()">
-        <div class="input-group">
-          <app-input
-            type="email"
-            placeholder="Email"
-            name="email"
-            [(ngModel)]="email"
-            [required]="true">
+    <!-- Form Container -->
+    <div class="w-full md:w-[25rem]">
+
+      <!-- Header -->
+      <div class="flex items-center gap-3 mb-6">
+        <!-- Change this to into official logo -->
+        <div class="w-12 md:w-16 h-12 md:h-16 bg-gray-200 rounded-full"></div>
+        <div class="space-y-1 md:space-y-3">
+          <h1 class="text-xl md:text-5xl font-semibold text-gray-800">Welcome back</h1>
+          <p class="text-xs md:text-sm text-gray-500">
+            We're here to help you manage your day.
+          </p>
+        </div>
+      </div>
+
+      <!-- Form -->
+      <form (ngSubmit)="onLogin()" class="space-y-3">
+        <div>
+          <app-input type="email" placeholder="Email" name="email" [(ngModel)]="email" [required]="true">
           </app-input>
         </div>
 
-        <div class="input-group">
-          <app-input
-            type="password"
-            placeholder="Password"
-            name="password"
-            [(ngModel)]="password"
-            [required]="true">
-          </app-input>
+
+        <div>
+          <app-password-field placeholder="Password" name="password" [(value)]="password" [required]="true">
+          </app-password-field>
         </div>
 
-        <div class="forgot-link">
-          <a href="#">Forgot Password?</a>
+
+        <div>
+          <a href="#" class="text-xs md:text-sm text-[#6F2C91] hover:underline">
+            Forgot Password?
+          </a>
         </div>
 
-        <button type="submit" class="btn-login" [disabled]="isLoading">
+        <!-- Button -->
+        <button type="submit" [disabled]="isLoading"
+          class="w-full py-2.5 text-sm md:py-3 md:text-base bg-[#6F2C91] text-white rounded-lg transition hover:bg-[#5a189a] disabled:opacity-50">
           {{ isLoading ? 'Logging in...' : 'Log in' }}
         </button>
+
+        <!-- Error (VISIBLE on mobile) -->
+        <div *ngIf="errorMessage" class="text-sm text-red-600 bg-red-50 border border-red-200 px-3 py-2 rounded-md">
+          {{ errorMessage }}
+        </div>
+
       </form>
 
-      <p class="footer-text">
-        Don't have an account yet? <a routerLink="/signup" class="signup-link">Sign up</a>
+      <!-- Footer -->
+      <p class="text-center mt-5 text-gray-500 text-sm">
+        Don't have an account yet?
+        <a routerLink="/signup" class="text-[#6F2C91] font-semibold hover:underline">
+          Sign up
+        </a>
       </p>
 
-      <div *ngIf="errorMessage" class="error-message">
-        {{ errorMessage }}
-      </div>
     </div>
   </div>
 </div>

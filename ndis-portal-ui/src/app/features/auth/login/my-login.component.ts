@@ -6,13 +6,20 @@ import { AuthService, LoginRequest, LoginResponse } from '../../../core/services
 import { ChatService } from '../../../core/services/chatbot.service';
 import { SlideshowComponent } from '../../../../shared/components/slideshow/slideshow.component';
 import { InputComponent } from '../../../../shared/components/input/input.component';
+import { PasswordFieldComponent } from '../../../../shared/components/password-field/password-field.component';
 
 @Component({
   selector: 'app-my-login',
   standalone: true,
-  imports: [FormsModule, CommonModule, RouterModule, SlideshowComponent, InputComponent],
+  imports: [
+    FormsModule,
+    CommonModule,
+    RouterModule,
+    SlideshowComponent,
+    InputComponent,
+    PasswordFieldComponent,
+  ],
   templateUrl: './my-login.component.html',
-  styleUrls: ['./my-login.component.css'],
 })
 export class MyLoginComponent {
   @HostBinding('style.display') display = 'block';
@@ -62,39 +69,40 @@ export class MyLoginComponent {
 
     // Validate email format: must have @, end with .com, lowercase domain
     const trimmedEmail = this.email.trim();
-    
+
     if (trimmedEmail.length > 50) {
       this.errorMessage = 'Email must be 50 characters or less';
       return;
     }
-    
+
     if (!trimmedEmail.includes('@')) {
       this.errorMessage = 'Email must contain @ symbol';
       return;
     }
-    
+
     if (!trimmedEmail.toLowerCase().endsWith('.com')) {
       this.errorMessage = 'Email must end with .com';
       return;
     }
-    
+
     // Check domain is lowercase
     const parts = trimmedEmail.split('@');
     if (parts.length !== 2) {
       this.errorMessage = 'Email must contain exactly one @ symbol';
       return;
     }
-    
+
     const domain = parts[1].toLowerCase();
     if (domain !== parts[1]) {
       this.errorMessage = 'Domain part of email must be lowercase';
       return;
     }
-    
+
     // Final regex validation
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-z0-9.-]+\.com$/;
     if (!emailRegex.test(trimmedEmail)) {
-      this.errorMessage = 'Please enter a valid email address (e.g., user@domain.com)';
+      this.errorMessage =
+        'Please enter a valid email address (e.g., user@domain.com)';
       return;
     }
 
@@ -108,7 +116,7 @@ export class MyLoginComponent {
 
     const loginData: LoginRequest = {
       email: this.email,
-      password: this.password
+      password: this.password,
     };
 
     this.authService.loginApi(loginData).subscribe({
@@ -140,14 +148,18 @@ export class MyLoginComponent {
           console.log('authService.login() called');
 
           // Redirect based on role
-          const redirectPath = role?.toLowerCase() === 'coordinator' ? '/dashboard' : '/services';
+          const redirectPath =
+            role?.toLowerCase() === 'coordinator' ? '/dashboard' : '/services';
           console.log('Redirecting to:', redirectPath);
 
-          this.router.navigate([redirectPath]).then(() => {
-            console.log('Navigation to', redirectPath, 'completed');
-          }).catch(err => {
-            console.error('Navigation failed:', err);
-          });
+          this.router
+            .navigate([redirectPath])
+            .then(() => {
+              console.log('Navigation to', redirectPath, 'completed');
+            })
+            .catch((err) => {
+              console.error('Navigation failed:', err);
+            });
         } else {
           console.log('Login failed - status:', status, 'token:', token);
           this.errorMessage = message || 'Login failed. Please try again.';
@@ -157,7 +169,7 @@ export class MyLoginComponent {
         this.isLoading = false;
         console.error('Login error:', error);
         this.errorMessage = this.getSpecificErrorMessage(error);
-      }
+      },
     });
   }
 
@@ -168,7 +180,8 @@ export class MyLoginComponent {
       const errorBody = error.error;
 
       // Try to extract message from error body
-      const apiMessage = errorBody?.message || errorBody?.Message || errorBody?.error;
+      const apiMessage =
+        errorBody?.message || errorBody?.Message || errorBody?.error;
 
       switch (status) {
         case 400:
