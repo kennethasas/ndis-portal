@@ -6,11 +6,12 @@ import { ChatMessage } from '../../../models/chat-message.model';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { ChatIconComponent } from '../../icons/svg-icons/chat-icon';
 import { ChatService } from '../../../../app/core/services/chatbot.service';
+import { DynamicIconComponent } from '../../icons/dynamic-icon.component';
 
 @Component({
   selector: 'app-chat-message',
   standalone: true,
-  imports: [CommonModule, FormsModule, ChatIconComponent],
+  imports: [CommonModule, FormsModule, ChatIconComponent, DynamicIconComponent],
   templateUrl: './chatbot-message.component.html',
 })
 export class ChatMessageComponent implements AfterViewInit {
@@ -111,6 +112,21 @@ export class ChatMessageComponent implements AfterViewInit {
   bookService(serviceId: number) {
     console.log('[ChatMessage] Booking service:', serviceId);
     this.router.navigate(['/book-new'], { queryParams: { serviceId: serviceId.toString() } });
+  }
+
+  /**
+   * Get icon name based on category
+   */
+  getIconForCategory(categoryName: string): string {
+    const normalized = categoryName.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+    const iconMap: { [key: string]: string } = {
+      'therapy-supports': 'therapy',
+      'community-access': 'community',
+      'respite-care': 'care',
+      'support-coordination': 'support',
+      'daily-personal-activities': 'activity',
+    };
+    return iconMap[normalized] || 'default';
   }
 
   /**

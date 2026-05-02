@@ -33,34 +33,32 @@
     <!-- Regular message content -->
     <div [innerHTML]="formatMessage(message.content)"></div>
     
-    <!-- Service Recommendations as Cards -->
-    <div *ngIf="message.recommendations && message.recommendations.length > 0" class="mt-4 space-y-3">
+    <!-- Service Recommendations as Cards with Book Button Inside -->
+    <div *ngIf="message.recommendations && message.recommendations.length > 0" class="mt-4 space-y-4">
       <div *ngFor="let rec of message.recommendations" 
-           class="group bg-white rounded-xl border border-gray-200 p-3 shadow-sm hover:shadow-md transition-all hover:border-[#6F2C91]"
-           style="max-width: 280px;">
+           class="group flex flex-col rounded-[24px] border border-[#e9e2e2] bg-white p-5 shadow-sm transition-all hover:shadow-md"
+           style="max-width: 260px;">
         
-        <!-- Compact Service Card -->
-        <div class="flex items-start gap-3">
-          <!-- Icon -->
-          <div class="flex-shrink-0 w-8 h-8 rounded-full bg-[#f3f0f5] flex items-center justify-center">
-            <svg class="w-4 h-4 text-[#6F2C91]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
-            </svg>
-          </div>
-          
-          <!-- Content -->
-          <div class="flex-1 min-w-0">
-            <h4 class="font-semibold text-gray-900 text-sm truncate">{{ rec.serviceName }}</h4>
-            <p class="text-xs text-[#6F2C91] font-medium mt-0.5">{{ rec.categoryName }}</p>
-            <p class="text-xs text-gray-600 mt-1 line-clamp-2">{{ rec.reason }}</p>
-          </div>
+        <!-- Icon -->
+        <div class="mb-4 flex h-9 w-9 items-center justify-center rounded-full text-[#6b21a8] bg-[#f3f0f5]">
+          <app-dynamic-icon [name]="getIconForCategory(rec.categoryName)"></app-dynamic-icon>
         </div>
-        
-        <!-- Book Now button centered in card -->
-        <div class="flex items-center justify-center mt-3 pt-3 border-t border-gray-100">
-          <button (click)="bookService(rec.serviceId); $event.stopPropagation()" 
-                  class="text-xs font-medium text-white bg-[#6F2C91] hover:bg-[#5a189a] transition-colors px-12 py-2 rounded-full w-full max-w-[200px]">
-            Book Now →
+
+        <!-- Content -->
+        <div class="flex flex-1 flex-col">
+          <h4 class="mb-2 text-[16px] font-semibold leading-tight text-[#001a33]">
+            {{ rec.serviceName }}
+          </h4>
+          <p class="flex-grow text-xs leading-relaxed text-[#7b8da0] line-clamp-2">
+            {{ rec.reason }}
+          </p>
+        </div>
+
+        <!-- Footer with Book Button replacing the tag -->
+        <div class="mt-4 pt-3 border-t border-[#f0f4f8]">
+          <button (click)="bookService(rec.serviceId)"
+                  class="text-xs font-medium text-white bg-[#6F2C91] hover:bg-[#5a189a] transition-colors px-4 py-2 rounded-full w-full">
+            Book this service →
           </button>
         </div>
       </div>

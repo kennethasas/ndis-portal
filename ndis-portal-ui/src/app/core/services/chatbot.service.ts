@@ -399,4 +399,22 @@ Click on any button above, or tell me in your own words what you need help with!
     this.isAiRecommendationMode = false;
     console.log('[ChatService] Chat history cleared');
   }
+
+  /**
+   * Reset to normal chat mode (when opening via chat button)
+   */
+  resetToNormalChat(): void {
+    // Only reset if we're currently in AI recommendation mode
+    if (this.isAiRecommendationMode) {
+      this.isAiRecommendationMode = false;
+      console.log('[ChatService] Reset to normal chat mode');
+    }
+  }
+
+  /**
+   * Check if currently in AI recommendation mode
+   */
+  isInAiRecommendationMode(): boolean {
+    return this.isAiRecommendationMode;
+  }
 }

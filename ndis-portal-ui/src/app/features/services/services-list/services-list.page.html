@@ -8,15 +8,10 @@
     </header>
 
     <main>
-        <!-- AI Recommendation Card (always first) -->
-        <section class="grid w-full grid-cols-[repeat(auto-fill,minmax(280px,1fr))] gap-5 p-4 items-stretch">
-            <app-ai-recommendation-card (cardSelected)="openAiRecommendation()" 
-                class="block w-full max-w-[320px] cursor-pointer transition-transform duration-200 hover:scale-[1.02] active:scale-95">
-            </app-ai-recommendation-card>
-        </section>
-
-        <!-- Regular Services -->
-        <app-service-card-component [services]="filteredServices" (cardSelected)="onCardClick($event)">
+        <!-- All Services including AI Recommendation Card -->
+        <app-service-card-component [services]="filteredServices" 
+            (cardSelected)="onCardClick($event)"
+            (aiRecommendationSelected)="openAiRecommendation()">
         </app-service-card-component>
     </main>
 

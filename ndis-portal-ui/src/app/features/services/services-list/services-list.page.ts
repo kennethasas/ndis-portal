@@ -86,12 +86,9 @@ export class ServicesListComponent implements OnInit {
   }
 
   openAiRecommendation() {
-    // Initialize AI recommendation content and open chat
-    this.chatService.initializeAiRecommendation();
-    
-    // Open the existing chat panel
+    // Open chat in AI recommendation mode via the container
     if (this.chatContainer) {
-      this.chatContainer.toggleChat();
+      this.chatContainer.openAiRecommendation();
     }
   }
 }
