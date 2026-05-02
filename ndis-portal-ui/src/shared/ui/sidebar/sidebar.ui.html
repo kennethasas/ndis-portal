@@ -1,42 +1,51 @@
-<!-- File: src/app/shared/components/sidebar/sidebar.ui.html -->
-
 <aside
-  class="h-screen bg-white border-r border-slate-200 flex flex-col p-4 transition-all duration-300 ease-in-out"
-  [class.w-64]="!isCollapsed" [class.w-20]="isCollapsed">
+  class="h-screen bg-white border-r border-slate-200 flex flex-col transition-all duration-300 ease-in-out fixed md:relative z-50"
+  [class.w-64]="!isCollapsed" [class.w-20]="isCollapsed" [class.-translate-x-full]="isCollapsed && isMobile"
+  [class.translate-x-0]="!isCollapsed && isMobile">
 
   <!-- SIDEBAR HEADER -->
-  <div class="flex items-center gap-3 px-2 mb-8 overflow-hidden whitespace-nowrap"
-    (click)="isCollapsed ? toggleCollapse() : null" [class.cursor-pointer]="isCollapsed">
-    <div
-      class="min-w-[32px] h-8 bg-[#6b21a8] text-white rounded-lg flex items-center justify-center font-bold text-[10px]">
-      NDIS
-    </div>
-
-    <!-- Title only shows when expanded -->
-    <div *ngIf="!isCollapsed" class="flex flex-col">
-      <span class="font-semibold text-sm text-slate-900">NDIS</span>
-      <span class="text-xs text-slate-500">{{ subText }}</span>
-    </div>
+  <div 
+    class="hidden md:flex items-center justify-between h-16 mb-2"
+    [class.px-4]="!isCollapsed"
+    [class.px-5]="isCollapsed">
+    <button (click)="toggle()" class="p-2 rounded-full hover:bg-slate-100 text-slate-600 transition-colors">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+        class="w-6 h-6">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+      </svg>
+    </button>
+    <app-icon-sidebar (click)="toggle()" *ngIf="!isCollapsed" class="ml-4 font-bold text-slate-900"></app-icon-sidebar>
   </div>
 
   <!-- NAVIGATION -->
-  <nav class="flex flex-col gap-1">
-    <a *ngFor="let item of navItems" [routerLink]="item.path" routerLinkActive="bg-[#f3f0ff] text-[#6b21a8] font-medium"
-      #rla="routerLinkActive"
-      class="flex items-center gap-3 p-2.5 rounded-lg text-slate-500 hover:bg-slate-50 hover:text-slate-900 transition-all group"
-      [class.justify-center]="isCollapsed">
+  <nav class="flex-1 flex flex-col gap-2 px-3 mt-4 md:mt-0">
+    <a *ngFor="let item of navItems" [routerLink]="item.path" 
+      routerLinkActive="bg-[#f3f0ff] text-[#6b21a8]"
+      class="relative flex items-center h-12 rounded-xl transition-all duration-200 group"
+      [class.justify-center]="isCollapsed" [class.px-3]="!isCollapsed">
 
-      <div class="flex items-center justify-center min-w-[20px]" [class.text-[#6b21a8]]="rla.isActive">
+      <!-- Icon Container: This holds the active background -->
+      <div class="flex items-center justify-center min-w-[24px]">
         <ng-container [ngSwitch]="item.icon">
-          <app-icon-home *ngSwitchCase="'home'" [size]="20"></app-icon-home>
-          <app-icon-service *ngSwitchCase="'services'" [size]="20"></app-icon-service>
-          <app-icon-book *ngSwitchCase="'bookings'" [size]="20"></app-icon-book>
+          <app-icon-home *ngSwitchCase="'home'"></app-icon-home>
+          <app-icon-service *ngSwitchCase="'services'"></app-icon-service>
+          <app-icon-book *ngSwitchCase="'bookings'"></app-icon-book>
         </ng-container>
       </div>
 
-      <span *ngIf="!isCollapsed" class="text-sm whitespace-nowrap">
+      <!-- Text Label -->
+      <span *ngIf="!isCollapsed" class="ml-4 text-sm font-medium whitespace-nowrap overflow-hidden">
         {{ item.label }}
       </span>
+
+      <!-- TOOLTIP: Only visible on desktop hover when collapsed -->
+      <div *ngIf="isCollapsed"
+        class="absolute left-full ml-4 px-2 py-1 bg-slate-800 text-white text-xs rounded opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all whitespace-nowrap z-50 pointer-events-none">
+        {{ item.label }}
+      </div>
     </a>
   </nav>
 </aside>
+
+<!-- Mobile Backdrop -->
+<div *ngIf="!isCollapsed && isMobile" (click)="toggle()" class="fixed inset-0 bg-black/20 z-40 md:hidden"></div>
