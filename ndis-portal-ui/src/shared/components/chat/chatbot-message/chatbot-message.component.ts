@@ -1,6 +1,7 @@
-import { Component, Input, AfterViewInit, ElementRef } from '@angular/core';
+import { Component, Input, AfterViewInit, ElementRef, Renderer2, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import { ChatMessage } from '../../../models/chat-message.model';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { ChatIconComponent } from '../../icons/svg-icons/chat-icon';
@@ -18,16 +19,22 @@ export class ChatMessageComponent implements AfterViewInit {
   constructor(
     private sanitizer: DomSanitizer,
     private chatService: ChatService,
-    private elementRef: ElementRef
+    private elementRef: ElementRef,
+    private router: Router,
+    private renderer: Renderer2
   ) {}
 
   ngAfterViewInit() {
+    console.log('[ChatMessage] ngAfterViewInit called, message role:', this.message.role);
+    console.log('[ChatMessage] Message content includes book-service-btn:', this.message.content.includes('book-service-btn'));
+
     // Add click event listeners for AI service buttons
     if (this.message.content.includes('ai-service-buttons')) {
       setTimeout(() => {
         const buttons = this.elementRef.nativeElement.querySelectorAll('.ai-service-btn');
+        console.log('[ChatMessage] Found ai-service buttons:', buttons.length);
         buttons.forEach((button: HTMLButtonElement) => {
-          button.addEventListener('click', (event: Event) => {
+          this.renderer.listen(button, 'click', (event: Event) => {
             event.preventDefault();
             const serviceType = button.getAttribute('data-service');
             const serviceText = button.textContent?.trim();
@@ -36,8 +43,74 @@ export class ChatMessageComponent implements AfterViewInit {
             }
           });
         });
-      }, 0);
+      }, 100);
     }
+
+    // Add click event listeners for Book Service buttons
+    if (this.message.content.includes('book-service-btn')) {
+      setTimeout(() => {
+        const bookButtons = this.elementRef.nativeElement.querySelectorAll('.book-service-btn');
+        console.log('[ChatMessage] Found book-service buttons:', bookButtons.length);
+        
+        if (bookButtons.length === 0) {
+          console.log('[ChatMessage] No book buttons found, retrying in 500ms...');
+          setTimeout(() => {
+            const retryButtons = this.elementRef.nativeElement.querySelectorAll('.book-service-btn');
+            console.log('[ChatMessage] Retry found book-service buttons:', retryButtons.length);
+            this.attachBookButtonListeners(retryButtons);
+          }, 500);
+          return;
+        }
+        
+        this.attachBookButtonListeners(bookButtons);
+      }, 100);
+    }
+  }
+
+  private attachBookButtonListeners(buttons: NodeListOf<Element>) {
+    buttons.forEach((btn: Element) => {
+      const button = btn as HTMLButtonElement;
+      console.log('[ChatMessage] Attaching listener to button:', button);
+      
+      // Use onclick property for more direct handling
+      button.onclick = (event: Event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        const serviceId = button.getAttribute('data-service-id');
+        console.log('[ChatMessage] Book button clicked via onclick, serviceId:', serviceId);
+        if (serviceId) {
+          console.log('[ChatMessage] Navigating to /book-new with serviceId:', serviceId);
+          this.router.navigate(['/book-new'], { queryParams: { serviceId: serviceId } }).then(
+            (success) => console.log('[ChatMessage] Navigation success:', success),
+            (error) => console.error('[ChatMessage] Navigation error:', error)
+          );
+        }
+        return false;
+      };
+    });
+  }
+
+  // Global handler as fallback
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: Event) {
+    const target = event.target as HTMLElement;
+    if (target && target.classList && target.classList.contains('view-service-btn')) {
+      event.preventDefault();
+      event.stopPropagation();
+      const serviceId = target.getAttribute('data-service-id');
+      console.log('[ChatMessage] View button clicked via document listener, serviceId:', serviceId);
+      if (serviceId) {
+        this.router.navigate(['/services'], { queryParams: { highlightService: serviceId } });
+      }
+    }
+  }
+
+  /**
+   * Navigate to booking page for a service
+   */
+  bookService(serviceId: number) {
+    console.log('[ChatMessage] Booking service:', serviceId);
+    this.router.navigate(['/book-new'], { queryParams: { serviceId: serviceId.toString() } });
   }
 
   /**
@@ -53,8 +126,8 @@ export class ChatMessageComponent implements AfterViewInit {
   formatMessage(content: string): SafeHtml {
     if (!content) return this.sanitizer.bypassSecurityTrustHtml('');
 
-    // Check if this is an AI recommendation message with buttons
-    if (content.includes('ai-service-buttons')) {
+    // Check if this is an AI recommendation message with buttons or service recommendations
+    if (content.includes('ai-service-buttons') || content.includes('service-recommendation') || content.includes('book-service-btn')) {
       // For AI recommendation messages, allow the specific HTML structure
       return this.sanitizer.bypassSecurityTrustHtml(content);
     }

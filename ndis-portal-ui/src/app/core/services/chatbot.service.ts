@@ -243,14 +243,16 @@ export class ChatService {
       message: message.trim()
     };
 
-    this.http.post<AiRecommendationResponse>(this.aiRecommendationUrl, request)
+    this.http.post<any>(this.aiRecommendationUrl, request)
       .pipe(
         catchError(error => {
           console.error('[ChatService] AI recommendation API error:', error);
           return of({
-            recommendations: [],
-            isOutOfScope: true,
-            outOfScopeMessage: 'Sorry, I am temporarily unable to provide service recommendations. Please try again later or contact your Support Coordinator for assistance.'
+            Data: {
+              recommendations: [],
+              isOutOfScope: true,
+              outOfScopeMessage: 'Sorry, I am temporarily unable to provide service recommendations. Please try again later or contact your Support Coordinator for assistance.'
+            }
           });
         })
       )
@@ -261,26 +263,30 @@ export class ChatService {
         setTimeout(() => {
           console.log('[ChatService] AI recommendation API response received:', response);
           
-          if (response.isOutOfScope) {
+          // Extract data from wrapped response
+          const data = response.Data || response;
+          
+          if (data.isOutOfScope) {
             // Handle out-of-scope response
             const botMessage: ChatMessage = {
               id: Date.now().toString(),
               role: 'assistant',
-              content: response.outOfScopeMessage || 'Sorry, your request is outside the scope of our available NDIS services.',
+              content: data.outOfScopeMessage || 'Sorry, your request is outside the scope of our available NDIS services.',
               timestamp: new Date(),
+              isOutOfScope: true,
             };
 
             const updatedMessages = [...this.messagesSubject.value, botMessage];
             this.messagesSubject.next(updatedMessages);
             this.saveMessages(updatedMessages);
-          } else if (response.recommendations && response.recommendations.length > 0) {
-            // Format recommendations as a nice response
-            const recommendationsText = this.formatRecommendations(response.recommendations);
+          } else if (data.recommendations && data.recommendations.length > 0) {
+            // Store recommendations as structured data
             const botMessage: ChatMessage = {
               id: Date.now().toString(),
               role: 'assistant',
-              content: `Based on your needs, I found the following services that might be perfect for you:\n\n${recommendationsText}\n\nWould you like more information about any of these services, or would you like me to help you with something else?`,
+              content: `Based on your needs, I found ${data.recommendations.length} service${data.recommendations.length > 1 ? 's' : ''} that might be perfect for you. Click on any service card to book it:`,
               timestamp: new Date(),
+              recommendations: data.recommendations,
             };
 
             const updatedMessages = [...this.messagesSubject.value, botMessage];
@@ -306,12 +312,22 @@ export class ChatService {
   }
 
   /**
-   * Format AI recommendations into readable text
+   * Format AI recommendations into readable text with Book buttons
    */
   private formatRecommendations(recommendations: any[]): string {
     return recommendations.map((rec, index) => {
-      return `${index + 1}. **${rec.serviceName}** (${rec.categoryName})\n   ${rec.reason}\n   *Confidence: ${Math.round(rec.confidence * 100)}%*`;
-    }).join('\n\n');
+      return `<div class="service-recommendation" style="margin-bottom: 16px; padding: 12px; border: 1px solid #e5e7eb; border-radius: 8px; background: #f9fafb;">
+  <div style="font-weight: 600; color: #111827; margin-bottom: 4px;">${index + 1}. ${rec.serviceName}</div>
+  <div style="font-size: 12px; color: #6b7280; margin-bottom: 8px;">${rec.categoryName}</div>
+  <div style="font-size: 14px; color: #374151; margin-bottom: 8px; line-height: 1.4;">${rec.reason}</div>
+  <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 8px;">
+    <span style="font-size: 12px; color: #6F2C91; font-weight: 500;">Confidence: ${Math.round(rec.confidence * 100)}%</span>
+    <button class="book-service-btn" data-service-id="${rec.serviceId}" style="background: #6F2C91; color: white; border: none; padding: 8px 16px; border-radius: 6px; font-size: 13px; cursor: pointer; font-weight: 500; transition: background 0.2s;">
+      Book this service
+    </button>
+  </div>
+</div>`;
+    }).join('');
   }
 
   /**
@@ -335,26 +351,27 @@ Tell us what areas of daily life you need support with, and we'll recommend the 
 What areas of daily life do you need support with?
 
 <div class="ai-service-buttons" style="display: flex; flex-direction: column; gap: 8px; margin: 12px 0;">
-  <button class="ai-service-btn" data-service="daily-activities" style="background: #6F2C91; color: white; border: none; padding: 12px 16px; border-radius: 8px; cursor: pointer; font-size: 14px; text-align: left; transition: background 0.2s;">
+  <button class="ai-service-btn" data-service="daily-activities" style="background: white; color: #6F2C91; border: 2px solid #6F2C91; padding: 12px 16px; border-radius: 8px; cursor: pointer; font-size: 14px; text-align: left; transition: all 0.2s; font-weight: 500;">
     Daily personal activities
   </button>
-  <button class="ai-service-btn" data-service="community-access" style="background: #6F2C91; color: white; border: none; padding: 12px 16px; border-radius: 8px; cursor: pointer; font-size: 14px; text-align: left; transition: background 0.2s;">
+  <button class="ai-service-btn" data-service="community-access" style="background: white; color: #6F2C91; border: 2px solid #6F2C91; padding: 12px 16px; border-radius: 8px; cursor: pointer; font-size: 14px; text-align: left; transition: all 0.2s; font-weight: 500;">
     Community access and social activities
   </button>
-  <button class="ai-service-btn" data-service="therapy-supports" style="background: #6F2C91; color: white; border: none; padding: 12px 16px; border-radius: 8px; cursor: pointer; font-size: 14px; text-align: left; transition: background 0.2s;">
+  <button class="ai-service-btn" data-service="therapy-supports" style="background: white; color: #6F2C91; border: 2px solid #6F2C91; padding: 12px 16px; border-radius: 8px; cursor: pointer; font-size: 14px; text-align: left; transition: all 0.2s; font-weight: 500;">
     Therapy supports
   </button>
-  <button class="ai-service-btn" data-service="support-coordination" style="background: #6F2C91; color: white; border: none; padding: 12px 16px; border-radius: 8px; cursor: pointer; font-size: 14px; text-align: left; transition: background 0.2s;">
+  <button class="ai-service-btn" data-service="support-coordination" style="background: white; color: #6F2C91; border: 2px solid #6F2C91; padding: 12px 16px; border-radius: 8px; cursor: pointer; font-size: 14px; text-align: left; transition: all 0.2s; font-weight: 500;">
     Support coordination
   </button>
-  <button class="ai-service-btn" data-service="respite-care" style="background: #6F2C91; color: white; border: none; padding: 12px 16px; border-radius: 8px; cursor: pointer; font-size: 14px; text-align: left; transition: background 0.2s;">
+  <button class="ai-service-btn" data-service="respite-care" style="background: white; color: #6F2C91; border: 2px solid #6F2C91; padding: 12px 16px; border-radius: 8px; cursor: pointer; font-size: 14px; text-align: left; transition: all 0.2s; font-weight: 500;">
     Respite care
   </button>
 </div>
 
 <style>
 .ai-service-btn:hover {
-  background: #5a189a !important;
+  background: #6F2C91 !important;
+  color: white !important;
 }
 .ai-service-btn:active {
   transform: scale(0.98);
