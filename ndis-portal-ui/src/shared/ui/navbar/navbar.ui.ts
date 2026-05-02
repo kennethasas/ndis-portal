@@ -1,31 +1,22 @@
-import { Component, Input } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
-import { HomeIconComponent } from '../../components/icons/svg-icons/home-icon';
-import { SideBarIconComponent } from '../../components/icons/svg-icons/sidebar-icon';
 
+import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { SidebarService } from '../../../app/core/services/sidebar.service';
+
 @Component({
   selector: 'app-navbar-ui',
   standalone: true,
-  imports: [
-    CommonModule,
-    RouterModule,
-    HomeIconComponent,
-    SideBarIconComponent,
-  ],
+  imports: [CommonModule],
   templateUrl: './navbar.ui.html',
-  host: { class: 'block w-full' },
 })
 export class NavbarUiComponent {
-  @Input() breadcrumbs: Array<{ label: string; url: string }> = [];
-
   constructor(private sidebarService: SidebarService) {}
 
   /**
-   * Triggers the global sidebar toggle state
+   * This is the method the HTML is looking for.
+   * It tells the global service to flip the collapsed state.
    */
-  toggleSidebar(): void {
+  toggle(): void {
     this.sidebarService.toggle();
   }
 }

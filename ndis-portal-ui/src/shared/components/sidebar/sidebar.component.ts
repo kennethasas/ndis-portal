@@ -9,7 +9,6 @@ import { AuthService } from '../../../app/core/services/auth.service';
   template: `
     <app-sidebar-ui
       [navItems]="filteredLinks"
-      [subText]="currentSubText"
     ></app-sidebar-ui>
   `,
   host: { class: 'block h-full flex-none transition-all duration-300' },

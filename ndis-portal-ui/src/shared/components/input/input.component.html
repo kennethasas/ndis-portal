@@ -1,14 +1,16 @@
 <div class="input-wrapper">
   <label *ngIf="label" [for]="name" class="input-label">{{ label }}</label>
-  <input
-    [type]="type"
-    [id]="name"
-    [name]="name"
-    [placeholder]="placeholder"
-    [required]="required"
-    [disabled]="disabled"
-    [value]="value"
-    (input)="onInput($event)"
-    (blur)="onTouched()"
-    class="app-input">
+  <input [type]="type" [id]="name" [name]="name" [placeholder]="placeholder" [required]="required" [disabled]="disabled"
+    [value]="value" (input)="onInput($event)" (blur)="onTouched()" class="
+          w-full
+          px-3 py-2.5
+          text-sm
+          border border-slate-300 rounded-lg
+          bg-white outline-none transition
+          focus:border-[#6F2C91]
+          focus:ring-2 focus:ring-[#6F2C91]/10
+          placeholder:text-slate-400
+          disabled:bg-slate-100 disabled:cursor-not-allowed
+          md:px-4 md:py-3.5 md:text-base
+        " />
 </div>

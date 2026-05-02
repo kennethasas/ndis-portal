@@ -1,14 +1,19 @@
-import { Component, Input, OnInit, OnDestroy } from '@angular/core';
+import {
+  Component,
+  Input,
+  OnInit,
+  OnDestroy,
+  HostListener,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { SidebarService } from '../../../app/core/services/sidebar.service';
 
-// Icons
 import { HomeIconComponent } from '../../components/icons/svg-icons/home-icon';
 import { BookIconComponent } from '../../components/icons/svg-icons/book-icon';
 import { ServiceIconComponent } from '../../components/icons/svg-icons/service-icon';
-
+import { SideBarIconComponent } from '../../components/icons/svg-icons/sidebar-icon';
 export interface NavItem {
   label: string;
   path: string;
@@ -22,56 +27,49 @@ export interface NavItem {
     CommonModule,
     RouterModule,
     HomeIconComponent,
-    BookIconComponent,
     ServiceIconComponent,
+    BookIconComponent,
+    SideBarIconComponent,
   ],
   templateUrl: './sidebar.ui.html',
 })
 export class SidebarUi implements OnInit, OnDestroy {
   @Input() navItems: NavItem[] = [];
-  @Input() subText: string = 'Enterprise';
-
-  /** Sidebar state from service */
   isCollapsed = false;
-
-  /** Subscription cleanup container */
+  isMobile = false;
   private sub = new Subscription();
 
   constructor(private sidebarService: SidebarService) {}
 
-  ngOnInit(): void {
-    /**
-     * Subscribe to global sidebar state
-     */
-    console.log('SidebarUi navItems:', this.navItems);
+  toggle(): void {
+    this.sidebarService.toggle(); // Both call the exact same service method
+  }
 
+  @HostListener('window:resize')
+  onResize() {
+    this.checkScreenSize();
+  }
+
+  private checkScreenSize() {
+    this.isMobile = window.innerWidth < 768;
+    if (this.isMobile && !this.isCollapsed) {
+      this.sidebarService.setCollapsed(true);
+    }
+  }
+
+  ngOnInit() {
     this.sub.add(
-      this.sidebarService.collapsed$.subscribe((state) => {
-        this.isCollapsed = state;
-      }),
+      this.sidebarService.collapsed$.subscribe(
+        (state) => (this.isCollapsed = state),
+      ),
     );
   }
 
-  /**
-   * Toggle sidebar via service
-   */
-  toggleCollapse(event?: Event): void {
-    if (event) {
-      event.stopPropagation();
-    }
-
-    this.sidebarService.toggle();
+  closeSidebar() {
+    this.sidebarService.setCollapsed(true);
   }
 
-  /**
-   * Called when clicking navigation item
-   * Ensures mobile auto-close behavior only when needed
-   */
-  onNavClick(): void {
-    this.sidebarService.autoCloseOnMobile();
-  }
-
-  ngOnDestroy(): void {
+  ngOnDestroy() {
     this.sub.unsubscribe();
   }
 }
