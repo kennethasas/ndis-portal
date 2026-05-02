@@ -5,6 +5,7 @@ namespace NDISPortal.API.Services.Interfaces
     public interface IServiceService
     {
         Task<IEnumerable<ServiceDto>> GetAllAsync(int? categoryId);
+        Task<IEnumerable<ServiceDto>> GetAllForCoordinatorAsync(int? categoryId);
 
         Task<ServiceDto?> GetByIdAsync(int id);
 

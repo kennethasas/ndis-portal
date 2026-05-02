@@ -1,5 +1,10 @@
 <app-button-ui 
-  label="Book This Service" 
-  variant="solid" (onClick)="onClick.emit($event)"
+  [label]="isLoading ? 'loading' : 'Book This Service'" 
+  variant="solid" 
+  [disabled]="disabled || isLoading"
+  (onClick)="handleClick($event)"
 >
+  <div *ngIf="isLoading" left-icon class="inline-flex items-center">
+    <div class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+  </div>
 </app-button-ui>

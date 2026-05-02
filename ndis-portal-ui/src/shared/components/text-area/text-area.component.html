@@ -1,7 +1,7 @@
 <app-text-area-ui>
   <span label-content>{{ label }}</span>
 
-  <textarea [rows]="rows" [placeholder]="placeholder" [ngModel]="value" [required]="required"
+  <textarea [rows]="rows" [placeholder]="placeholder" [ngModel]="value" [required]="required" [disabled]="disabled"
     (ngModelChange)="valueChange.emit($event)"
-    class="w-full px-4 py-3.5 bg-white border border-slate-200 rounded-md text-slate-700 text-sm md:text-base outline-none transition-all focus:border-[#6B3293] focus:ring-4 focus:ring-violet-600/10 placeholder:text-slate-400"></textarea>
+    class="w-full px-4 py-3.5 bg-white border border-slate-200 rounded-md text-slate-700 text-sm md:text-base outline-none transition-all focus:border-[#6B3293] focus:ring-4 focus:ring-violet-600/10 placeholder:text-slate-400 disabled:opacity-50 disabled:cursor-not-allowed"></textarea>
 </app-text-area-ui>

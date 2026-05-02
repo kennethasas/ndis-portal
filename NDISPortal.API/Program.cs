@@ -15,11 +15,11 @@ using System.Text;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDbContext<application_db_context>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseSqlServer("Server=JIM;Database=ndis_portal_db;Trusted_Connection=True;TrustServerCertificate=True;"));
 
-var jwtKey = builder.Configuration["JwtSettings:Key"];
-var jwtIssuer = builder.Configuration["JwtSettings:Issuer"];
-var jwtAudience = builder.Configuration["JwtSettings:Audience"];
+var jwtKey = "THIS_IS_A_VERY_SECURE_KEY_2026_!@#_LONG_RANDOM_STRING";
+var jwtIssuer = "MyApi";
+var jwtAudience = "MyApiUsers";
 
 builder.Services.AddAuthentication(options =>
 {
@@ -37,7 +37,7 @@ builder.Services.AddAuthentication(options =>
         ValidIssuer = jwtIssuer,
         ValidAudience = jwtAudience,
         IssuerSigningKey = new SymmetricSecurityKey(
-            Encoding.UTF8.GetBytes(jwtKey!)
+            Encoding.UTF8.GetBytes(jwtKey)
         ),
         RoleClaimType = System.Security.Claims.ClaimTypes.Role
     };
@@ -61,7 +61,7 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
     {
-        policy.WithOrigins("https://localhost:4200", "http://localhost:4200")
+        policy.WithOrigins("https://localhost:4200", "http://localhost:4200", "https://localhost:4201", "http://localhost:4201")
               .AllowAnyMethod()
               .AllowAnyHeader()
               .AllowCredentials();
@@ -114,7 +114,7 @@ app.UseHttpsRedirection();
 
 app.UseCors("AllowFrontend");
 
-app.UseMiddleware<error_handling_middleware>();
+// app.UseMiddleware<error_handling_middleware>(); // TEMPORARY: Disable for testing
 
 app.UseAuthentication();
 app.UseAuthorization();

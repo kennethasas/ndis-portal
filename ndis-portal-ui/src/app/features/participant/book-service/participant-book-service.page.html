@@ -7,7 +7,9 @@
     </div>
 
     <!-- Error Message -->
-    <div *ngIf="errorMessage" class="w-full max-w-4xl bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
+    <div *ngIf="errorMessage" 
+         data-testid="error-message"
+         class="w-full max-w-4xl bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
         {{ errorMessage }}
     </div>
 
@@ -34,25 +36,53 @@
             </div>
 
             <div class="w-full space-y-6" *ngIf="!isLoadingServices">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
-                    <app-select-service class="block w-full" [options]="services" [(value)]="bookingData.serviceId" [disabled]="isSubmitting">
+                <!-- Service Selection -->
+                <div class="space-y-2">
+                    <app-select-service 
+                        data-testid="service-select"
+                        class="block w-full" 
+                        [options]="services" 
+                        [(value)]="bookingForm.serviceId" 
+                        [disabled]="isSubmitting">
                     </app-select-service>
-    
-                    <app-date-picker-component class="block w-full" [(value)]="bookingData.date" [disabled]="isSubmitting">
-                    </app-date-picker-component>
+                    <div *ngIf="hasError('serviceId')" class="text-red-500 text-sm mt-1">
+                        {{ getError('serviceId') }}
+                    </div>
                 </div>
-    
-                <app-text-area-component class="block w-full" [(value)]="bookingData.notes" [disabled]="isSubmitting">
-                </app-text-area-component>
+
+                <!-- Preferred Date -->
+                <div class="space-y-2">
+                    <app-date-picker-component 
+                        data-testid="date-input"
+                        class="block w-full" 
+                        [(value)]="bookingForm.preferredDate" 
+                        [disabled]="isSubmitting">
+                    </app-date-picker-component>
+                    <div *ngIf="hasError('preferredDate')" class="text-red-500 text-sm mt-1">
+                        {{ getError('preferredDate') }}
+                    </div>
+                </div>
+
+                <!-- Notes -->
+                <div class="space-y-2">
+                    <app-text-area-component 
+                        data-testid="notes-input"
+                        class="block w-full" 
+                        [(value)]="bookingForm.notes" 
+                        [disabled]="isSubmitting">
+                    </app-text-area-component>
+                </div>
             </div>
+
             <div class="flex flex-col-reverse md:flex-row justify-end items-center gap-8 pt-6">
                 <app-back-button (onClick)="navBack()"></app-back-button>
-                <app-book-button (onClick)="confirmBooking()" [disabled]="isSubmitting || !bookingData.serviceId || !bookingData.date" [isLoading]="isSubmitting">
+                <app-book-button 
+                    data-testid="submit-btn"
+                    (onClick)="submitBooking()" 
+                    [disabled]="isSubmitting" 
+                    [isLoading]="isSubmitting">
                 </app-book-button>
             </div>
         </div>
     </div>
-
-
- 
 </div>

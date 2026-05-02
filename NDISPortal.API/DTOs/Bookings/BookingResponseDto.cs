@@ -10,6 +10,8 @@
 
         public string ServiceName { get; set; } = string.Empty;
 
+        public string? ServiceCategory { get; set; }
+
         public string? ParticipantName { get; set; }
 
         public DateTime PreferredDate { get; set; }

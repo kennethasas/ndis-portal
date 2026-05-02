@@ -1,8 +1,8 @@
 <app-select-ui [isRequired]="required">
     <span label-content>{{ label }}</span>
 
-    <select [ngModel]="value" (ngModelChange)="valueChange.emit($event)" [required]="required"
-        class="w-full px-4 py-3.5 bg-white border border-slate-200 rounded-md text-slate-700 text-sm md:text-base outline-none appearance-none cursor-pointer">
+    <select [ngModel]="value" (ngModelChange)="valueChange.emit($event)" [required]="required" [disabled]="disabled"
+        class="w-full px-4 py-3.5 bg-white border border-slate-200 rounded-md text-slate-700 text-sm md:text-base outline-none appearance-none cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed">
         <option value="" disabled selected>{{ placeholder }}</option>
 
         <option *ngFor="let opt of options" [value]="opt.id">

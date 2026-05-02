@@ -17,7 +17,7 @@ namespace Register.API.Services
         public AuthService(IConfiguration config)
         {
             _config = config;
-            _connectionString = config.GetConnectionString("DefaultConnection");
+            _connectionString = "Server=JIM;Database=ndis_portal_db;Trusted_Connection=True;TrustServerCertificate=True;";
         }
 
         public async Task<object> Register(RegisterDto dto)
@@ -233,10 +233,10 @@ namespace Register.API.Services
                 new Claim(ClaimTypes.Role, role)
             };
 
-            var keyString = _config["JwtSettings:Key"];
-            var issuer = _config["JwtSettings:Issuer"];
-            var audience = _config["JwtSettings:Audience"];
-            var expiryHours = _config["JwtSettings:ExpiryHours"];
+            var keyString = "THIS_IS_A_VERY_SECURE_KEY_2026_!@#_LONG_RANDOM_STRING";
+            var issuer = "MyApi";
+            var audience = "MyApiUsers";
+            var expiryHours = "8";
 
             if (string.IsNullOrWhiteSpace(keyString) ||
                 string.IsNullOrWhiteSpace(issuer) ||

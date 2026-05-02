@@ -1,190 +1,70 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { AllBookingTable } from '../../../../shared/components/table/all-bookings/all-booking-table.component';
-import { StatusDropdownComponent } from '../../../../shared/components/dropdown/status/status-dropdown.component';
-import { PaginationComponent } from '../../../../shared/components/pagination/pagination.component';
-import { BookingService } from '../../../core/services/booking.service';
-import { Booking, BookingViewModel } from '../../../core/models/booking.model';
-// Import the generic Smart Dialog Component
-import { CancelDialogComponent } from '../../../../shared/components/dialog/cancel-dialog.component';
+import { ApiService } from '../../../core/services/api-service';
 
 @Component({
   selector: 'app-all-bookings',
   standalone: true,
-  imports: [
-    CommonModule,
-    AllBookingTable,
-    StatusDropdownComponent,
-    PaginationComponent,
-    CancelDialogComponent, // Integrated for responsive cancellation
-  ],
+  imports: [CommonModule],
   templateUrl: './all-bookings.page.html',
 })
 export class AllBookingsComponent implements OnInit {
-  // --- Data State ---
-  bookings: BookingViewModel[] = [];
-  totalItems = 0;
-  totalPages = 1;
-  currentPage = 1;
-  pageSize = 10;
-  activeFilter = 'all';
-  isLoading = false;
-  errorMessage = '';
+  bookings: any[] = [];
+  isLoadingBookings = true;
+  activeMenuId: number | null = null;
 
-  // --- Dialog State ---
-  isCancelDialogOpen = false;
-  selectedBookingForCancel: BookingViewModel | null = null;
+  constructor(private api: ApiService) {}
 
-  constructor(private bookingService: BookingService) {}
-
-  ngOnInit() {
-    this.fetchBookings();
+  ngOnInit(): void {
+    this.loadBookings();
   }
 
-  /**
-   * Fetches bookings based on the active status filter
-   */
-  fetchBookings() {
-    this.isLoading = true;
-    this.errorMessage = '';
+  loadBookings(): void {
+    this.isLoadingBookings = true;
 
-    const statusFilter =
-      this.activeFilter === 'all' ? undefined : this.activeFilter;
-
-    this.bookingService.getBookings(statusFilter).subscribe({
-      next: (bookings: Booking[]) => {
-        this.isLoading = false;
-        // Transform raw data to ViewModel for the table
-        this.bookings = bookings.map((booking) => this.mapToViewModel(booking));
-        this.totalItems = bookings.length;
-        this.totalPages = Math.ceil(this.totalItems / this.pageSize) || 1;
+    this.api.getBookings().subscribe({
+      next: (res: any) => {
+        const data = res.Data || res;
+        this.bookings = Array.isArray(data) ? data : [];
+        this.isLoadingBookings = false;
       },
-      error: (error: Error) => {
-        this.isLoading = false;
-        this.errorMessage = error.message;
+      error: (err) => {
+        console.error('Error loading bookings:', err);
         this.bookings = [];
-        this.totalItems = 0;
-        this.totalPages = 1;
+        this.isLoadingBookings = false;
       },
     });
   }
 
-  // --- Event Handlers ---
+  approveBooking(booking: any): void {
+    this.activeMenuId = null;
 
-  /**
-   * Triggered by the table action. Opens our custom responsive dialog.
-   */
-  handleCancel(booking: BookingViewModel) {
-    this.selectedBookingForCancel = booking;
-    this.isCancelDialogOpen = true;
-  }
-
-  /**
-   * Approves a pending booking (Coordinator only)
-   */
-  handleApprove(booking: BookingViewModel) {
-    this.isLoading = true;
-    this.errorMessage = '';
-
-    this.bookingService.updateBookingStatus(booking.id, 'Approved').subscribe({
+    this.api.updateBookingStatus(booking.id, 'Approved').subscribe({
       next: () => {
-        this.isLoading = false;
-        this.fetchBookings(); // Refresh the data list
+        booking.status = 'Approved';
       },
-      error: (error: Error) => {
-        this.isLoading = false;
-        this.errorMessage = error.message;
-      },
-    });
-  }
-
-  /**
-   * Resets the dialog state and closes it
-   */
-  closeCancelDialog() {
-    this.isCancelDialogOpen = false;
-    // Delay nulling to prevent content flashing during close animation
-    setTimeout(() => {
-      this.selectedBookingForCancel = null;
-    }, 200);
-  }
-
-  /**
-   * Performs the API call to delete the booking after user confirms in the Dialog
-   */
-  confirmCancellation() {
-    if (!this.selectedBookingForCancel) return;
-
-    const idToDelete = this.selectedBookingForCancel.id;
-
-    // Close UI immediately for snappy feel
-    this.isCancelDialogOpen = false;
-    this.isLoading = true;
-
-    this.bookingService.deleteBooking(idToDelete).subscribe({
-      next: () => {
-        this.selectedBookingForCancel = null;
-        this.fetchBookings(); // Refresh the data list
-      },
-      error: (error: Error) => {
-        this.isLoading = false;
-        this.errorMessage = error.message;
+      error: (err) => {
+        console.error('Error approving booking:', err);
+        alert('Failed to approve booking. Please try again.');
       },
     });
   }
 
-  handleStatusFilter(status: string) {
-    this.activeFilter = status;
-    this.currentPage = 1;
-    this.fetchBookings();
+  toggleMenu(booking: any): void {
+    this.activeMenuId = this.activeMenuId === booking.id ? null : booking.id;
   }
 
-  handlePageChange(page: number) {
-    this.currentPage = page;
-    this.fetchBookings();
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent): void {
+    const target = event.target as HTMLElement;
+    const clickedMenu = target.closest('[data-testid="menu-btn"]');
+
+    if (!clickedMenu) {
+      this.activeMenuId = null;
+    }
   }
 
-  handleView(booking: BookingViewModel) {
-    console.log('Viewing booking details:', booking.rawData);
-  }
-
-  // --- Mapping & Data Logic ---
-
-  private mapToViewModel(booking: Booking): BookingViewModel {
-    const dateObj = new Date(booking.preferredDate);
-    const formattedDate = dateObj.toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-    });
-
-    return {
-      id: booking.id,
-      name: booking.participantName,
-      service: booking.serviceName,
-      category: this.deriveCategory(booking.serviceName),
-      date: formattedDate,
-      status: booking.status,
-      notes: booking.notes,
-      rawData: booking,
-    };
-  }
-
-  /**
-   * Maps service names to display categories for the Table Badge
-   */
-  private deriveCategory(serviceName: string): string {
-    const name = serviceName.toLowerCase();
-    if (name.includes('hygiene') || name.includes('personal'))
-      return 'Daily Personal Activities';
-    if (name.includes('transport') || name.includes('drive'))
-      return 'Transportation';
-    if (name.includes('meal') || name.includes('cook'))
-      return 'Meal Preparation';
-    if (name.includes('social') || name.includes('community'))
-      return 'Social Participation';
-    if (name.includes('home') || name.includes('cleaning'))
-      return 'Home Maintenance';
-    return 'Support Services';
+  isPending(booking: any): boolean {
+    return booking.status === 'Pending';
   }
 }

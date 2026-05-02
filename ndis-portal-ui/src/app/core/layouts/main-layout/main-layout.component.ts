@@ -8,6 +8,7 @@ import { NavbarComponent } from '../../../../shared/components/navbar/navbar.com
 /* Import your chatbot container */
 import { ChatbotContainerComponent }
 from '../../../../shared/components/chat/chatbot-container/chatbot-container.component';
+import { ToastComponent } from '../../../../shared/components/toast/toast.component'; // Adjust path as needed
 
 @Component({
   selector: 'app-main-layout',
@@ -18,6 +19,7 @@ from '../../../../shared/components/chat/chatbot-container/chatbot-container.com
     SidebarComponent,
     NavbarComponent,
     ChatbotContainerComponent,
+    ToastComponent,
   ],
   templateUrl: './main-layout.component.html',
   // This ensures the layout component itself fills the screen

@@ -12,6 +12,6 @@ namespace Service.API.DTOs.Service
 
         public string Description { get; set; }
 
-        public bool is_active { get; set; }
+        public bool IsActive { get; set; }
     }
 }
