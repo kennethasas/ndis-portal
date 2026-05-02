@@ -1,93 +1,141 @@
-<div class="signup-page">
-  <div class="image-section">
-    <app-slideshow 
-      [images]="slideImages" 
-      [interval]="5000" 
-      alt="NDIS Support Services">
+<div class="flex flex-col lg:flex-row-reverse h-screen w-full overflow-hidden bg-white">
+
+  <!-- Image Section (approx 42% using fraction 5/12 or w-[41.6%]) -->
+  <!-- Image Side -->
+  <div
+    class="hidden md:block flex-none w-[42%] overflow-hidden h-screen max-md:w-full max-md:h-[22vh] max-md:min-h-[140px]">
+    <app-slideshow class="block w-full h-full" [images]="slideImages" [interval]="5000" alt="NDIS Support Services">
     </app-slideshow>
   </div>
 
-  <div class="form-section">
-    <div class="form-container">
-      <div class="header">
-        <div class="logo-placeholder"></div>
-        <div class="title-group">
-          <h1>Create an account</h1>
-          <p class="subtitle">Start your journey toward personalized care.</p>
+  <!-- Form Section -->
+  <div class="flex-1 flex justify-center items-center p-5 bg-white overflow-y-auto">
+    <div class="w-full max-w-md">
+
+      <!-- Header -->
+      <div class="flex items-center gap-3 mb-5">
+        <div class="w-14 h-14 bg-stone-200 rounded-full shrink-0"></div>
+        <div>
+          <h1 class="m-0 text-xl lg:text-4xl font-bold text-neutral-800">Create an account</h1>
+          <p class="text-neutral-500 text-xs lg:text-base">Start your journey toward personalized care.</p>
         </div>
       </div>
 
-      <form (ngSubmit)="onSignUp()" #signupForm="ngForm">
-        <div class="input-row">
-          <div class="input-group">
-            <app-input
-              type="text"
-              placeholder="First Name"
-              name="firstName"
-              [(ngModel)]="signupData.firstName"
+      <form (ngSubmit)="onSignUp()" #signupForm="ngForm" class="space-y-3">
+        <!-- Input Row (Stacks on mobile) -->
+        <div class="flex flex-col lg:flex-row gap-2">
+          <div>
+            <app-input type="text" placeholder="First Name" name="firstName" [(ngModel)]="signupData.firstName"
               [required]="true">
             </app-input>
           </div>
-          <div class="input-group">
-            <app-input
-              type="text"
-              placeholder="Last Name"
-              name="lastName"
-              [(ngModel)]="signupData.lastName"
+          <div>
+            <app-input type="text" placeholder="Last Name" name="lastName" [(ngModel)]="signupData.lastName"
               [required]="true">
             </app-input>
           </div>
         </div>
 
-        <div class="input-group">
-          <select name="role" [(ngModel)]="signupData.role" required class="select-input">
+        <!-- Role Select 
+        <div class="mb-4">
+          <select name="role" [(ngModel)]="signupData.role" required
+            class="w-full p-3.5 border border-neutral-200 rounded-lg text-sm outline-none focus:border-[#6F2C91] appearance-none bg-white text-neutral-700">
             <option value="" disabled selected>Role</option>
             <option value="participant">Participant</option>
             <option value="coordinator">Coordinator</option>
           </select>
         </div>
+        -->
+        <div>
+          <app-role-dropdown name="role" [(value)]="signupData.role" required></app-role-dropdown>
+        </div>
 
-        <div class="input-group">
-          <app-input
-            type="email"
-            placeholder="Email"
-            name="email"
-            [(ngModel)]="signupData.email"
-            [required]="true">
+        <!-- Email -->
+        <div>
+          <app-input type="email" placeholder="Email" name="email" [(ngModel)]="signupData.email" [required]="true">
           </app-input>
         </div>
 
-        <div class="input-group">
-          <app-input
-            type="password"
-            placeholder="Password"
-            name="password"
+        <!-- Password 
+        <div class="relative w-full">
+          <input 
+            [type]="showPassword ? 'text' : 'password'"
+            placeholder="Password" 
+            name="password" 
             [(ngModel)]="signupData.password"
-            [required]="true">
-          </app-input>
+            [required]="true"
+            class="
+              w-full
+              px-3 py-2.5 pr-10
+              text-sm
+              border border-slate-300 rounded-lg
+              bg-white outline-none transition
+              focus:border-[#6F2C91]
+              focus:ring-2 focus:ring-[#6F2C91]/10
+              placeholder:text-slate-400
+              md:px-4 md:py-3.5 md:text-base 
+            "
+          />
+            <button type="button" (click)="togglePassword()"
+              class="absolute right-2 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-700">
+              <app-icon-unview *ngIf="!showPassword"></app-icon-unview>
+              <app-icon-view *ngIf="showPassword"></app-icon-view>
+            </button>
         </div>
 
-        <div class="checkbox-group">
-          <input type="checkbox" id="terms" name="terms" [(ngModel)]="signupData.agreeToTerms" required>
-          <label for="terms">I agree to the terms and conditions.</label>
+        -->
+        <div>
+          <app-password-field placeholder="Password" name="password" [(value)]="signupData.password" [required]="true">
+          </app-password-field>
         </div>
 
-        <button type="submit" class="btn-signup" [disabled]="isLoading">
+
+        <!-- Checkbox -->
+        <div class="flex items-start gap-3 my-5">
+          <div>
+            <input type="checkbox" id="terms" name="terms" [(ngModel)]="signupData.agreeToTerms" required
+              class="w-4 h-4 rounded border-neutral-300 text-purple-800 focus:ring-purple-800 accent-purple-800 cursor-pointer">
+
+          </div>
+
+          <div class="text-xs md:text-sm">
+            <label for="terms" class="text-neutral-600 cursor-pointer select-none">
+              I agree to the
+              <a routerLink="/terms"
+                class="font-semibold text-purple-800 hover:text-purple-900 underline underline-offset-2">Terms of
+                Service</a>
+              and
+              <a routerLink="/privacy"
+                class="font-semibold text-purple-800 hover:text-purple-900 underline underline-offset-2">Privacy
+                Policy</a>.
+            </label>
+          </div>
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit" [disabled]="isLoading"
+          class="w-full py-2.5 text-sm md:py-3 md:text-base bg-[#6F2C91] text-white rounded-lg transition hover:bg-[#5a189a] disabled:opacity-50">
+
           {{ isLoading ? 'Creating account...' : 'Sign up' }}
         </button>
+
+        <!-- Feedback Messages -->
+        <div *ngIf="errorMessage" class="text-sm text-red-600 bg-red-50 border border-red-200 px-3 py-2 rounded-md">
+          {{ errorMessage }}
+        </div>
+
+
+        <div *ngIf="successMessage"
+          class="bg-emerald-50 text-emerald-700 text-sm border border-red-200 px-3 py-2 rounded-md">
+          {{ successMessage }}
+        </div>
       </form>
 
-      <p class="footer-text">
-        Already have an account? <a routerLink="/login" class="login-link">Log in</a>
+      <!-- Footer -->
+      <p class="text-center mt-6 text-sm md:text-sm text-neutral-600">
+        Already have an account?
+        <a routerLink="/login" class="text-[#6F2C91] font-bold hover:underline">Log in</a>
       </p>
-
-      <div *ngIf="errorMessage" class="error-message">
-        {{ errorMessage }}
-      </div>
-
-      <div *ngIf="successMessage" class="success-message">
-        {{ successMessage }}
-      </div>
     </div>
   </div>
 </div>
