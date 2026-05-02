@@ -8,8 +8,13 @@
     </header>
 
     <main>
-        <!-- Use filteredServices here -->
-        <app-service-card-component [services]="filteredServices" (cardSelected)="onCardClick($event)">
+        <!-- All Services including AI Recommendation Card -->
+        <app-service-card-component [services]="filteredServices" 
+            (cardSelected)="onCardClick($event)"
+            (aiRecommendationSelected)="openAiRecommendation()">
         </app-service-card-component>
     </main>
+
+    <!-- Chat Container (for AI recommendation functionality) -->
+    <app-chatbot-container #chatContainer></app-chatbot-container>
 </div>

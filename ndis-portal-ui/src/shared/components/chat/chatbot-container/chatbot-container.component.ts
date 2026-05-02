@@ -6,6 +6,7 @@ import { Router, NavigationEnd } from '@angular/router';
 import { ChatButtonComponent } from '../../../../shared/components/chat/chatbot-button/chatbot-button.component';
 import { ChatPanelComponent } from '../chatbot-panel/chatbot-panel.component';
 import { AuthService } from '../../../../app/core/services/auth.service';
+import { ChatService } from '../../../../app/core/services/chatbot.service';
 
 
 /**
@@ -31,7 +32,8 @@ export class ChatbotContainerComponent implements OnInit, OnDestroy {
   constructor(
     private auth: AuthService,
     private cdr: ChangeDetectorRef,
-    private router: Router
+    private router: Router,
+    private chatService: ChatService
   ) {}
 
   ngOnInit() {
@@ -79,6 +81,28 @@ export class ChatbotContainerComponent implements OnInit, OnDestroy {
       return;
     }
 
+    const wasOpen = this.isOpen;
     this.isOpen = !this.isOpen;
+
+    // If opening via chat button (not via service recommendation card),
+    // reset to normal chat mode
+    if (!wasOpen && this.isOpen) {
+      this.chatService.resetToNormalChat();
+    }
+  }
+
+  /**
+   * Open chat in AI recommendation mode (called from service recommendation card)
+   */
+  openAiRecommendation() {
+    if (!this.showChatbot) {
+      return;
+    }
+
+    // Initialize AI recommendation mode
+    this.chatService.initializeAiRecommendation();
+    
+    // Open the chat panel
+    this.isOpen = true;
   }
 }

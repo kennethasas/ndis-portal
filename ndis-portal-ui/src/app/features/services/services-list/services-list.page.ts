@@ -1,21 +1,26 @@
 // services-list.page.ts
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { CardComponent, ServiceItem } from '../../../../shared/components/card/service-card/service-card.component';
 import { CategoryDropdownComponent } from '../../../../shared/components/dropdown/category/category-dropdown.component';
 import { ApiService } from '../../../core/services/api-service';
+import { ChatService } from '../../../core/services/chatbot.service';
+import { AiRecommendationCardComponent } from '../../../../shared/components/ai-recommendation/ai-recommendation-card/ai-recommendation-card.component';
+import { ChatbotContainerComponent } from '../../../../shared/components/chat/chatbot-container/chatbot-container.component';
 
 
 @Component({
   selector: 'app-services-list',
   standalone: true,
-  imports: [CommonModule, CardComponent, CategoryDropdownComponent],
+  imports: [CommonModule, CardComponent, CategoryDropdownComponent, AiRecommendationCardComponent, ChatbotContainerComponent],
   templateUrl: './services-list.page.html',
 })
 export class ServicesListComponent implements OnInit {
   allServices: ServiceItem[] = [];
   filteredServices: ServiceItem[] = [];
+  
+  @ViewChild(ChatbotContainerComponent) chatContainer!: ChatbotContainerComponent;
 
   // FIXED: Ensure keys here match the normalized output of your API strings
   private categoryIconMap: { [key: string]: string } = {
@@ -29,6 +34,7 @@ export class ServicesListComponent implements OnInit {
   constructor(
     private router: Router,
     private api: ApiService,
+    private chatService: ChatService,
   ) {}
 
   ngOnInit() {
@@ -77,5 +83,12 @@ export class ServicesListComponent implements OnInit {
 
   onCardClick(service: ServiceItem) {
     this.router.navigate(['/services', service.id]);
+  }
+
+  openAiRecommendation() {
+    // Open chat in AI recommendation mode via the container
+    if (this.chatContainer) {
+      this.chatContainer.openAiRecommendation();
+    }
   }
 }
