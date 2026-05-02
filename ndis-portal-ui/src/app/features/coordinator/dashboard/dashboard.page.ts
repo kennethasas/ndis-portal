@@ -122,6 +122,21 @@ export class DashboardComponent implements OnInit {
     });
   }
 
+  cancelBooking(booking: any): void {
+    this.activeMenuId = null;
+
+    this.api.updateBookingStatus(booking.id, 'Cancelled').subscribe({
+      next: () => {
+        booking.status = 'Cancelled';
+        this.loadStats();
+      },
+      error: (err) => {
+        console.error('Error cancelling booking:', err);
+        alert('Failed to cancel booking. Please try again.');
+      }
+    });
+  }
+
   toggleMenu(booking: any): void {
     // Close menu if clicking the same booking, otherwise open new menu
     this.activeMenuId = this.activeMenuId === booking.id ? null : booking.id;

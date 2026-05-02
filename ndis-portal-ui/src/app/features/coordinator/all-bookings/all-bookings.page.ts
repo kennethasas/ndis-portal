@@ -50,6 +50,20 @@ export class AllBookingsComponent implements OnInit {
     });
   }
 
+  cancelBooking(booking: any): void {
+    this.activeMenuId = null;
+
+    this.api.updateBookingStatus(booking.id, 'Cancelled').subscribe({
+      next: () => {
+        booking.status = 'Cancelled';
+      },
+      error: (err) => {
+        console.error('Error cancelling booking:', err);
+        alert('Failed to cancel booking. Please try again.');
+      },
+    });
+  }
+
   toggleMenu(booking: any): void {
     this.activeMenuId = this.activeMenuId === booking.id ? null : booking.id;
   }

@@ -49,6 +49,7 @@ namespace NdisPortal.BookingsApi.Services.Implementations
             return status.Trim().ToLower() switch
             {
                 "approved" => 1,
+                "cancelled" => 2,
                 _ => null
             };
         }
@@ -224,7 +225,7 @@ namespace NdisPortal.BookingsApi.Services.Implementations
 
             if (newStatus == null)
             {
-                throw new ArgumentException("Invalid status value. Allowed value is: Approved.");
+                throw new ArgumentException("Invalid status value. Allowed values are: Approved, Cancelled.");
             }
 
             booking.Status = (byte)newStatus.Value;
