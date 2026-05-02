@@ -17,7 +17,8 @@ namespace Register.API.Services
         public AuthService(IConfiguration config)
         {
             _config = config;
-            _connectionString = config.GetConnectionString("DefaultConnection");
+            _connectionString = _config.GetConnectionString("DefaultConnection")
+                ?? throw new InvalidOperationException("Connection string 'DefaultConnection' is missing.");
         }
 
         public async Task<object> Register(RegisterDto dto)
@@ -246,6 +247,11 @@ namespace Register.API.Services
                 return new { status = 500, message = "JWT settings are missing or invalid" };
             }
 
+            if (!double.TryParse(expiryHours, out var expiryHoursValue))
+            {
+                return new { status = 500, message = "JWT expiry setting is invalid" };
+            }
+
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(keyString));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
@@ -253,7 +259,7 @@ namespace Register.API.Services
                 issuer: issuer,
                 audience: audience,
                 claims: claims,
-                expires: DateTime.Now.AddHours(Convert.ToDouble(expiryHours)),
+                expires: DateTime.Now.AddHours(expiryHoursValue),
                 signingCredentials: creds
             );
 

@@ -16,6 +16,7 @@ export class TextAreaComponent {
   @Input() placeholder: string =
     'Type addtional notes';
   @Input() required: boolean = true; // Defaulting to required
+  @Input() disabled: boolean = false;
 
   @Output() valueChange = new EventEmitter<string>();
 }

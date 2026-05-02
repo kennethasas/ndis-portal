@@ -19,6 +19,7 @@ namespace NDISPortal.API.Services.Implementations
         {
             var query = _context.Services
                 .Include(s => s.ServiceCategory)
+                .Where(s => s.is_active) // Only active services for participants
                 .AsQueryable();
 
             if (categoryId.HasValue)
@@ -39,6 +40,65 @@ namespace NDISPortal.API.Services.Implementations
                 .ToListAsync();
 
             return services;
+        }
+
+        public async Task<IEnumerable<ServiceDto>> GetAllForCoordinatorAsync(int? categoryId)
+        {
+            try
+            {
+                Console.WriteLine("GetAllForCoordinatorAsync: Starting database query...");
+                
+                // Check if we can access the database at all
+                var serviceCount = await _context.Services.CountAsync();
+                Console.WriteLine($"Total services in database: {serviceCount}");
+                
+                var categoryCount = await _context.service_categories.CountAsync();
+                Console.WriteLine($"Total categories in database: {categoryCount}");
+                
+                // Use real database query
+                var query = _context.Services
+                    .Include(s => s.ServiceCategory)
+                    .AsQueryable(); // All services (active and inactive) for coordinators
+
+                if (categoryId.HasValue)
+                {
+                    query = query.Where(s => s.CategoryId == categoryId.Value);
+                    Console.WriteLine($"Filtering by category ID: {categoryId.Value}");
+                }
+
+                // Log the SQL query
+                var sql = query.ToQueryString();
+                Console.WriteLine($"SQL Query: {sql}");
+
+                var services = await query
+                    .Select(s => new ServiceDto
+                    {
+                        Id = s.Id,
+                        CategoryId = s.CategoryId,
+                        CategoryName = s.ServiceCategory != null ? s.ServiceCategory.Name : string.Empty,
+                        Name = s.Name,
+                        Description = s.Description,
+                        IsActive = s.is_active
+                    })
+                    .ToListAsync();
+
+                Console.WriteLine($"Found {services.Count} services");
+                foreach (var service in services.Take(3))
+                {
+                    Console.WriteLine($"Service: ID={service.Id}, Name={service.Name}, Active={service.IsActive}");
+                }
+
+                return services;
+            }
+            catch (Exception ex)
+            {
+                // Log the error for debugging
+                Console.WriteLine($"Error in GetAllForCoordinatorAsync: {ex.Message}");
+                Console.WriteLine($"Stack trace: {ex.StackTrace}");
+                
+                // Return empty list instead of throwing to avoid breaking the frontend
+                return new List<ServiceDto>();
+            }
         }
 
         public async Task<ServiceDto?> GetByIdAsync(int id)
@@ -141,7 +201,7 @@ namespace NDISPortal.API.Services.Implementations
             service.CategoryId = dto.CategoryId;
             service.Name = dto.Name.Trim();
             service.Description = dto.Description;
-            service.is_active = dto.is_active;
+            service.is_active = dto.IsActive;
             service.modified_date = DateTime.UtcNow;
 
             await _context.SaveChangesAsync();

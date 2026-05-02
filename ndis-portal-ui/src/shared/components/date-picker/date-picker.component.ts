@@ -13,6 +13,7 @@ export class DatePickerComponent {
   @Input() label: string = 'Preferred Date';
   @Input() value: string = '';
   @Input() required: boolean = true;
+  @Input() disabled: boolean = false;
 
   // NEW: Input for the placeholder
   @Input() placeholder: string = 'yyyy-mm-dd';
