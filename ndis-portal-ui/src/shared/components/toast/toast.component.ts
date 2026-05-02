@@ -8,18 +8,17 @@ import { ToastService } from '../../../app/core/services/toast.service';
   imports: [CommonModule], // Add CommonModule here
   template: `
     <!-- Centering Wrapper -->
-    <!-- Centering Wrapper -->
     <div
       *ngIf="(toast$ | async)?.show"
-      class="fixed top-6 inset-x-0 z-[400] flex justify-center pointer-events-none"
+      class="fixed top-4 sm:top-6 inset-x-0 z-[400] flex justify-center px-3 sm:px-4 lg:px-6 pointer-events-none"
     >
       <!-- Toast -->
       <div
-        class="pointer-events-auto flex items-start gap-4 bg-white border border-slate-200 px-6 py-5 rounded-xl animate-in min-w-[420px] max-w-[95vw]"
+        class="pointer-events-auto flex items-start gap-3 sm:gap-4 bg-white border border-slate-200 px-4 py-4 sm:px-6 sm:py-5 rounded-xl animate-in w-full sm:w-auto min-w-0 sm:min-w-[420px] lg:min-w-[460px] 2xl:min-w-[520px] max-w-[95vw] sm:max-w-[90vw] lg:max-w-[720px] 2xl:max-w-[900px]"
       >
         <!-- Icon -->
         <div
-          class="mt-0.5"
+          class="mt-0.5 flex-shrink-0"
           [ngClass]="{
             'text-emerald-500': (toast$ | async)?.type === 'success',
             'text-rose-500': (toast$ | async)?.type === 'error',
@@ -27,8 +26,7 @@ import { ToastService } from '../../../app/core/services/toast.service';
           }"
         >
           <svg
-            width="22"
-            height="22"
+            class="w-5 h-5 sm:w-[22px] sm:h-[22px] 2xl:w-7 2xl:h-7"
             viewBox="0 0 24 24"
             fill="none"
             stroke="currentColor"
@@ -67,11 +65,13 @@ import { ToastService } from '../../../app/core/services/toast.service';
         </div>
 
         <!-- Content -->
-        <div class="flex flex-col flex-1">
-          <p class="text-base font-semibold text-slate-900 leading-tight">
+        <div class="flex flex-col flex-1 min-w-0">
+          <p
+            class="text-sm sm:text-base 2xl:text-lg font-semibold text-slate-900 leading-tight break-words"
+          >
             {{ (toast$ | async)?.message }}
           </p>
-          <p class="text-xs text-slate-400 capitalize mt-1">
+          <p class="text-[11px] sm:text-xs 2xl:text-sm text-slate-400 capitalize mt-1">
             {{ (toast$ | async)?.type }}
           </p>
         </div>
@@ -79,11 +79,10 @@ import { ToastService } from '../../../app/core/services/toast.service';
         <!-- Close -->
         <button
           (click)="dismiss()"
-          class="p-2 rounded-md text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition"
+          class="flex-shrink-0 p-1.5 sm:p-2 2xl:p-3 rounded-md text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition"
         >
           <svg
-            width="16"
-            height="16"
+            class="w-4 h-4 2xl:w-5 2xl:h-5"
             fill="none"
             stroke="currentColor"
             stroke-width="2.5"
@@ -110,6 +109,7 @@ import { ToastService } from '../../../app/core/services/toast.service';
           filter: blur(0);
         }
       }
+
       .animate-in {
         animation: drop-in 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
       }

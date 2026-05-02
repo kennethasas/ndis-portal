@@ -17,7 +17,8 @@ namespace Register.API.Services
         public AuthService(IConfiguration config)
         {
             _config = config;
-            _connectionString = "Server=JIM;Database=ndis_portal_db;Trusted_Connection=True;TrustServerCertificate=True;";
+            _connectionString = _config.GetConnectionString("DefaultConnection")
+                ?? throw new InvalidOperationException("Connection string 'DefaultConnection' is missing.");
         }
 
         public async Task<object> Register(RegisterDto dto)
@@ -233,10 +234,10 @@ namespace Register.API.Services
                 new Claim(ClaimTypes.Role, role)
             };
 
-            var keyString = "THIS_IS_A_VERY_SECURE_KEY_2026_!@#_LONG_RANDOM_STRING";
-            var issuer = "MyApi";
-            var audience = "MyApiUsers";
-            var expiryHours = "8";
+            var keyString = _config["JwtSettings:Key"];
+            var issuer = _config["JwtSettings:Issuer"];
+            var audience = _config["JwtSettings:Audience"];
+            var expiryHours = _config["JwtSettings:ExpiryHours"];
 
             if (string.IsNullOrWhiteSpace(keyString) ||
                 string.IsNullOrWhiteSpace(issuer) ||
@@ -246,6 +247,11 @@ namespace Register.API.Services
                 return new { status = 500, message = "JWT settings are missing or invalid" };
             }
 
+            if (!double.TryParse(expiryHours, out var expiryHoursValue))
+            {
+                return new { status = 500, message = "JWT expiry setting is invalid" };
+            }
+
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(keyString));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
@@ -253,7 +259,7 @@ namespace Register.API.Services
                 issuer: issuer,
                 audience: audience,
                 claims: claims,
-                expires: DateTime.Now.AddHours(Convert.ToDouble(expiryHours)),
+                expires: DateTime.Now.AddHours(expiryHoursValue),
                 signingCredentials: creds
             );
 

@@ -15,11 +15,15 @@ using System.Text;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDbContext<application_db_context>(options =>
-    options.UseSqlServer("Server=JIM;Database=ndis_portal_db;Trusted_Connection=True;TrustServerCertificate=True;"));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")
+        ?? throw new InvalidOperationException("Connection string 'DefaultConnection' is missing.")));
 
-var jwtKey = "THIS_IS_A_VERY_SECURE_KEY_2026_!@#_LONG_RANDOM_STRING";
-var jwtIssuer = "MyApi";
-var jwtAudience = "MyApiUsers";
+var jwtKey = builder.Configuration["JwtSettings:Key"]
+    ?? throw new InvalidOperationException("JwtSettings:Key is missing.");
+var jwtIssuer = builder.Configuration["JwtSettings:Issuer"]
+    ?? throw new InvalidOperationException("JwtSettings:Issuer is missing.");
+var jwtAudience = builder.Configuration["JwtSettings:Audience"]
+    ?? throw new InvalidOperationException("JwtSettings:Audience is missing.");
 
 builder.Services.AddAuthentication(options =>
 {
