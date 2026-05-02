@@ -27,28 +27,12 @@ export class ChatMessageComponent implements AfterViewInit {
 
   ngAfterViewInit() {
     console.log('[ChatMessage] ngAfterViewInit called, message role:', this.message.role);
-    console.log('[ChatMessage] Message content includes book-service-btn:', this.message.content.includes('book-service-btn'));
 
-    // Add click event listeners for AI service buttons
-    if (this.message.content.includes('ai-service-buttons')) {
-      setTimeout(() => {
-        const buttons = this.elementRef.nativeElement.querySelectorAll('.ai-service-btn');
-        console.log('[ChatMessage] Found ai-service buttons:', buttons.length);
-        buttons.forEach((button: HTMLButtonElement) => {
-          this.renderer.listen(button, 'click', (event: Event) => {
-            event.preventDefault();
-            const serviceType = button.getAttribute('data-service');
-            const serviceText = button.textContent?.trim();
-            if (serviceText) {
-              this.chatService.sendMessage(serviceText);
-            }
-          });
-        });
-      }, 100);
-    }
+    // Add click event listeners for AI service buttons with retry logic
+    this.attachAiServiceButtonListeners();
 
     // Add click event listeners for Book Service buttons
-    if (this.message.content.includes('book-service-btn')) {
+    if (this.message.content && this.message.content.includes('book-service-btn')) {
       setTimeout(() => {
         const bookButtons = this.elementRef.nativeElement.querySelectorAll('.book-service-btn');
         console.log('[ChatMessage] Found book-service buttons:', bookButtons.length);
@@ -66,6 +50,39 @@ export class ChatMessageComponent implements AfterViewInit {
         this.attachBookButtonListeners(bookButtons);
       }, 100);
     }
+  }
+
+  private attachAiServiceButtonListeners() {
+    // Try to attach listeners immediately
+    this.tryAttachAiServiceButtons();
+    
+    // Also retry after a delay to ensure DOM is ready
+    setTimeout(() => {
+      this.tryAttachAiServiceButtons();
+    }, 300);
+  }
+
+  private tryAttachAiServiceButtons() {
+    const buttons = this.elementRef.nativeElement.querySelectorAll('.ai-service-btn');
+    console.log('[ChatMessage] Found ai-service buttons:', buttons.length);
+    
+    buttons.forEach((button: HTMLButtonElement) => {
+      // Only attach if not already attached
+      if (!button.hasAttribute('data-listener-attached')) {
+        button.setAttribute('data-listener-attached', 'true');
+        
+        button.onclick = (event: Event) => {
+          event.preventDefault();
+          event.stopPropagation();
+          const serviceText = button.textContent?.trim();
+          console.log('[ChatMessage] AI service button clicked:', serviceText);
+          if (serviceText) {
+            this.chatService.sendMessage(serviceText);
+          }
+          return false;
+        };
+      }
+    });
   }
 
   private attachBookButtonListeners(buttons: NodeListOf<Element>) {
@@ -95,6 +112,20 @@ export class ChatMessageComponent implements AfterViewInit {
   @HostListener('document:click', ['$event'])
   onDocumentClick(event: Event) {
     const target = event.target as HTMLElement;
+    
+    // Handle AI service buttons
+    if (target && target.classList && target.classList.contains('ai-service-btn')) {
+      event.preventDefault();
+      event.stopPropagation();
+      const serviceText = target.textContent?.trim();
+      console.log('[ChatMessage] AI service button clicked via document listener:', serviceText);
+      if (serviceText) {
+        this.chatService.sendMessage(serviceText);
+      }
+      return;
+    }
+    
+    // Handle view service buttons
     if (target && target.classList && target.classList.contains('view-service-btn')) {
       event.preventDefault();
       event.stopPropagation();

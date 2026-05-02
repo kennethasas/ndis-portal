@@ -351,27 +351,27 @@ Tell us what areas of daily life you need support with, and we'll recommend the 
 What areas of daily life do you need support with?
 
 <div class="ai-service-buttons" style="display: flex; flex-direction: column; gap: 8px; margin: 12px 0;">
-  <button class="ai-service-btn" data-service="daily-activities" style="background: white; color: #6F2C91; border: 2px solid #6F2C91; padding: 12px 16px; border-radius: 8px; cursor: pointer; font-size: 14px; text-align: left; transition: all 0.2s; font-weight: 500;">
+  <button class="ai-service-btn" data-service="daily-activities" style="background: white; color: #334155; border: 2px solid black; padding: 12px 16px; border-radius: 6px; cursor: pointer; font-size: 14px; text-align: left; transition: all 0.2s; font-weight: 500;">
     Daily personal activities
   </button>
-  <button class="ai-service-btn" data-service="community-access" style="background: white; color: #6F2C91; border: 2px solid #6F2C91; padding: 12px 16px; border-radius: 8px; cursor: pointer; font-size: 14px; text-align: left; transition: all 0.2s; font-weight: 500;">
+  <button class="ai-service-btn" data-service="community-access" style="background: white; color: #334155; border: 2px solid black; padding: 12px 16px; border-radius: 6px; cursor: pointer; font-size: 14px; text-align: left; transition: all 0.2s; font-weight: 500;">
     Community access and social activities
   </button>
-  <button class="ai-service-btn" data-service="therapy-supports" style="background: white; color: #6F2C91; border: 2px solid #6F2C91; padding: 12px 16px; border-radius: 8px; cursor: pointer; font-size: 14px; text-align: left; transition: all 0.2s; font-weight: 500;">
+  <button class="ai-service-btn" data-service="therapy-supports" style="background: white; color: #334155; border: 2px solid black; padding: 12px 16px; border-radius: 6px; cursor: pointer; font-size: 14px; text-align: left; transition: all 0.2s; font-weight: 500;">
     Therapy supports
   </button>
-  <button class="ai-service-btn" data-service="support-coordination" style="background: white; color: #6F2C91; border: 2px solid #6F2C91; padding: 12px 16px; border-radius: 8px; cursor: pointer; font-size: 14px; text-align: left; transition: all 0.2s; font-weight: 500;">
+  <button class="ai-service-btn" data-service="support-coordination" style="background: white; color: #334155; border: 2px solid black; padding: 12px 16px; border-radius: 6px; cursor: pointer; font-size: 14px; text-align: left; transition: all 0.2s; font-weight: 500;">
     Support coordination
   </button>
-  <button class="ai-service-btn" data-service="respite-care" style="background: white; color: #6F2C91; border: 2px solid #6F2C91; padding: 12px 16px; border-radius: 8px; cursor: pointer; font-size: 14px; text-align: left; transition: all 0.2s; font-weight: 500;">
+  <button class="ai-service-btn" data-service="respite-care" style="background: white; color: #334155; border: 2px solid black; padding: 12px 16px; border-radius: 6px; cursor: pointer; font-size: 14px; text-align: left; transition: all 0.2s; font-weight: 500;">
     Respite care
   </button>
 </div>
 
 <style>
 .ai-service-btn:hover {
-  background: #6F2C91 !important;
-  color: white !important;
+  background: #f3f0f5 !important;
+  color: #334155 !important;
 }
 .ai-service-btn:active {
   transform: scale(0.98);
