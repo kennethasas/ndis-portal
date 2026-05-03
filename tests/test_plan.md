@@ -54,11 +54,11 @@ The NDIS Participant Service Portal is a web-based system that allows participan
 
 |        Type         |                       Description                           |        Tool          |
 |    Manual Testing   |      Execute test cases manually based on requirements      |   Test Cases MD      |
-|     API Testing     |    Validate backend endpoints, status codes, and response   |      Postman         |
+|     API Testing     |    Validate backend endpoints, status codes, and response   |    Postman/Swagger   |
 |     UI Testing      |Validate Angular pages, forms, buttons, tables, and messages |      Browser         |
 |  Automation Testing |                Automate key user workflows                  |Playwright TypeScript |
 |  Regression Testing |                 Re-test after bug fixes                     |  Manual / Playwright |
-| Database Validation |                Verify data in SQL Server                    |        SSMS          |
+| Database Validation |                Verify data in SQL Server                    |  SQL Server (SSMS)   |
 
 ---
 
@@ -118,7 +118,7 @@ The NDIS Participant Service Portal is a web-based system that allows participan
 - Names: Honey Bell Dayanan, Daryll Joy Vallagar, Kristine Mae Tabbuga, Jenny Rose Ardais
 - Responsibility: Create and execute test cases, report bugs, retest fixes
 ## Developer
-Names: Kenneth Wayne Asas, John Brian Barte, CJ Adrian Sanquilos
+Names: Kenneth Wayne Asas, John Brian Barte, CJ Adrian Sanquilos, Jimwell Buensalida
 Responsibility: Fix reported bugs and support environment issues
 ## QA Lead
 - Names: Jenny Rose Y. Ardais
@@ -134,13 +134,13 @@ Responsibility: Fix reported bugs and support environment issues
 
 |        Phase       |  Start |  End   |
 |--------------------|--------|--------|
-|    Test Planning   | Apr 27 | Apr 30 |
-|  Test Case Writing |  May 1 |  May 5 |
-|    SIT Execution   |  May 6 | May 13 |
-|  Bug Fix & Retest  | May 14 | May 16 |
-|         UAT        | May 17 | May 21 |
-|      Sign-off      | May 22 | May 22 |
-| Production Release | May 26 | May 26 |
+|    Test Planning   | Apr 14 | Apr 20 |
+|  Test Case Writing | Apr 15 | Apr 28 |
+|    SIT Execution   | Apr 20 | Apr 29 |
+|  Bug Fix & Retest  | Apr 29 | May 02 |
+|         UAT        | Apr 29 | May 02 |
+|      Sign-off      | Apr 30 | May 02 |
+| Production Release | May 04 | May 04 |
 
 ---
 
@@ -148,7 +148,7 @@ Responsibility: Fix reported bugs and support environment issues
 
 - [ ] Test Plan (`test_plan.md`)
 - [ ] Test Cases (`test_cases.md`)
-- [ ] Bug Report (tracked in Jira)
+- [ ] Bug Report (`bug_log.md`)
 - [ ] Test Summary Report
 - [ ] UAT Sign-off Form
 
@@ -159,4 +159,4 @@ Responsibility: Fix reported bugs and support environment issues
 QA Approver: Daryll Joy C. Vallagar
 Dev Approver: Jimwell T. Buensalida
 Product Owner: Daryll Joy C. Vallagar
-Date: May 22, 2026
+Date: May 02, 2026
