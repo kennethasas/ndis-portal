@@ -66,7 +66,7 @@ export class ServiceDetailComponent implements OnInit {
 
   // ACTION: Routes to booking with the service ID as a query parameter
   processBooking() {
-    this.router.navigate(['/book-new'], {
+    this.router.navigate(['/participant/book-service'], {
       queryParams: { serviceId: this.serviceData?.id },
     });
   }
