@@ -26,7 +26,10 @@ export class CategoryDropdownComponent implements OnChanges {
   }
 
   updateCategoryOptions() {
-    if (!this.services || this.services.length === 0) return;
+    if (!this.services || this.services.length === 0) {
+      this.categoryOptions = [{ label: 'All Categories', value: 'all' }];
+      return;
+    }
 
     const uniqueCategories = new Set<string>();
     this.services.forEach(service => {
@@ -35,29 +38,14 @@ export class CategoryDropdownComponent implements OnChanges {
       }
     });
 
-    // Show all predefined categories plus any that have active services
-    const allCategories = [
-      'Daily Personal Activities',
-      'Community Access', 
-      'Therapy Supports',
-      'Respite Care',
-      'Support Coordination'
-    ];
+    const activeCategories = Array.from(uniqueCategories).sort();
 
-    const activeCategories = Array.from(uniqueCategories);
-    
     this.categoryOptions = [
       { label: 'All Categories', value: 'all' },
-      ...allCategories.map(category => ({
+      ...activeCategories.map(category => ({
         label: category,
         value: category.toLowerCase().replace(/\s+/g, '-')
-      })),
-      ...activeCategories
-        .filter(cat => !allCategories.includes(cat))
-        .map(category => ({
-          label: category,
-          value: category.toLowerCase().replace(/\s+/g, '-')
-        }))
+      }))
     ];
   }
 

@@ -1,6 +1,6 @@
 import { Inject, Injectable, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
-import { BehaviorSubject, catchError, of } from 'rxjs';
+import { BehaviorSubject, catchError, firstValueFrom, of } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
 import { AuthService } from './auth.service';
@@ -48,6 +48,7 @@ export class ChatService {
   private aiRecommendationUrl = `${environment.apiUrl}/ai/recommend-services`;
   private minimumTypingMs = 500;
   private isAiRecommendationMode = false;
+  private cachedCategories: { id: number; name: string }[] = [];
 
   private messagesSubject = new BehaviorSubject<ChatMessage[]>([]);
   
@@ -109,14 +110,23 @@ export class ChatService {
     this.messagesSubject.next(updatedMessages);
     this.saveMessages(updatedMessages);
 
-    // Check if this is an AI recommendation request
-    if (this.isAiRecommendationRequest(text) || this.isAiRecommendationMode) {
+    // Check if this is an AI recommendation request (async)
+    this.checkAndHandleRecommendationRequest(text, updatedMessages);
+  }
+
+  /**
+   * Check if message is a recommendation request and route accordingly
+   */
+  private async checkAndHandleRecommendationRequest(text: string, currentMessages: ChatMessage[]) {
+    const isRecommendationRequest = await this.isAiRecommendationRequest(text);
+
+    if (isRecommendationRequest || this.isAiRecommendationMode) {
       console.log('[ChatService] Calling AI recommendation API...');
       this.callAiRecommendationApi(text);
     } else {
       // Call regular chat API
       console.log('[ChatService] Calling regular chat API...');
-      this.callChatApi(text, updatedMessages);
+      this.callChatApi(text, currentMessages);
     }
   }
 
@@ -212,22 +222,60 @@ export class ChatService {
   }
 
   /**
+   * Fetch service categories from the API
+   */
+  private async fetchCategories(): Promise<{ id: number; name: string }[]> {
+    if (this.cachedCategories.length > 0) {
+      return this.cachedCategories;
+    }
+
+    try {
+      const response = await firstValueFrom(
+        this.http.get<any>(`${environment.apiUrl}/service-categories`).pipe(
+          catchError(error => {
+            console.error('[ChatService] Failed to fetch categories:', error);
+            return of({ Data: [] });
+          })
+        )
+      );
+
+      const categories = response?.Data || response || [];
+      this.cachedCategories = categories.map((c: any) => ({
+        id: c.id || c.Id,
+        name: c.name || c.Name
+      }));
+      return this.cachedCategories;
+    } catch {
+      return [];
+    }
+  }
+
+  /**
    * Check if the message is an AI recommendation request
    */
-  private isAiRecommendationRequest(text: string): boolean {
-    const aiKeywords = [
-      'daily personal activities',
-      'community access',
-      'therapy supports',
-      'support coordination',
-      'respite care',
+  private async isAiRecommendationRequest(text: string): Promise<boolean> {
+    const defaultKeywords = [
       'find the right service',
       'recommend services',
-      'service recommendation'
+      'service recommendation',
+      'what service',
+      'which service',
+      'help me find',
+      'i need help with',
+      'looking for service'
     ];
-    
-    return aiKeywords.some(keyword => 
+
+    // Check default keywords first
+    if (defaultKeywords.some(keyword =>
       text.toLowerCase().includes(keyword.toLowerCase())
+    )) {
+      return true;
+    }
+
+    // Check against dynamic category names from database
+    const categories = await this.fetchCategories();
+    return categories.some(cat =>
+      text.toLowerCase().includes(cat.name.toLowerCase())
     );
   }
 
@@ -333,13 +381,27 @@ export class ChatService {
   /**
    * Initialize chat with AI recommendation context
    */
-  initializeAiRecommendation(): void {
+  async initializeAiRecommendation(): Promise<void> {
     if (!this.isParticipant()) {
       console.log('[ChatService] Access denied - only participants can use chat');
       return;
     }
 
     this.isAiRecommendationMode = true;
+
+    // Fetch categories from API
+    const categories = await this.fetchCategories();
+
+    // Build dynamic buttons from database categories
+    const categoryButtons = categories.length > 0
+      ? categories.map(cat => `
+  <button class="ai-service-btn" data-service="${cat.name.toLowerCase().replace(/\s+/g, '-')}" style="background: white; color: #334155; border: 2px solid black; padding: 12px 16px; border-radius: 6px; cursor: pointer; font-size: 14px; text-align: left; transition: all 0.2s; font-weight: 500;">
+    ${cat.name}
+  </button>`).join('')
+      : `
+  <button class="ai-service-btn" data-service="browse-all" style="background: white; color: #334155; border: 2px solid black; padding: 12px 16px; border-radius: 6px; cursor: pointer; font-size: 14px; text-align: left; transition: all 0.2s; font-weight: 500;">
+    Browse All Services
+  </button>`;
 
     const aiWelcomeMessage: ChatMessage = {
       id: Date.now().toString(),
@@ -351,21 +413,7 @@ Tell us what areas of daily life you need support with, and we'll recommend the 
 What areas of daily life do you need support with?
 
 <div class="ai-service-buttons" style="display: flex; flex-direction: column; gap: 8px; margin: 12px 0;">
-  <button class="ai-service-btn" data-service="daily-activities" style="background: white; color: #334155; border: 2px solid black; padding: 12px 16px; border-radius: 6px; cursor: pointer; font-size: 14px; text-align: left; transition: all 0.2s; font-weight: 500;">
-    Daily personal activities
-  </button>
-  <button class="ai-service-btn" data-service="community-access" style="background: white; color: #334155; border: 2px solid black; padding: 12px 16px; border-radius: 6px; cursor: pointer; font-size: 14px; text-align: left; transition: all 0.2s; font-weight: 500;">
-    Community access and social activities
-  </button>
-  <button class="ai-service-btn" data-service="therapy-supports" style="background: white; color: #334155; border: 2px solid black; padding: 12px 16px; border-radius: 6px; cursor: pointer; font-size: 14px; text-align: left; transition: all 0.2s; font-weight: 500;">
-    Therapy supports
-  </button>
-  <button class="ai-service-btn" data-service="support-coordination" style="background: white; color: #334155; border: 2px solid black; padding: 12px 16px; border-radius: 6px; cursor: pointer; font-size: 14px; text-align: left; transition: all 0.2s; font-weight: 500;">
-    Support coordination
-  </button>
-  <button class="ai-service-btn" data-service="respite-care" style="background: white; color: #334155; border: 2px solid black; padding: 12px 16px; border-radius: 6px; cursor: pointer; font-size: 14px; text-align: left; transition: all 0.2s; font-weight: 500;">
-    Respite care
-  </button>
+${categoryButtons}
 </div>
 
 <style>
@@ -384,7 +432,7 @@ Click on any button above, or tell me in your own words what you need help with!
 
     this.messagesSubject.next([aiWelcomeMessage]);
     this.saveMessages([aiWelcomeMessage]);
-    console.log('[ChatService] AI recommendation initialized');
+    console.log('[ChatService] AI recommendation initialized with', categories.length, 'categories');
   }
 
   /**
@@ -397,6 +445,7 @@ Click on any button above, or tell me in your own words what you need help with!
 
     this.messagesSubject.next([]);
     this.isAiRecommendationMode = false;
+    this.cachedCategories = []; // Clear cached categories
     console.log('[ChatService] Chat history cleared');
   }
 
