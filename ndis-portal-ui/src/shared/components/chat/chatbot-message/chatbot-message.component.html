@@ -35,6 +35,10 @@
     
     <!-- Service Recommendations as Cards with Book Button Inside -->
     <div *ngIf="message.recommendations && message.recommendations.length > 0" class="mt-4 space-y-4">
+      <!-- Brief explanation at the top -->
+      <p *ngIf="message.recommendations[0]?.reason" class="text-sm text-[#4a5568] leading-relaxed mb-3">
+        {{ message.recommendations[0].reason }}
+      </p>
       <div *ngFor="let rec of message.recommendations" 
            class="group flex flex-col rounded-[24px] border border-[#e9e2e2] bg-white p-5 shadow-sm transition-all hover:shadow-md"
            style="max-width: 260px;">
@@ -49,8 +53,8 @@
           <h4 class="mb-2 text-[16px] font-semibold leading-tight text-[#001a33]">
             {{ rec.serviceName }}
           </h4>
-          <p class="flex-grow text-xs leading-relaxed text-[#7b8da0] line-clamp-2">
-            {{ rec.reason }}
+          <p class="mt-1 flex-grow text-sm leading-relaxed text-[#7b8da0] line-clamp-2">
+            {{ rec.description }}
           </p>
         </div>
 

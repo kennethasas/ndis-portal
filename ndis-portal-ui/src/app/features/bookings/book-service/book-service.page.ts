@@ -1,10 +1,10 @@
 import { FormsModule } from '@angular/forms';
 
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
-import { Observable, of } from 'rxjs';
+import { Observable, of, Subscription } from 'rxjs';
 import { timeout, map, catchError } from 'rxjs/operators';
 import { environment } from '../../../../environments/environment';
 
@@ -32,7 +32,7 @@ import { BackButton } from '../../../../shared/components/button/back-button/bac
   templateUrl: './book-service.page.html',
   // You can likely remove the .css file now that we are using Tailwind
 })
-export class BookServiceComponent implements OnInit {
+export class BookServiceComponent implements OnInit, OnDestroy {
   bookingData = {
     serviceId: '',
     date: '',
@@ -54,6 +54,8 @@ export class BookServiceComponent implements OnInit {
   errorMessage = '';
   isSubmitting = false; // Prevent duplicate submissions
 
+  private queryParamsSubscription: Subscription | null = null;
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
@@ -65,11 +67,18 @@ export class BookServiceComponent implements OnInit {
 
   ngOnInit() {
     this.loadServices();
+    // Subscribe to query params to handle navigation while already on this page
+    this.queryParamsSubscription = this.route.queryParams.subscribe(params => {
+      const preselectedService = params['serviceId'];
+      if (preselectedService) {
+        this.bookingData.serviceId = preselectedService;
+      }
+    });
+  }
 
-    const preselectedService =
-      this.route.snapshot.queryParamMap.get('serviceId');
-    if (preselectedService) {
-      this.bookingData.serviceId = preselectedService;
+  ngOnDestroy() {
+    if (this.queryParamsSubscription) {
+      this.queryParamsSubscription.unsubscribe();
     }
   }
 
