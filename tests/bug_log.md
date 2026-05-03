@@ -1,5 +1,9 @@
 # Bug Log
 
+**Project:** NDIS Portal
+**Version:** 1.0
+**Date:** May 3, 2026
+**Prepared by:** QA Team
 
 ## NOVA-80: Register Email with Invalid Domain Name 
 https://thrivesolutions-team.atlassian.net/browse/NOVA-80
@@ -159,7 +163,7 @@ https://thrivesolutions-team.atlassian.net/browse/NOVA-170
 - Medium
 
 ### Status
-- To Do
+- Done
 
 
 ## NOVA-171: Action Column Should Display Three-Dot Menu Before Approve and Cancel Buttons
@@ -272,7 +276,7 @@ https://thrivesolutions-team.atlassian.net/browse/NOVA-175
 - Low
 
 ### Status
-- In Progress
+- Done
 
 
 ## NOVA-176: No Confirmation Message and Newly Added Service Not Visible Immediately
@@ -297,7 +301,7 @@ https://thrivesolutions-team.atlassian.net/browse/NOVA-176
 - Medium
 
 ### Status
-- In Progress
+- Done
 
 
 
