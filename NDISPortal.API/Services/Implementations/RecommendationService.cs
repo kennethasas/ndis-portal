@@ -2,6 +2,7 @@
 using NDISPortal.API.Services.Interfaces;
 using Service.API.DTOs;
 using Service.API.DTOs.Service;
+using System.Text;
 using System.Text.Json;
 
 namespace NDISPortal.API.Services.Implementations
@@ -55,6 +56,7 @@ namespace NDISPortal.API.Services.Implementations
                 try
                 {
                     aiRaw = await _claude.GetRecommendationsAsync(prompt);
+                    _logger.LogInformation("AI raw response: {response}", aiRaw);
                 }
                 catch (Exception ex)
                 {
@@ -182,47 +184,57 @@ namespace NDISPortal.API.Services.Implementations
                 description = s.Description
             });
 
-            return $@"You are an NDIS support assistant. Your job is to recommend the most relevant NDIS support services based on the participant's situation and needs.
+            var categoriesJson = JsonSerializer.Serialize(categoryList, new JsonSerializerOptions { WriteIndented = true });
+            var servicesJson = JsonSerializer.Serialize(serviceList, new JsonSerializerOptions { WriteIndented = true });
 
-USER'S SITUATION AND NEEDS:
-""""{request.Message}""""
+            var prompt = new StringBuilder();
+            prompt.AppendLine("You are an NDIS support assistant. Your job is to recommend the most relevant NDIS support services based on the participant's situation and needs.");
+            prompt.AppendLine();
+            prompt.AppendLine("USER'S SITUATION AND NEEDS:");
+            prompt.AppendLine($"\"{request.Message}\"");
+            prompt.AppendLine();
+            prompt.AppendLine("AVAILABLE SERVICE CATEGORIES (you may ONLY recommend services from these categories):");
+            prompt.AppendLine(categoriesJson);
+            prompt.AppendLine();
+            prompt.AppendLine("AVAILABLE SERVICES (you may ONLY recommend from this exact list):");
+            prompt.AppendLine(servicesJson);
+            prompt.AppendLine();
+            prompt.AppendLine("TASK:");
+            prompt.AppendLine("Analyze the user's situation and return a personalized shortlist of the top 3-5 most relevant services from the AVAILABLE SERVICES list. Each recommendation must include a personalized explanation of why it fits their specific needs.");
+            prompt.AppendLine();
+            prompt.AppendLine("CRITICAL RULES - YOU MUST FOLLOW THESE:");
+            prompt.AppendLine("1. ONLY recommend services that exist in the AVAILABLE SERVICES list above");
+            prompt.AppendLine("2. ONLY recommend services whose category exists in the AVAILABLE SERVICE CATEGORIES list");
+            prompt.AppendLine("3. If the user's needs do not match any available service categories or services, respond with: OUT_OF_SCOPE");
+            prompt.AppendLine("4. If the request is unrelated to NDIS disability support services (e.g., medical advice, legal issues, non-NDIS topics), respond with: OUT_OF_SCOPE");
+            prompt.AppendLine("5. Use the exact service IDs from the provided list");
+            prompt.AppendLine("6. **PERSONALIZED EXPLANATION REQUIRED**: Write a brief, specific reason (1-2 sentences) that directly connects this service to the user's stated needs. Reference their exact words when possible.");
+            prompt.AppendLine("   Example: Based on your need for help with showering and dressing, this service provides personal care assistance tailored to your daily routine.");
+            prompt.AppendLine("7. Assign a confidence score (0.0-1.0) based on how well the service matches the user's needs");
+            prompt.AppendLine();
+            prompt.AppendLine("OUT OF SCOPE EXAMPLES (respond with OUT_OF_SCOPE if user asks for):");
+            prompt.AppendLine("- Medical diagnoses or treatment advice");
+            prompt.AppendLine("- Legal or financial advice unrelated to NDIS");
+            prompt.AppendLine("- Services not related to disability support");
+            prompt.AppendLine("- Requests completely unrelated to the available service categories");
+            prompt.AppendLine();
+            prompt.AppendLine("Return format - STRICT JSON ONLY. Return an array of objects like this example:");
+            prompt.AppendLine("[{");
+            prompt.AppendLine("  \"serviceId\": 1,");
+            prompt.AppendLine("  \"reason\": \"Based on your need for help with showering, this service provides personal hygiene assistance\",");
+            prompt.AppendLine("  \"confidence\": 0.85");
+            prompt.AppendLine("},{");
+            prompt.AppendLine("  \"serviceId\": 2,");
+            prompt.AppendLine("  \"reason\": \"Since you mentioned needing help with daily activities, this service supports your independence\",");
+            prompt.AppendLine("  \"confidence\": 0.82");
+            prompt.AppendLine("}]");
+            prompt.AppendLine();
+            prompt.AppendLine("Important: Return ONLY the JSON array, no markdown formatting, no code blocks, no explanation text.");
+            prompt.AppendLine();
+            prompt.AppendLine("OR if out of scope, respond with exactly:");
+            prompt.AppendLine("OUT_OF_SCOPE");
 
-AVAILABLE SERVICE CATEGORIES (you may ONLY recommend services from these categories):
-{JsonSerializer.Serialize(categoryList, new JsonSerializerOptions { WriteIndented = true })}
-
-AVAILABLE SERVICES (you may ONLY recommend from this exact list):
-{JsonSerializer.Serialize(serviceList, new JsonSerializerOptions { WriteIndented = true })}
-
-TASK:
-Analyze the user's situation and recommend the top 3-5 most relevant services from the AVAILABLE SERVICES list provided.
-
-CRITICAL RULES - YOU MUST FOLLOW THESE:
-1. ONLY recommend services that exist in the AVAILABLE SERVICES list above
-2. ONLY recommend services whose category exists in the AVAILABLE SERVICE CATEGORIES list
-3. If the user's needs do not match any available service categories or services, respond with: OUT_OF_SCOPE
-4. If the request is unrelated to NDIS disability support services (e.g., medical advice, legal issues, non-NDIS topics), respond with: OUT_OF_SCOPE
-5. Use the exact service IDs from the provided list
-6. Provide a brief, clear reason explaining how the service matches the user's specific needs
-7. Assign a confidence score (0.0-1.0) based on how well the service matches the user's needs
-
-OUT OF SCOPE EXAMPLES (respond with OUT_OF_SCOPE if user asks for):
-- Medical diagnoses or treatment advice
-- Legal or financial advice unrelated to NDIS
-- Services not related to disability support
-- Requests completely unrelated to the available service categories
-
-Return format - STRICT JSON ONLY:
-[
-  {{
-    ""serviceId"": <id>,
-    ""reason"": ""<brief explanation of why this service matches the user's specific needs>"",
-    ""confidence"": <0.0-1.0>
-  }},
-  ...
-]
-
-OR if out of scope, respond with exactly:
-OUT_OF_SCOPE";
+            return prompt.ToString();
         }
 
         /// <summary>
@@ -340,59 +352,59 @@ OUT_OF_SCOPE";
         }
 
         /// <summary>
-        /// Generates a contextual reason based on matched keywords and service details
+        /// Generates a personalized reason based on user's specific needs and matched keywords
         /// </summary>
         private string GenerateReason(string serviceName, string categoryName, string description, List<string> matchedKeywords, string userMessage)
         {
+            var userNeeds = userMessage.Length > 50 ? userMessage.Substring(0, 50) + "..." : userMessage;
+
             if (!matchedKeywords.Any())
             {
-                return $"This {categoryName} service may be relevant to your situation.";
+                return $"Based on your needs for {userNeeds.ToLowerInvariant()}, this {serviceName} from our {categoryName} category can provide the support you're looking for.";
             }
 
-            // Build specific reasons based on keywords and category
-            var keywordReasons = new List<string>();
-
+            // Map keywords to specific need descriptions
+            var needDescriptions = new List<string>();
             foreach (var keyword in matchedKeywords.Take(2))
             {
-                var reason = keyword switch
+                var need = keyword.ToLowerInvariant() switch
                 {
-                    "cant walk" or "paralyzed" or "wheelchair" or "bedridden" => 
-                        "mobility challenges",
-                    "bathing" or "shower" or "hygiene" or "clean" or "toilet" => 
-                        "personal care needs",
-                    "dressing" or "grooming" => 
-                        "help getting dressed",
-                    "community" or "social" or "outing" or "going out" => 
-                        "community engagement",
-                    "walk" or "walking" or "mobility" or "transport" => 
-                        "getting around",
-                    "therapy" or "therapist" or "occupational" or "speech" => 
-                        "skill development",
-                    "respite" or "accommodation" or "place to stay" => 
-                        "temporary support",
-                    "plan" or "coordination" or "management" => 
-                        "plan management",
-                    "vision" or "seeing" or "blind" => 
-                        "vision support needs",
-                    "help with" or "assistance with" => 
-                        "daily assistance",
-                    _ => null
+                    "cant walk" or "paralyzed" or "wheelchair" or "bedridden" => "mobility support",
+                    "bathing" or "shower" => "personal hygiene",
+                    "hygiene" or "toilet" => "daily hygiene needs",
+                    "clean" => "keeping clean",
+                    "dressing" => "getting dressed",
+                    "grooming" => "personal grooming",
+                    "community" or "social" or "outing" or "going out" => "getting out in the community",
+                    "walk" or "walking" or "mobility" => "moving around",
+                    "transport" => "transportation assistance",
+                    "therapy" or "therapist" => "therapeutic support",
+                    "occupational" => "daily living skills",
+                    "speech" => "communication support",
+                    "skills" or "improve" or "enhance" => "developing skills",
+                    "respite" => "a break from caregiving",
+                    "accommodation" or "place to stay" => "short-term accommodation",
+                    "break" => "taking a break",
+                    "plan" or "coordination" or "management" => "managing your NDIS plan",
+                    "vision" or "seeing" or "blind" => "vision-related support",
+                    "help with" or "assistance with" => "daily assistance",
+                    _ => keyword.ToLowerInvariant()
                 };
 
-                if (reason != null && !keywordReasons.Contains(reason))
+                if (!needDescriptions.Contains(need))
                 {
-                    keywordReasons.Add(reason);
+                    needDescriptions.Add(need);
                 }
             }
 
-            // Build the final reason
-            if (keywordReasons.Any())
+            // Build personalized reason
+            if (needDescriptions.Any())
             {
-                var reasonsText = string.Join(" and ", keywordReasons);
-                return $"Helps with {reasonsText}: {description}";
+                var needsText = string.Join(" and ", needDescriptions);
+                return $"Since you mentioned needing help with {needsText}, the {serviceName} service directly addresses this by: {description}";
             }
 
-            return $"Supports your needs: {description}";
+            return $"Based on your request for {userNeeds.ToLowerInvariant()}, this {serviceName} service can help you with: {description}";
         }
 
         /// <summary>
