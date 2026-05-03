@@ -10,6 +10,7 @@ import { BookButton } from '../../../../shared/components/button/book-button/boo
 import { BackButton } from '../../../../shared/components/button/back-button/back-button.component';
 import { BookingService } from '../../../core/services/booking.service';
 import { ApiService } from '../../../core/services/api-service';
+import { ToastService } from '../../../core/services/toast.service';
 
 @Component({
   selector: 'app-participant-book-service',
@@ -38,7 +39,6 @@ export class ParticipantBookServiceComponent implements OnInit {
   isLoadingServices = false;
   isSubmitting = false;
   errorMessage = '';
-  successMessage = '';
 
   // Validation errors
   validationErrors = {
@@ -50,7 +50,8 @@ export class ParticipantBookServiceComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private bookingService: BookingService,
-    private apiService: ApiService
+    private apiService: ApiService,
+    private toast: ToastService
   ) {}
 
   ngOnInit() {
@@ -131,7 +132,6 @@ export class ParticipantBookServiceComponent implements OnInit {
     this.isSubmitting = true;
     this.isLoading = true;
     this.errorMessage = '';
-    this.successMessage = '';
 
     // Convert to proper types for API
     const serviceId = parseInt(this.bookingForm.serviceId as string, 10);
@@ -145,19 +145,13 @@ export class ParticipantBookServiceComponent implements OnInit {
 
     this.bookingService.createBooking(bookingPayload).subscribe({
       next: () => {
-        // Only show success message if the booking was actually created
-        this.successMessage = 'Booking created successfully!';
-        
         // Keep loading state active until navigation completes
         setTimeout(() => {
-          this.router.navigate(['/bookings'], { 
-            queryParams: { 
-              success: 'true' 
-            } 
-          }).then(() => {
+          this.router.navigate(['/bookings']).then(() => {
             // Reset states only after navigation is complete
             this.isSubmitting = false;
             this.isLoading = false;
+            this.toast.show('Booking created successfully!', 'success');
           });
         }, 1500);
       },
@@ -168,9 +162,6 @@ export class ParticipantBookServiceComponent implements OnInit {
         
         // Display the error message from the service
         this.errorMessage = error.message;
-        
-        // Clear any existing success message
-        this.successMessage = '';
         
         // Log the error for debugging
         console.error('Booking failed:', error);

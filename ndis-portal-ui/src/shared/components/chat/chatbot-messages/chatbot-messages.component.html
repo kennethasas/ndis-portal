@@ -5,10 +5,10 @@
   ">
 
   <div class="min-h-full flex flex-col justify-end gap-3">
-    <ng-container *ngIf="messages$ | async as messages">
+    <ng-container>
 
-      <!-- Show default welcome only if no messages exist -->
-      <div *ngIf="messages.length === 0" class="flex w-full items-end justify-start gap-2">
+      <!-- Show default welcome -->
+      <div class="flex w-full items-end justify-start gap-2">
         <div class="
           w-9 h-9
           rounded-full
@@ -44,7 +44,7 @@
       " [message]="msg">
       </app-chat-message>
 
-      <div *ngIf="loading$ | async" class="flex w-full items-end justify-start gap-2 mb-2">
+      <div *ngIf="loading" class="flex w-full items-end justify-start gap-2 mb-2">
         <div class="
           w-9 h-9
           rounded-full

@@ -21,6 +21,7 @@
   <nav class="flex-1 flex flex-col gap-2 px-3 mt-4 md:mt-0">
     <a *ngFor="let item of navItems" [routerLink]="item.path" 
       routerLinkActive="bg-[#f3f0ff] text-[#6b21a8]"
+      [routerLinkActiveOptions]="{ exact: true }"
       class="relative flex items-center h-12 rounded-xl transition-all duration-200 group"
       [class.justify-center]="isCollapsed" [class.px-3]="!isCollapsed">
 

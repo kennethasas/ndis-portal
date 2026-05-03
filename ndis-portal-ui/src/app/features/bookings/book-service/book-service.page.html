@@ -1,58 +1,73 @@
-<div class="p-4 md:p-6 space-y-6 max-w-[2560px] mx-auto">
+<section class="min-h-full w-full px-3 py-4 sm:px-4 md:px-6 lg:px-8 2xl:px-10 min-[2560px]:px-14 min-[3840px]:px-20">
+  <div class="mx-auto flex w-full max-w-screen-2xl min-[2560px]:max-w-[2200px] min-[3840px]:max-w-[3200px] flex-col gap-5 sm:gap-6 2xl:gap-8 min-[3840px]:gap-12">
+    <header class="w-full">
+      <h1 class="text-xl sm:text-2xl lg:text-3xl 2xl:text-4xl min-[2560px]:text-5xl min-[3840px]:text-6xl font-bold leading-tight text-slate-900">
+        Book a Service
+      </h1>
+    </header>
 
-    <div class="w-full max-w-4xl mb-8">
-        <h1 class="text-lg md:text-xl 2xl:text-3xl 4xl:text-5xl font-bold text-slate-900 truncate">
-            Book a Service
-        </h1>
+    <div
+      *ngIf="errorMessage"
+      class="w-full rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700 sm:text-base 2xl:text-lg min-[3840px]:text-2xl"
+    >
+      {{ errorMessage }}
     </div>
 
-    <!-- Error Message -->
-    <div *ngIf="errorMessage" class="w-full max-w-4xl bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
-        {{ errorMessage }}
+    <div *ngIf="isLoadingServices" class="flex min-h-[220px] items-center justify-center gap-3 py-10">
+      <div class="h-6 w-6 rounded-full border-4 border-violet-100 border-t-violet-600 animate-spin 2xl:h-8 2xl:w-8"></div>
+      <span class="text-sm text-slate-500 sm:text-base 2xl:text-xl">
+        Loading services...
+      </span>
     </div>
 
-    <!-- Success Message -->
-    <div *ngIf="successMessage" class="w-full max-w-4xl bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded">
-        {{ successMessage }}
+    <div *ngIf="isSubmitting" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4">
+      <div class="flex w-full max-w-sm flex-col items-center gap-4 rounded-lg bg-white p-6 text-center shadow-xl sm:max-w-md 2xl:max-w-lg 2xl:p-8 min-[3840px]:max-w-2xl min-[3840px]:p-12">
+        <div class="h-8 w-8 rounded-full border-4 border-violet-100 border-t-violet-600 animate-spin 2xl:h-10 2xl:w-10 min-[3840px]:h-14 min-[3840px]:w-14"></div>
+        <p class="text-base font-semibold text-slate-700 2xl:text-xl min-[3840px]:text-3xl">
+          Loading
+        </p>
+        <p class="text-sm text-slate-500 2xl:text-lg min-[3840px]:text-2xl">
+          Please wait while we process your request
+        </p>
+      </div>
     </div>
 
-    <div class="p-4 md:p-6 flex flex-col items-center justify-center max-w-[2560px] mx-auto">
-        <div class="w-full max-w-4xl space-y-10">    
-            <!-- Loading Services -->
-            <div *ngIf="isLoadingServices" class="flex items-center justify-center py-4">
-                <div class="w-6 h-6 border-4 border-violet-100 border-t-violet-600 rounded-full animate-spin mr-2"></div>
-                <span class="text-slate-500">Loading services...</span>
-            </div>
+    <form *ngIf="!isLoadingServices" class="flex w-full flex-col gap-5 sm:gap-6 2xl:gap-8 min-[3840px]:gap-12">
+      <div class="grid w-full grid-cols-1 gap-5 lg:grid-cols-2 2xl:gap-8 min-[2560px]:gap-10 min-[3840px]:gap-14">
+        <app-select-service
+          class="block w-full"
+          [options]="services"
+          [(value)]="bookingData.serviceId"
+          [disabled]="isSubmitting">
+        </app-select-service>
 
-            <!-- Loading Overlay -->
-            <div *ngIf="isSubmitting" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-                <div class="bg-white rounded-lg p-6 flex flex-col items-center space-y-4">
-                    <div class="w-8 h-8 border-4 border-violet-100 border-t-violet-600 rounded-full animate-spin"></div>
-                    <p class="text-slate-700 font-medium">Loading</p>
-                    <p class="text-slate-500 text-sm">Please wait while we process your request</p>
-                </div>
-            </div>
+        <app-date-picker-component
+          class="block w-full"
+          [(value)]="bookingData.date"
+          [disabled]="isSubmitting">
+        </app-date-picker-component>
+      </div>
 
-            <div class="w-full space-y-6" *ngIf="!isLoadingServices">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
-                    <app-select-service class="block w-full" [options]="services" [(value)]="bookingData.serviceId" [disabled]="isSubmitting">
-                    </app-select-service>
-    
-                    <app-date-picker-component class="block w-full" [(value)]="bookingData.date" [disabled]="isSubmitting">
-                    </app-date-picker-component>
-                </div>
-    
-                <app-text-area-component class="block w-full" [(value)]="bookingData.notes" [disabled]="isSubmitting">
-                </app-text-area-component>
-            </div>
-            <div class="flex flex-col-reverse md:flex-row justify-end items-center gap-8 pt-6">
-                <app-back-button (onClick)="navBack()"></app-back-button>
-                <app-book-button (onClick)="confirmBooking()" [disabled]="isSubmitting || !bookingData.serviceId || !bookingData.date" [isLoading]="isSubmitting">
-                </app-book-button>
-            </div>
+      <app-text-area-component
+        class="block w-full"
+        [rows]="5"
+        [(value)]="bookingData.notes"
+        [disabled]="isSubmitting">
+      </app-text-area-component>
+
+      <div class="flex w-full flex-col-reverse gap-3 pt-2 sm:flex-row sm:justify-end sm:gap-4 2xl:gap-6 min-[3840px]:gap-8">
+        <div class="w-full sm:w-auto [&_button]:w-full sm:[&_button]:w-auto">
+          <app-back-button (onClick)="navBack()"></app-back-button>
         </div>
-    </div>
 
-
- 
-</div>
+        <div class="w-full sm:w-auto [&_button]:w-full sm:[&_button]:w-auto">
+          <app-book-button
+            (onClick)="confirmBooking()"
+            [disabled]="isSubmitting || !bookingData.serviceId || !bookingData.date"
+            [isLoading]="isSubmitting">
+          </app-book-button>
+        </div>
+      </div>
+    </form>
+  </div>
+</section>

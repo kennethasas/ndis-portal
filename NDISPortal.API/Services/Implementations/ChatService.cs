@@ -25,7 +25,7 @@ namespace Register.API.Services
             ILogger<ChatService> logger,
             IServiceService serviceService,
             IServiceCategoryService categoryService,
-            IBookingService bookingService,
+                IBookingService bookingService,
             application_db_context context)
         {
             _config = config;

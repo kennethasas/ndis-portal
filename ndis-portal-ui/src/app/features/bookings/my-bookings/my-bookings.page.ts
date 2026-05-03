@@ -20,7 +20,7 @@ import { BookingService } from '../../../core/services/booking.service';
 
 import { Booking, BookingViewModel } from '../../../core/models/booking.model';
 
-import { Router, ActivatedRoute } from '@angular/router';
+import { Router } from '@angular/router';
 
 // Import the generic Smart Dialog Component
 
@@ -72,8 +72,6 @@ export class MyBookingsComponent implements OnInit {
 
   errorMessage = '';
 
-  successMessage = '';
-
 
 
   // --- Dialog State ---
@@ -82,6 +80,8 @@ export class MyBookingsComponent implements OnInit {
 
   selectedBookingForCancel: BookingViewModel | null = null;
 
+  selectedNotesBooking: BookingViewModel | null = null;
+
 
 
   constructor(
@@ -89,8 +89,6 @@ export class MyBookingsComponent implements OnInit {
     private bookingService: BookingService, 
 
     private router: Router, 
-
-    private route: ActivatedRoute,
 
     private http: HttpClient
 
@@ -101,46 +99,6 @@ export class MyBookingsComponent implements OnInit {
   ngOnInit() {
 
     console.log('MyBookingsComponent ngOnInit() called');
-
-    
-
-    // Test available endpoints first
-
-    this.testAvailableEndpoints();
-
-    
-
-    // Check for success message from query parameter
-
-    this.route.queryParams.subscribe(params => {
-
-      if (params['success'] === 'true') {
-
-        this.successMessage = 'Booking created successfully!';
-
-        // Clear the success message after 5 seconds
-
-        setTimeout(() => {
-
-          this.successMessage = '';
-
-        }, 5000);
-
-        // Clear the query parameter to prevent showing message on refresh
-
-        this.router.navigate([], { 
-
-          relativeTo: this.route,
-
-          queryParams: {},
-
-          replaceUrl: true 
-
-        });
-
-      }
-
-    });
 
     
 
@@ -620,7 +578,13 @@ export class MyBookingsComponent implements OnInit {
 
   handleView(booking: BookingViewModel) {
 
-    console.log('Viewing booking details:', booking.rawData);
+    this.selectedNotesBooking = booking;
+
+  }
+
+  closeNotes() {
+
+    this.selectedNotesBooking = null;
 
   }
 

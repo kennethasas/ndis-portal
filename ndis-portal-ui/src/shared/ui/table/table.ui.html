@@ -129,9 +129,12 @@
                  VIEW BUTTON
                  =========================== -->
 
-            <button *ngSwitchCase="'view'" (click)="viewAction.emit(row)"
-              class="text-violet-600 font-medium hover:underline text-sm">
-              View Note
+            <button
+              *ngSwitchCase="'view'"
+              (click)="viewAction.emit(row)"
+              [ngClass]="col.actionLabel ? 'px-3 py-1.5 text-sm font-medium text-violet-700 bg-violet-50 hover:bg-violet-100 rounded-md transition-colors' : 'text-violet-600 font-medium hover:underline text-sm'"
+            >
+              {{ col.actionLabel || 'View Note' }}
             </button>
 
             <!-- ===========================
@@ -264,9 +267,11 @@
 
             <!-- View -->
             <div *ngSwitchCase="'view'" class="flex items-center">
-              <button (click)="viewAction.emit(row)"
-                class="inline-flex items-center gap-2 px-3 py-1 border rounded-md text-xs hover:bg-slate-50">
-                View
+              <button
+                (click)="viewAction.emit(row)"
+                [ngClass]="col.actionLabel ? 'px-3 py-1.5 text-sm font-medium text-violet-700 bg-violet-50 hover:bg-violet-100 rounded-md transition-colors' : 'inline-flex items-center gap-2 px-3 py-1 border rounded-md text-xs hover:bg-slate-50'"
+              >
+                {{ col.actionLabel || 'View' }}
               </button>
             </div>
 

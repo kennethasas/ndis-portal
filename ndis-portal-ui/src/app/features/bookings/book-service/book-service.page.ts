@@ -13,6 +13,7 @@ import { DatePickerComponent } from '../../../../shared/components/date-picker/d
 import { TextAreaComponent } from '../../../../shared/components/text-area/text-area.component';
 import { BookingService } from '../../../core/services/booking.service';
 import { ApiService } from '../../../core/services/api-service';
+import { ToastService } from '../../../core/services/toast.service';
 
 import { BookButton } from '../../../../shared/components/button/book-button/book-button.component';
 import { BackButton } from '../../../../shared/components/button/back-button/back-button.component';
@@ -51,7 +52,6 @@ export class BookServiceComponent implements OnInit {
   isLoading = false;
   isLoadingServices = false;
   errorMessage = '';
-  successMessage = '';
   isSubmitting = false; // Prevent duplicate submissions
 
   constructor(
@@ -59,7 +59,8 @@ export class BookServiceComponent implements OnInit {
     private router: Router,
     private bookingService: BookingService,
     private apiService: ApiService,
-    private http: HttpClient
+    private http: HttpClient,
+    private toast: ToastService
   ) {}
 
   ngOnInit() {
@@ -134,7 +135,6 @@ export class BookServiceComponent implements OnInit {
     this.isSubmitting = true;
     this.isLoading = true;
     this.errorMessage = '';
-    this.successMessage = '';
 
     // Convert to proper types for API
     const serviceId = parseInt(this.bookingData.serviceId as string, 10);
@@ -156,7 +156,6 @@ export class BookServiceComponent implements OnInit {
           this.isSubmitting = false;
           this.isLoading = false;
           this.errorMessage = 'Cannot connect to server. Please check your internet connection and try again.';
-          this.successMessage = '';
           return;
         }
         
@@ -168,7 +167,6 @@ export class BookServiceComponent implements OnInit {
         this.isSubmitting = false;
         this.isLoading = false;
         this.errorMessage = 'Cannot connect to server. Please check your internet connection and try again.';
-        this.successMessage = '';
       }
     });
   }
@@ -198,23 +196,16 @@ export class BookServiceComponent implements OnInit {
           this.isSubmitting = false;
           this.isLoading = false;
           this.errorMessage = 'Invalid response from server. Booking may not have been created.';
-          this.successMessage = '';
           return;
         }
         
-        // Only show success message if the booking was actually created
-        this.successMessage = 'Booking created successfully!';
-
         // Keep loading state active until navigation completes
         setTimeout(() => {
-          this.router.navigate(['/bookings'], { 
-            queryParams: { 
-              success: 'true' 
-            } 
-          }).then(() => {
+          this.router.navigate(['/bookings']).then(() => {
             // Reset states only after navigation is complete
             this.isSubmitting = false;
             this.isLoading = false;
+            this.toast.show('Booking created successfully!', 'success');
           });
         }, 1500);
       },
@@ -227,9 +218,6 @@ export class BookServiceComponent implements OnInit {
         
         // Display the error message from the service
         this.errorMessage = error.message;
-        
-        // Clear any existing success message
-        this.successMessage = '';
         
         // Log the error for debugging
         console.error('Booking failed:', error);

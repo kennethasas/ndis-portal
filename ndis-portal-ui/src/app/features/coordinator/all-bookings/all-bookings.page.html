@@ -1,6 +1,12 @@
 <div class="p-4 md:p-6 space-y-6 max-w-[2560px] mx-auto">
-  <div class="flex flex-row items-center justify-between gap-4 w-full">
+  <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 w-full">
     <h1 class="text-lg md:text-xl font-bold text-slate-900">All Bookings</h1>
+
+    <app-status-dropdown
+      class="w-full sm:w-auto"
+      [activeStatus]="activeFilter"
+      (statusChange)="handleStatusFilter($event)">
+    </app-status-dropdown>
   </div>
 
   <div>
@@ -24,7 +30,13 @@
               Service
             </th>
             <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
+              Category
+            </th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
               Preferred Date
+            </th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
+              Notes
             </th>
             <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
               Status
@@ -44,7 +56,19 @@
               {{ booking.serviceName }}
             </td>
             <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500">
+              {{ booking.serviceCategory || 'Uncategorized' }}
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500">
               {{ booking.preferredDate | date:'mediumDate' }}
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500">
+              <button
+                type="button"
+                (click)="viewNotes(booking)"
+                class="px-3 py-1.5 text-sm font-medium text-violet-700 bg-violet-50 hover:bg-violet-100 rounded-md transition-colors"
+              >
+                View
+              </button>
             </td>
             <td class="px-6 py-4 whitespace-nowrap">
               <span
@@ -99,12 +123,47 @@
           </tr>
 
           <tr *ngIf="bookings.length === 0">
-            <td colspan="5" class="px-6 py-12 text-center text-sm text-slate-400">
+            <td colspan="7" class="px-6 py-12 text-center text-sm text-slate-400">
               No bookings found
             </td>
           </tr>
         </tbody>
       </table>
+    </div>
+  </div>
+
+  <div
+    *ngIf="selectedNotesBooking"
+    class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4"
+  >
+    <div class="w-full max-w-md rounded-lg bg-white shadow-xl">
+      <div class="flex items-center justify-between border-b border-slate-200 px-5 py-4">
+        <h2 class="text-base font-semibold text-slate-900">Booking Notes</h2>
+
+        <button
+          type="button"
+          (click)="closeNotes()"
+          class="text-slate-400 hover:text-slate-600"
+        >
+          &times;
+        </button>
+      </div>
+
+      <div class="px-5 py-4">
+        <p class="whitespace-pre-wrap break-words text-sm text-slate-600">
+          {{ selectedNotesBooking.notes || 'No notes provided.' }}
+        </p>
+      </div>
+
+      <div class="flex justify-end border-t border-slate-200 px-5 py-4">
+        <button
+          type="button"
+          (click)="closeNotes()"
+          class="rounded-md bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800"
+        >
+          Close
+        </button>
+      </div>
     </div>
   </div>
 </div>

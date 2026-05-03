@@ -58,6 +58,7 @@ export class AuthService {
   }
 
   private hasToken(): boolean {
+    if (!this.isBrowser()) return false;
     return !!localStorage.getItem('token');
   }
 
@@ -126,6 +127,7 @@ export class AuthService {
   }
 
   getRole(): string | null {
+    if (!this.isBrowser()) return null;
     return localStorage.getItem('role');
   }
 }

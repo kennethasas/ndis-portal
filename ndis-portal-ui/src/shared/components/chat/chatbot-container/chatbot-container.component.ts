@@ -78,6 +78,7 @@ export class ChatbotContainerComponent implements OnInit, OnDestroy {
   toggleChat() {
     if (!this.showChatbot) {
       this.isOpen = false;
+      this.cdr.detectChanges();
       return;
     }
 
@@ -89,6 +90,8 @@ export class ChatbotContainerComponent implements OnInit, OnDestroy {
     if (!wasOpen && this.isOpen) {
       this.chatService.resetToNormalChat();
     }
+
+    this.cdr.detectChanges();
   }
 
   /**
@@ -104,5 +107,6 @@ export class ChatbotContainerComponent implements OnInit, OnDestroy {
     
     // Open the chat panel
     this.isOpen = true;
+    this.cdr.detectChanges();
   }
 }
