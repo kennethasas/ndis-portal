@@ -1,7 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
+import { Subscription } from 'rxjs';
 
 import { ServiceSelectComponent } from '../../../../shared/components/select/select-service/select-service.component';
 import { DatePickerComponent } from '../../../../shared/components/date-picker/date-picker.component';
@@ -26,7 +27,7 @@ import { ToastService } from '../../../core/services/toast.service';
   ],
   templateUrl: './participant-book-service.page.html',
 })
-export class ParticipantBookServiceComponent implements OnInit {
+export class ParticipantBookServiceComponent implements OnInit, OnDestroy {
   bookingForm = {
     serviceId: '',
     preferredDate: '',
@@ -46,6 +47,8 @@ export class ParticipantBookServiceComponent implements OnInit {
     preferredDate: '',
   };
 
+  private queryParamsSubscription: Subscription | null = null;
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
@@ -56,13 +59,18 @@ export class ParticipantBookServiceComponent implements OnInit {
 
   ngOnInit() {
     this.loadServices();
-    this.checkPreselectedService();
+    // Subscribe to query params to handle navigation while already on this page
+    this.queryParamsSubscription = this.route.queryParams.subscribe(params => {
+      const preselectedService = params['serviceId'];
+      if (preselectedService) {
+        this.bookingForm.serviceId = preselectedService;
+      }
+    });
   }
 
-  checkPreselectedService() {
-    const preselectedService = this.route.snapshot.queryParamMap.get('serviceId');
-    if (preselectedService) {
-      this.bookingForm.serviceId = preselectedService;
+  ngOnDestroy() {
+    if (this.queryParamsSubscription) {
+      this.queryParamsSubscription.unsubscribe();
     }
   }
 

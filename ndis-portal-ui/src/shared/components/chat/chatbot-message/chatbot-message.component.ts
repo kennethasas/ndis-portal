@@ -97,8 +97,8 @@ export class ChatMessageComponent implements AfterViewInit {
         const serviceId = button.getAttribute('data-service-id');
         console.log('[ChatMessage] Book button clicked via onclick, serviceId:', serviceId);
         if (serviceId) {
-          console.log('[ChatMessage] Navigating to /book-new with serviceId:', serviceId);
-          this.router.navigate(['/book-new'], { queryParams: { serviceId: serviceId } }).then(
+          console.log('[ChatMessage] Navigating to /participant/book-service with serviceId:', serviceId);
+          this.router.navigate(['/participant/book-service'], { queryParams: { serviceId: serviceId } }).then(
             (success) => console.log('[ChatMessage] Navigation success:', success),
             (error) => console.error('[ChatMessage] Navigation error:', error)
           );
@@ -142,7 +142,7 @@ export class ChatMessageComponent implements AfterViewInit {
    */
   bookService(serviceId: number) {
     console.log('[ChatMessage] Booking service:', serviceId);
-    this.router.navigate(['/book-new'], { queryParams: { serviceId: serviceId.toString() } });
+    this.router.navigate(['/participant/book-service'], { queryParams: { serviceId: serviceId.toString() } });
   }
 
   /**
