@@ -29,11 +29,12 @@
           <app-icon-dashboard *ngSwitchCase="'dashboard'"></app-icon-dashboard>
           <app-icon-service *ngSwitchCase="'services'"></app-icon-service>
           <app-icon-book *ngSwitchCase="'bookings'"></app-icon-book>
+          <app-icon-book-new *ngSwitchCase="'book-new'"></app-icon-book-new>
         </ng-container>
       </div>
 
       <!-- Text Label -->
-      <span *ngIf="!isCollapsed" class="ml-4 text-slate-900 text-sm font-medium whitespace-nowrap overflow-hidden">
+      <span *ngIf="!isCollapsed" class="ml-4 text-sm font-medium whitespace-nowrap overflow-hidden">
         {{ item.label }}
       </span>
 

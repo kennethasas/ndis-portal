@@ -17,11 +17,12 @@ import { ServiceIconComponent } from '../../components/icons/svg-icons/service-i
 import { SideBarIconComponent } from '../../components/icons/svg-icons/sidebar-icon';
 import { DashboardIconComponent } from '../../components/icons/svg-icons/dashboard-icon';
 import { LogoutIconComponent } from '../../components/icons/svg-icons/logout-icon';
+import { NewBookIconComponent } from '../../components/icons/svg-icons/book-new-icon';
 import { DialogUi } from '../dialog/dialog.ui';
 export interface NavItem {
   label: string;
   path: string;
-  icon: 'home' | 'services' | 'bookings' | 'dashboard';
+  icon: 'home' | 'services' | 'bookings' | 'dashboard' | 'book-new';
 }
 
 @Component({
@@ -37,6 +38,7 @@ export interface NavItem {
     DashboardIconComponent,
     LogoutIconComponent,
     DialogUi,
+    NewBookIconComponent,
   ],
   templateUrl: './sidebar.ui.html',
 })

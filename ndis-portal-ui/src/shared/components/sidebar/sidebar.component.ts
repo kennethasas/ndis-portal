@@ -49,7 +49,7 @@ export class SidebarComponent {
     {
       label: 'Book a Service',
       path: '/participant/book-service',
-      icon: 'bookings',
+      icon: 'book-new',
       role: 'Participant',
     },
     {
