@@ -27,6 +27,9 @@ namespace NDISPortal.API.Services.Implementations
                 query = query.Where(s => s.CategoryId == categoryId.Value);
             }
 
+            // Order by newest first (newly added services at the top)
+            query = query.OrderByDescending(s => s.created_date);
+
             var services = await query
                 .Select(s => new ServiceDto
                 {
@@ -65,6 +68,9 @@ namespace NDISPortal.API.Services.Implementations
                     query = query.Where(s => s.CategoryId == categoryId.Value);
                     Console.WriteLine($"Filtering by category ID: {categoryId.Value}");
                 }
+
+                // Order by newest first (newly added services at the top)
+                query = query.OrderByDescending(s => s.created_date);
 
                 // Log the SQL query
                 var sql = query.ToQueryString();
