@@ -1,40 +1,39 @@
-﻿using Microsoft.EntityFrameworkCore;
-using NDIS.API.Model;
-using NDISPortal.API.Data;
-using NDISPortal.API.DTOs.Ai;
+﻿using NDISPortal.API.DTOs.Ai;
 using NDISPortal.API.Services.Interfaces;
-using Service.API.Model;
+using Service.API.DTOs;
+using Service.API.DTOs.Service;
 using System.Text.Json;
 
 namespace NDISPortal.API.Services.Implementations
 {
     public class RecommendationService : IRecommendationService
     {
-        private readonly application_db_context _context;
+        private readonly IServiceService _serviceService;
+        private readonly IServiceCategoryService _categoryService;
         private readonly IClaudeService _claude;
         private readonly ILogger<RecommendationService> _logger;
 
         public RecommendationService(
-            application_db_context context,
+            IServiceService serviceService,
+            IServiceCategoryService categoryService,
             IClaudeService claude,
             ILogger<RecommendationService> logger)
         {
-            _context = context;
+            _serviceService = serviceService;
+            _categoryService = categoryService;
             _claude = claude;
             _logger = logger;
         }
 
         public async Task<RecommendResponse> GetRecommendationsAsync(RecommendRequest request)
         {
-            // Fetch active services with their categories
-            var services = await _context.Services
-                .Where(s => s.is_active)
-                .Include(s => s.ServiceCategory)
-                .ToListAsync();
+            // Fetch active services with their categories via Service API
+            var serviceDtos = await _serviceService.GetAllAsync(null);
+            var services = serviceDtos.ToList();
 
-            // Fetch all service categories
-            var categories = await _context.service_categories
-                .ToListAsync();
+            // Fetch all service categories via Service Category API
+            var categoryDtos = await _categoryService.GetAllAsync();
+            var categories = categoryDtos.ToList();
 
             if (!services.Any() || !categories.Any())
             {
@@ -57,10 +56,9 @@ namespace NDISPortal.API.Services.Implementations
                 {
                     aiRaw = await _claude.GetRecommendationsAsync(prompt);
                 }
-                catch (Exception ex) when (ex.Message.Contains("API key is not configured") || 
-                                           ex.Message.Contains("Claude API error"))
+                catch (Exception ex)
                 {
-                    _logger.LogError(ex, "Claude API call failed");
+                    _logger.LogError(ex, "Claude API call failed with error: {message}", ex.Message);
                     // Fallback: return simple keyword-based recommendations
                     return GetFallbackRecommendations(request, services, categories);
                 }
@@ -130,7 +128,7 @@ namespace NDISPortal.API.Services.Implementations
                     {
                         ServiceId = service.Id,
                         ServiceName = service.Name,
-                        CategoryName = service.ServiceCategory?.Name ?? "Unknown",
+                        CategoryName = service.CategoryName ?? "Unknown",
                         Description = service.Description,
                         Reason = ai.Reason,
                         Confidence = ai.Confidence
@@ -167,21 +165,20 @@ namespace NDISPortal.API.Services.Implementations
             }
         }
 
-        private string BuildPrompt(RecommendRequest request, List<ServiceItem> services, List<ServiceCategory> categories)
+        private string BuildPrompt(RecommendRequest request, List<ServiceDto> services, List<ServiceCategoryDto> categories)
         {
             var categoryList = categories.Select(c => new
             {
                 id = c.Id,
-                name = c.Name,
-                description = c.Description
+                name = c.Name
             });
 
             var serviceList = services.Select(s => new
             {
                 id = s.Id,
                 name = s.Name,
-                category = s.ServiceCategory?.Name,
-                categoryId = s.ServiceCategory?.Id,
+                category = s.CategoryName,
+                categoryId = s.CategoryId,
                 description = s.Description
             });
 
@@ -232,33 +229,52 @@ OUT_OF_SCOPE";
         /// Fallback method that uses simple keyword matching when Claude API is unavailable
         /// </summary>
         private RecommendResponse GetFallbackRecommendations(
-            RecommendRequest request, 
-            List<ServiceItem> services, 
-            List<ServiceCategory> categories)
+            RecommendRequest request,
+            List<ServiceDto> services,
+            List<ServiceCategoryDto> categories)
         {
-            _logger.LogInformation("Using fallback keyword matching for recommendations");
+            _logger.LogInformation("Using fallback keyword matching for recommendations. Available categories: {categories}",
+                string.Join(", ", categories.Select(c => c.Name)));
 
             var message = request.Message?.ToLowerInvariant() ?? "";
-            
-            // Define keyword mappings (category keywords -> category names)
-            // These must match the actual category names in your database
-            var categoryKeywords = new Dictionary<string[], string>
+
+            // Build dynamic keyword mappings based on actual database category names
+            var categoryKeywords = new Dictionary<string[], string>();
+
+            foreach (var category in categories)
             {
-                { new[] { "personal", "daily activities", "bathing", "dressing", "grooming", "hygiene", "toilet", "personal hygiene", "shower", "clean", "myself", "cant walk", "paralyzed", "wheelchair", "bedridden", "help with", "assistance with" }, "Daily Personal Activities" },
-                { new[] { "community", "social", "outing", "activities", "participation", "engage", "access", "going out", "walk", "walking", "mobility", "cant walk", "cannot walk", "unable to walk", "vision", "seeing", "blind", "transport", "getting around" }, "Community Access" },
-                { new[] { "therapy", "therapist", "occupational", "speech", "physical", "communication", "skills", "improve", "enhance" }, "Therapy Supports" },
-                { new[] { "respite", "accommodation", "short term", "temporary", "care support", "place to stay", "break", "carer break" }, "Respite Care" },
-                { new[] { "plan", "coordination", "management", "coordinate", "support coordination", "ndis plan", "plan manager" }, "Support Coordination" }
-            };
+                var catName = category.Name.ToLowerInvariant();
+                var keywords = new List<string> { catName };
+
+                // Add common synonyms based on category name patterns
+                if (catName.Contains("personal") || catName.Contains("daily"))
+                    keywords.AddRange(new[] { "personal", "daily activities", "bathing", "dressing", "grooming", "hygiene", "toilet", "shower", "clean", "help with" });
+                if (catName.Contains("community") || catName.Contains("social"))
+                    keywords.AddRange(new[] { "community", "social", "outing", "going out", "walk", "walking", "mobility", "transport" });
+                if (catName.Contains("therapy") || catName.Contains("therapist"))
+                    keywords.AddRange(new[] { "therapy", "therapist", "occupational", "speech", "physical", "communication", "skills" });
+                if (catName.Contains("respite") || catName.Contains("accommodation"))
+                    keywords.AddRange(new[] { "respite", "accommodation", "short term", "temporary", "break" });
+                if (catName.Contains("coordination") || catName.Contains("plan"))
+                    keywords.AddRange(new[] { "plan", "coordination", "management", "coordinate", "plan manager" });
+
+                // Also match if user's message contains the category name directly
+                if (!categoryKeywords.ContainsKey(keywords.ToArray()))
+                {
+                    categoryKeywords[keywords.ToArray()] = category.Name;
+                }
+            }
 
             // Track matched keywords per category for better reasoning
             var categoryToKeywords = new Dictionary<string, List<string>>();
             foreach (var kvp in categoryKeywords)
             {
-                var matchedKeywords = kvp.Key.Where(keyword => message.Contains(keyword)).ToList();
+                var matchedKeywords = kvp.Key.Where(keyword => message.Contains(keyword.ToLowerInvariant())).ToList();
                 if (matchedKeywords.Any())
                 {
-                    categoryToKeywords[kvp.Value] = matchedKeywords;
+                    if (!categoryToKeywords.ContainsKey(kvp.Value))
+                        categoryToKeywords[kvp.Value] = new List<string>();
+                    categoryToKeywords[kvp.Value].AddRange(matchedKeywords);
                 }
             }
 
@@ -266,7 +282,7 @@ OUT_OF_SCOPE";
 
             // Find services in matched categories
             var matchedServices = services
-                .Where(s => matchedCategories.Contains(s.ServiceCategory?.Name ?? ""))
+                .Where(s => matchedCategories.Contains(s.CategoryName ?? ""))
                 .Take(5)
                 .ToList();
 
@@ -287,18 +303,19 @@ OUT_OF_SCOPE";
 
             if (!matchedServices.Any())
             {
+                var availableCategories = string.Join(", ", categories.Select(c => c.Name));
                 return new RecommendResponse
                 {
                     Recommendations = new List<RecommendationDto>(),
                     IsOutOfScope = true,
-                    OutOfScopeMessage = "Sorry, we couldn't find any suitable NDIS services matching your needs. Available: Daily Personal Activities, Community Access, Therapy Supports, Respite Care, and Support Coordination. For financial, legal, or medical advice, please consult appropriate professionals."
+                    OutOfScopeMessage = $"Sorry, we couldn't find any suitable NDIS services matching your needs. Available categories: {availableCategories}. For financial, legal, or medical advice, please consult appropriate professionals."
                 };
             }
 
             // Generate specific reasons based on matched keywords
-            var recommendations = matchedServices.Select(s => 
+            var recommendations = matchedServices.Select(s =>
             {
-                var categoryName = s.ServiceCategory?.Name ?? "Unknown";
+                var categoryName = s.CategoryName ?? "Unknown";
                 var categoryKeywords = categoryToKeywords.GetValueOrDefault(categoryName, new List<string>());
                 var reason = GenerateReason(s.Name, categoryName, s.Description, categoryKeywords, message);
                 var confidence = CalculateConfidence(categoryKeywords.Count, message.Length);

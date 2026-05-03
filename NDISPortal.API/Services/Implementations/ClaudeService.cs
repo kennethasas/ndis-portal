@@ -22,9 +22,11 @@ public class ClaudeService : IClaudeService
         {
             var apiKey = _config["Claude:ApiKey"];
 
+            _logger.LogInformation("Claude API key check: Key is {status}", string.IsNullOrEmpty(apiKey) ? "NULL or EMPTY" : "configured");
+
             if (string.IsNullOrEmpty(apiKey))
             {
-                _logger.LogError("Claude API key is not configured");
+                _logger.LogError("Claude API key is not configured. Check appsettings.Development.json has Claude:ApiKey");
                 throw new Exception("Claude API key is not configured");
             }
 
