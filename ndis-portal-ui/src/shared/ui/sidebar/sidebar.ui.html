@@ -4,11 +4,9 @@
   [class.translate-x-0]="!isCollapsed && isMobile">
 
   <!-- SIDEBAR HEADER -->
-  <div 
-    class="hidden md:flex items-center justify-between h-16 mb-2"
-    [class.px-4]="!isCollapsed"
+  <div class="hidden md:flex items-center justify-between h-16 mb-2" [class.px-4]="!isCollapsed"
     [class.px-5]="isCollapsed">
-    <button (click)="toggle()" class="p-2 rounded-full hover:bg-slate-100 text-slate-600 transition-colors">
+    <button (click)="toggle()" class="p-2 rounded-full hover:bg-slate-100 text-slate-900 transition-colors">
       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
         class="w-6 h-6">
         <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
@@ -19,8 +17,7 @@
 
   <!-- NAVIGATION -->
   <nav class="flex-1 flex flex-col gap-2 px-3 mt-4 md:mt-0">
-    <a *ngFor="let item of navItems" [routerLink]="item.path" 
-      routerLinkActive="bg-[#f3f0ff] text-[#6b21a8]"
+    <a *ngFor="let item of navItems" [routerLink]="item.path" routerLinkActive="bg-[#f3f0ff] text-[#6b21a8]"
       [routerLinkActiveOptions]="{ exact: true }"
       class="relative flex items-center h-12 rounded-xl transition-all duration-200 group"
       [class.justify-center]="isCollapsed" [class.px-3]="!isCollapsed">
@@ -29,13 +26,14 @@
       <div class="flex items-center justify-center min-w-[24px]">
         <ng-container [ngSwitch]="item.icon">
           <app-icon-home *ngSwitchCase="'home'"></app-icon-home>
+          <app-icon-dashboard *ngSwitchCase="'dashboard'"></app-icon-dashboard>
           <app-icon-service *ngSwitchCase="'services'"></app-icon-service>
           <app-icon-book *ngSwitchCase="'bookings'"></app-icon-book>
         </ng-container>
       </div>
 
       <!-- Text Label -->
-      <span *ngIf="!isCollapsed" class="ml-4 text-sm font-medium whitespace-nowrap overflow-hidden">
+      <span *ngIf="!isCollapsed" class="ml-4 text-slate-900 text-sm font-medium whitespace-nowrap overflow-hidden">
         {{ item.label }}
       </span>
 
@@ -46,7 +44,42 @@
       </div>
     </a>
   </nav>
+
+  <div class="p-3 border-t border-slate-200">
+    <button (click)="openLogoutDialog()"
+      class="w-full flex items-center h-12 rounded-xl transition-all duration-200 hover:bg-red-50 text-red-600"
+      [class.justify-center]="isCollapsed" [class.justify-start]="!isCollapsed" [class.px-3]="!isCollapsed">
+      <!-- Icon -->
+      <div class="flex items-center justify-center min-w-[24px]">
+        <app-icon-logout class="w-5 h-5"></app-icon-logout>
+      </div>
+
+      <!-- Label -->
+      <span *ngIf="!isCollapsed" class="ml-4 text-sm font-medium">
+        Logout
+      </span>
+    </button>
+  </div>
 </aside>
+
+<app-dialog-ui [label]="'Confirm Logout'" [isOpen]="isLogoutDialogOpen" (close)="closeLogoutDialog()">
+  <!-- BODY -->
+  <div body>
+    Are you sure you want to log out?
+  </div>
+
+  <!-- ACTIONS -->
+  <div actions class="flex gap-2 justify-end w-full">
+    <button (click)="closeLogoutDialog()"
+      class="px-4 py-2 text-sm rounded-lg border border-slate-300 hover:bg-slate-100">
+      Cancel
+    </button>
+
+    <button (click)="confirmLogout()" class="px-4 py-2 text-sm rounded-lg bg-red-600 text-white hover:bg-red-700">
+      Logout
+    </button>
+  </div>
+</app-dialog-ui>
 
 <!-- Mobile Backdrop -->
 <div *ngIf="!isCollapsed && isMobile" (click)="toggle()" class="fixed inset-0 bg-black/20 z-40 md:hidden"></div>

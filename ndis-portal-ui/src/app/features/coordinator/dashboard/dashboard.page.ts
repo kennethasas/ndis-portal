@@ -15,30 +15,18 @@ export class DashboardComponent implements OnInit {
     {
       label: 'Total Bookings',
       value: 0,
-      icon: 'fa-solid fa-calendar-days',
-      color: '#6366f1',
-      bg: '#e0e7ff',
     },
     {
       label: 'Pending',
       value: 0,
-      icon: 'fa-solid fa-clock',
-      color: '#f59e0b',
-      bg: '#fef3c7',
     },
     {
       label: 'Approved',
       value: 0,
-      icon: 'fa-solid fa-circle-check',
-      color: '#10b981',
-      bg: '#d1fae5',
     },
     {
       label: 'Cancelled',
       value: 0,
-      icon: 'fa-solid fa-circle-xmark',
-      color: '#ef4444',
-      bg: '#fee2e2',
     },
   ];
 

@@ -23,25 +23,25 @@
       <table class="min-w-full divide-y divide-slate-200">
         <thead class="bg-slate-50">
           <tr>
-            <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
-              Participant Name
+            <th class="p-4 text-left text-sm font-semibold text-slate-900 capitalize">
+              Name
             </th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
+            <th class="p-4 text-left text-sm font-semibold text-slate-900 capitalize">
               Service
             </th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
+            <th class="p-4 text-left text-sm font-semibold text-slate-900 capitalize">
               Category
             </th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
+            <th class="p-4 text-left text-sm font-semibold text-slate-900 capitalize">
               Preferred Date
             </th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
+            <th class="p-4 text-left text-sm font-semibold text-slate-900 capitalize">
               Notes
             </th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
+            <th class="p-4 text-left text-sm font-semibold text-slate-900 capitalize">
               Status
             </th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
+            <th class="p-4 text-left text-sm font-semibold text-slate-900 capitalize">
               Actions
             </th>
           </tr>
@@ -65,19 +65,19 @@
               <button
                 type="button"
                 (click)="viewNotes(booking)"
-                class="px-3 py-1.5 text-sm font-medium text-violet-700 bg-violet-50 hover:bg-violet-100 rounded-md transition-colors"
+                class="px-3 py-1 text-xs border rounded-md hover:bg-violet-100 transition-colors"
               >
                 View
               </button>
             </td>
-            <td class="px-6 py-4 whitespace-nowrap">
+            <td>
               <span
+                class="px-3 py-1 text-xs border rounded-md bg-white"
                 [ngClass]="{
-                  'bg-yellow-100 text-yellow-800': booking.status === 'Pending',
-                  'bg-green-100 text-green-800': booking.status === 'Approved',
-                  'bg-red-100 text-red-800': booking.status === 'Cancelled'
+                  'text-yellow-800': booking.status === 'Pending',
+                  'text-green-800': booking.status === 'Approved',
+                  'text-red-800': booking.status === 'Cancelled'
                 }"
-                class="px-2 py-1 text-xs font-medium rounded-full"
               >
                 {{ booking.status }}
               </span>
@@ -159,7 +159,7 @@
         <button
           type="button"
           (click)="closeNotes()"
-          class="rounded-md bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800"
+          class="rounded-md bg-[#6b21a8] px-4 py-2 text-sm font-medium text-white hover:bg-slate-800"
         >
           Close
         </button>
