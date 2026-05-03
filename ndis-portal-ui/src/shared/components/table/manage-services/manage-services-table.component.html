@@ -1,6 +1,113 @@
-    <app-table-ui
-      [columns]="serviceColumns"
-      [data]="bookings"
-      (viewAction)="onEdit.emit($event)"
-      (cancelAction)="onDeactivate.emit($event)"
-    ></app-table-ui>
+<ng-template #statusBadge let-service="service">
+  <div
+    class="inline-flex max-w-full items-center gap-2 rounded-md border border-slate-200 bg-white px-3 py-1 text-xs font-medium 2xl:text-base min-[3840px]:gap-3 min-[3840px]:px-5 min-[3840px]:py-2 min-[3840px]:text-2xl"
+    [ngClass]="{
+      'text-[#289839]': service.status === 'Active',
+      'text-[#DB4444]': service.status === 'Inactive'
+    }"
+  >
+    <svg class="h-2 w-2 shrink-0 min-[3840px]:h-3 min-[3840px]:w-3" viewBox="0 0 10 10" fill="currentColor">
+      <circle cx="5" cy="5" r="5" />
+    </svg>
+
+    <span class="truncate">{{ service.status }}</span>
+  </div>
+</ng-template>
+
+<ng-template #toggleControl let-service="service">
+  <button
+    type="button"
+    (click)="toggleStatus.emit(service)"
+    data-testid="toggle-btn"
+    class="relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-violet-500 focus:ring-offset-2 2xl:h-8 2xl:w-14 min-[3840px]:h-12 min-[3840px]:w-20"
+    [ngClass]="service.status === 'Active' ? 'bg-violet-600' : 'bg-slate-300'"
+  >
+    <span class="sr-only">Toggle status</span>
+    <span
+      class="inline-block h-4 w-4 rounded-full bg-white transition-transform 2xl:h-6 2xl:w-6 min-[3840px]:h-9 min-[3840px]:w-9"
+      [ngClass]="service.status === 'Active' ? 'translate-x-6 min-[3840px]:translate-x-10' : 'translate-x-1'"
+    ></span>
+  </button>
+</ng-template>
+
+<div *ngIf="bookings.length === 0" class="rounded-xl border-2 border-dashed border-slate-200 bg-slate-50 px-4 py-12 text-center 2xl:py-20 min-[3840px]:py-32">
+  <p class="text-sm font-medium text-slate-500 2xl:text-xl min-[3840px]:text-4xl">
+    No services found
+  </p>
+</div>
+
+<div *ngIf="bookings.length > 0" class="space-y-4 md:hidden">
+  <article
+    *ngFor="let service of bookings"
+    class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm"
+  >
+    <div class="flex items-start justify-between gap-3 border-b border-slate-100 p-4">
+      <div class="min-w-0">
+        <p class="truncate text-sm font-semibold text-slate-900">
+          {{ service.name }}
+        </p>
+        <p class="mt-1 break-words text-sm leading-5 text-slate-500">
+          {{ service.category }}
+        </p>
+      </div>
+
+      <ng-container *ngTemplateOutlet="statusBadge; context: { service: service }"></ng-container>
+    </div>
+
+    <div class="flex items-center justify-between gap-4 p-4">
+      <span class="text-sm text-slate-500">Actions</span>
+      <ng-container *ngTemplateOutlet="toggleControl; context: { service: service }"></ng-container>
+    </div>
+  </article>
+</div>
+
+<div *ngIf="bookings.length > 0" class="hidden rounded-xl border border-slate-200 bg-white shadow-sm md:block">
+  <div class="overflow-x-auto">
+    <table class="min-w-[860px] w-full table-fixed border-collapse text-sm 2xl:min-w-[1200px] 2xl:text-base min-[3840px]:min-w-[2000px] min-[3840px]:text-2xl">
+      <colgroup>
+        <col class="w-[35%]" />
+        <col class="w-[30%]" />
+        <col class="w-[20%]" />
+        <col class="w-[15%]" />
+      </colgroup>
+
+      <thead class="bg-slate-50/80">
+        <tr>
+          <th class="border-b border-slate-100 px-4 py-4 text-left text-xs font-semibold uppercase tracking-wide text-slate-500 2xl:px-6 2xl:py-5 2xl:text-sm min-[3840px]:px-10 min-[3840px]:py-8 min-[3840px]:text-xl">
+            Name
+          </th>
+          <th class="border-b border-slate-100 px-4 py-4 text-left text-xs font-semibold uppercase tracking-wide text-slate-500 2xl:px-6 2xl:py-5 2xl:text-sm min-[3840px]:px-10 min-[3840px]:py-8 min-[3840px]:text-xl">
+            Category
+          </th>
+          <th class="border-b border-slate-100 px-4 py-4 text-left text-xs font-semibold uppercase tracking-wide text-slate-500 2xl:px-6 2xl:py-5 2xl:text-sm min-[3840px]:px-10 min-[3840px]:py-8 min-[3840px]:text-xl">
+            Status
+          </th>
+          <th class="border-b border-slate-100 px-4 py-4 text-center text-xs font-semibold uppercase tracking-wide text-slate-500 2xl:px-6 2xl:py-5 2xl:text-sm min-[3840px]:px-10 min-[3840px]:py-8 min-[3840px]:text-xl">
+            Actions
+          </th>
+        </tr>
+      </thead>
+
+      <tbody class="divide-y divide-slate-100">
+        <tr *ngFor="let service of bookings" class="transition-colors hover:bg-slate-50/80">
+          <td class="px-4 py-4 align-middle 2xl:px-6 2xl:py-5 min-[3840px]:px-10 min-[3840px]:py-8">
+            <span class="block truncate font-semibold text-slate-900">
+              {{ service.name }}
+            </span>
+          </td>
+          <td class="px-4 py-4 align-middle 2xl:px-6 2xl:py-5 min-[3840px]:px-10 min-[3840px]:py-8">
+            <span class="inline-flex max-w-full rounded-md border border-slate-200 bg-white px-3 py-1 text-xs leading-snug text-slate-500 2xl:text-base min-[3840px]:px-5 min-[3840px]:py-2 min-[3840px]:text-2xl">
+              <span class="truncate">{{ service.category }}</span>
+            </span>
+          </td>
+          <td class="px-4 py-4 align-middle 2xl:px-6 2xl:py-5 min-[3840px]:px-10 min-[3840px]:py-8">
+            <ng-container *ngTemplateOutlet="statusBadge; context: { service: service }"></ng-container>
+          </td>
+          <td class="px-4 py-4 text-center align-middle 2xl:px-6 2xl:py-5 min-[3840px]:px-10 min-[3840px]:py-8">
+            <ng-container *ngTemplateOutlet="toggleControl; context: { service: service }"></ng-container>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

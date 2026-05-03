@@ -23,7 +23,7 @@
 
     <!-- Dropdown -->
     <div *ngIf="activeMenuRow === row"
-      class="absolute right-0 z-[100] bg-white border border-slate-200 rounded-md p-1 min-w-[120px] shadow-lg">
+      class="absolute right-full top-0 mr-2 z-[100] bg-white border border-slate-200 rounded-md p-1 min-w-[120px] shadow-lg">
 
       <!-- Multi-actions -->
       <ng-container *ngIf="getActionConfig() as customActions; else defaultAction">
@@ -59,22 +59,11 @@
 <div class="block md:hidden space-y-4 px-1">
 
   <!-- Card -->
-  <div *ngFor="let row of data" class="bg-white border rounded-xl shadow-sm overflow-hidden">
+  <div *ngFor="let row of data" class="bg-white border rounded-xl shadow-sm overflow-visible">
 
     <!-- ==========================================
          HEADER — ACTION MENU
          ========================================== -->
-
-    <div *ngIf="hasActionColumn" class="flex justify-end items-center p-3 border-b border-slate-100">
-
-      <div>
-
-        <ng-container *ngTemplateOutlet="actionMenu; context: { row: row }">
-        </ng-container>
-
-      </div>
-
-    </div>
 
     <!-- ==========================================
          BODY — COLUMN DATA
@@ -131,6 +120,7 @@
 
             <button
               *ngSwitchCase="'view'"
+              type="button"
               (click)="viewAction.emit(row)"
               [ngClass]="col.actionLabel ? 'px-3 py-1.5 text-sm font-medium text-violet-700 bg-violet-50 hover:bg-violet-100 rounded-md transition-colors' : 'text-violet-600 font-medium hover:underline text-sm'"
             >
@@ -192,6 +182,13 @@
 
         </div>
 
+      </ng-container>
+
+    </div>
+
+    <div *ngIf="hasActionColumn" class="relative z-10 flex justify-end items-center p-3 border-t border-slate-100 bg-slate-50/70">
+
+      <ng-container *ngTemplateOutlet="actionMenu; context: { row: row }">
       </ng-container>
 
     </div>
@@ -268,6 +265,7 @@
             <!-- View -->
             <div *ngSwitchCase="'view'" class="flex items-center">
               <button
+                type="button"
                 (click)="viewAction.emit(row)"
                 [ngClass]="col.actionLabel ? 'px-3 py-1.5 text-sm font-medium text-violet-700 bg-violet-50 hover:bg-violet-100 rounded-md transition-colors' : 'inline-flex items-center gap-2 px-3 py-1 border rounded-md text-xs hover:bg-slate-50'"
               >

@@ -2,9 +2,16 @@ import { Component, HostBinding } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
+import { switchMap } from 'rxjs';
 import { SlideshowComponent } from '../../../../shared/components/slideshow/slideshow.component';
 import { InputComponent } from '../../../../shared/components/input/input.component';
-import { AuthService, RegisterRequest, RegisterResponse } from '../../../core/services/auth.service';
+import {
+  AuthService,
+  LoginRequest,
+  LoginResponse,
+  RegisterRequest,
+  RegisterResponse,
+} from '../../../core/services/auth.service';
 import { PasswordFieldComponent } from "../../../../shared/components/password-field/password-field.component";
 import { RoleDropdownComponent } from '../../../../shared/components/dropdown/role/role-dropdown.component';
 
@@ -143,25 +150,57 @@ export class MySignupComponent {
 
     const registerData: RegisterRequest = {
       fullName: `${this.signupData.firstName} ${this.signupData.lastName}`,
-      email: this.signupData.email,
+      email: trimmedEmail,
       password: this.signupData.password,
       role:
         this.signupData.role.charAt(0).toUpperCase() +
         this.signupData.role.slice(1),
     };
 
-    this.authService.register(registerData).subscribe({
-      next: (response: RegisterResponse) => {
-        this.isLoading = false;
+    const loginData: LoginRequest = {
+      email: trimmedEmail,
+      password: this.signupData.password,
+    };
+
+    this.authService.register(registerData).pipe(
+      switchMap((response: RegisterResponse) => {
         this.successMessage =
           response.message || 'Account created successfully!';
-        setTimeout(() => {
-          this.router.navigate(['/login']);
-        }, 1500);
+
+        return this.authService.loginApi(loginData);
+      }),
+    ).subscribe({
+      next: (response: LoginResponse | any) => {
+        this.isLoading = false;
+
+        const data = response.Data || response;
+        const status = data?.status || (response.Success ? 200 : 400);
+        const token = data?.token;
+        const user = data?.user;
+        const message = data?.message || response.Message;
+
+        if (status === 200 && token) {
+          const userId = user?.id?.toString() || '';
+          const role = user?.role || registerData.role;
+
+          this.authService.login(token, userId, trimmedEmail, role);
+
+          const redirectPath =
+            role?.toLowerCase() === 'coordinator' ? '/dashboard' : '/services';
+
+          this.router.navigate([redirectPath]);
+          return;
+        }
+
+        this.errorMessage =
+          message ||
+          'Account created, but automatic login failed. Please log in manually.';
       },
       error: (error: any) => {
         this.isLoading = false;
-        this.errorMessage = this.getSpecificErrorMessage(error);
+        this.errorMessage = this.successMessage
+          ? 'Account created, but automatic login failed. Please log in manually.'
+          : this.getSpecificErrorMessage(error);
       },
     });
   }

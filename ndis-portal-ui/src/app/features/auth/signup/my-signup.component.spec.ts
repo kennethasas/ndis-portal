@@ -13,6 +13,33 @@ describe('MySignupComponent - Registration Test Cases', () => {
   let authService: AuthService;
   let router: Router;
 
+  const flushSuccessfulLogin = (
+    email: string,
+    password: string,
+    role: 'Participant' | 'Coordinator' = 'Participant',
+  ) => {
+    if (!jasmine.isSpy(router.navigate)) {
+      spyOn(router, 'navigate').and.returnValue(Promise.resolve(true));
+    }
+
+    const loginReq = httpMock.expectOne((request) =>
+      request.url.includes('/api/auth/login')
+    );
+
+    expect(loginReq.request.method).toBe('POST');
+    expect(loginReq.request.body).toEqual({ email, password });
+
+    loginReq.flush({
+      status: 200,
+      message: 'Login successful',
+      token: 'test-token',
+      user: {
+        id: 1,
+        role,
+      },
+    });
+  };
+
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [MySignupComponent, HttpClientTestingModule, RouterTestingModule],
@@ -29,6 +56,7 @@ describe('MySignupComponent - Registration Test Cases', () => {
 
   afterEach(() => {
     httpMock.verify();
+    localStorage.clear();
   });
 
   // ===== VALIDATION TESTS =====
@@ -120,7 +148,7 @@ describe('MySignupComponent - Registration Test Cases', () => {
 
   // ===== EMAIL VALIDATION TESTS =====
   describe('TC-A04: Register with invalid email', () => {
-    it('Should reject non-Gmail email formats at backend', (done: DoneFn) => {
+    it('Should display backend email validation errors', (done: DoneFn) => {
       component.signupData = {
         firstName: 'John',
         lastName: 'Smith',
@@ -142,9 +170,10 @@ describe('MySignupComponent - Registration Test Cases', () => {
       );
 
       expect(component.errorMessage).toContain('Email must be in @gmail.com format');
+      done();
     });
 
-    it('Should reject email without domain', (done: DoneFn) => {
+    it('Should reject email without domain before calling backend', () => {
       component.signupData = {
         firstName: 'John',
         lastName: 'Smith',
@@ -156,19 +185,11 @@ describe('MySignupComponent - Registration Test Cases', () => {
 
       component.onSignUp();
 
-      const req = httpMock.expectOne((request) =>
+      httpMock.expectNone((request) =>
         request.url.includes('/api/auth/register')
       );
 
-      req.flush(
-        { status: 400, message: 'Invalid input' },
-        { status: 400, statusText: 'Bad Request' }
-      );
-
-      setTimeout(() => {
-        expect(component.errorMessage).toBeTruthy();
-        done();
-      }, 100);
+      expect(component.errorMessage).toContain('Email must contain @ symbol');
     });
   });
 
@@ -188,7 +209,7 @@ describe('MySignupComponent - Registration Test Cases', () => {
       expect(component.errorMessage).toContain('Password must be at least 8 characters');
     });
 
-    it('Should show error at backend if password is less than 8 characters', (done: DoneFn) => {
+    it('Should stop before backend if password is less than 8 characters', () => {
       component.signupData = {
         firstName: 'John',
         lastName: 'Smith',
@@ -200,25 +221,17 @@ describe('MySignupComponent - Registration Test Cases', () => {
 
       component.onSignUp();
 
-      const req = httpMock.expectOne((request) =>
+      httpMock.expectNone((request) =>
         request.url.includes('/api/auth/register')
       );
 
-      req.flush(
-        { status: 400, message: 'Password must be at least 8 characters' },
-        { status: 400, statusText: 'Bad Request' }
-      );
-
-      setTimeout(() => {
-        expect(component.errorMessage).toContain('Password must be at least 8 characters');
-        done();
-      }, 100);
+      expect(component.errorMessage).toContain('Password must be at least 8 characters');
     });
   });
 
   // ===== SUCCESSFUL REGISTRATION TESTS =====
   describe('TC-A01: Register with valid data', () => {
-    it('Should return 201 and redirect to login on successful registration', (done: DoneFn) => {
+    it('Should return 201, log in, and redirect on successful registration', (done: DoneFn) => {
       spyOn(router, 'navigate').and.returnValue(Promise.resolve(true));
 
       component.signupData = {
@@ -251,10 +264,12 @@ describe('MySignupComponent - Registration Test Cases', () => {
         { status: 201, statusText: 'Created' }
       );
 
+      flushSuccessfulLogin('john@gmail.com', 'password123', 'Participant');
+
       setTimeout(() => {
         expect(component.isLoading).toBe(false);
         expect(component.successMessage).toContain('Account successfully created');
-        expect(router.navigate).toHaveBeenCalledWith(['/login']);
+        expect(router.navigate).toHaveBeenCalledWith(['/services']);
         done();
       }, 100);
     });
@@ -281,19 +296,20 @@ describe('MySignupComponent - Registration Test Cases', () => {
         user: { id: 2, role: 'Coordinator' },
       });
 
+      flushSuccessfulLogin('jane@gmail.com', 'password123', 'Coordinator');
+
       setTimeout(() => {
         expect(component.successMessage).toBeTruthy();
         fixture.detectChanges();
 
-        const successElement = fixture.debugElement.nativeElement.querySelector(
-          '.success-message'
+        expect(fixture.debugElement.nativeElement.textContent).toContain(
+          'Account successfully created'
         );
-        expect(successElement).toBeTruthy();
         done();
       }, 100);
     });
 
-    it('Should redirect after 1.5 seconds on successful registration', (done: DoneFn) => {
+    it('Should redirect after automatic login on successful registration', (done: DoneFn) => {
       spyOn(router, 'navigate').and.returnValue(Promise.resolve(true));
 
       component.signupData = {
@@ -317,10 +333,12 @@ describe('MySignupComponent - Registration Test Cases', () => {
         user: { id: 1, role: 'Participant' },
       });
 
+      flushSuccessfulLogin('john@gmail.com', 'password123', 'Participant');
+
       setTimeout(() => {
-        expect(router.navigate).toHaveBeenCalledWith(['/login']);
+        expect(router.navigate).toHaveBeenCalledWith(['/services']);
         done();
-      }, 1600);
+      }, 100);
     });
   });
 
@@ -378,11 +396,9 @@ describe('MySignupComponent - Registration Test Cases', () => {
       setTimeout(() => {
         fixture.detectChanges();
 
-        const errorElement = fixture.debugElement.nativeElement.querySelector(
-          '.error-message'
+        expect(fixture.debugElement.nativeElement.textContent).toContain(
+          'Email already exists'
         );
-        expect(errorElement).toBeTruthy();
-        expect(errorElement.textContent).toContain('Email already exists');
         done();
       }, 100);
     });
@@ -413,6 +429,8 @@ describe('MySignupComponent - Registration Test Cases', () => {
         user: { id: 1, role: 'Participant' },
       });
 
+      flushSuccessfulLogin('john@gmail.com', 'password123', 'Participant');
+
       done();
     });
 
@@ -439,6 +457,8 @@ describe('MySignupComponent - Registration Test Cases', () => {
         user: { id: 2, role: 'Coordinator' },
       });
 
+      flushSuccessfulLogin('jane@gmail.com', 'password123', 'Coordinator');
+
       done();
     });
   });
@@ -449,28 +469,27 @@ describe('MySignupComponent - Registration Test Cases', () => {
       component.errorMessage = 'Test error';
       fixture.detectChanges();
 
-      const errorElement = fixture.debugElement.nativeElement.querySelector(
-        '.error-message'
+      expect(fixture.debugElement.nativeElement.textContent).toContain(
+        'Test error'
       );
-      expect(errorElement).toBeTruthy();
-      expect(errorElement.textContent).toContain('Test error');
     });
 
     it('Should hide error message when cleared', () => {
       component.errorMessage = '';
       fixture.detectChanges();
 
-      const errorElement = fixture.debugElement.nativeElement.querySelector(
-        '.error-message'
+      expect(fixture.debugElement.nativeElement.textContent).not.toContain(
+        'Test error'
       );
-      expect(errorElement).toBeFalsy();
     });
 
     it('Should disable signup button while loading', () => {
       component.isLoading = true;
       fixture.detectChanges();
 
-      const button = fixture.debugElement.nativeElement.querySelector('.btn-signup');
+      const button = fixture.debugElement.nativeElement.querySelector(
+        'button[type="submit"]'
+      );
       expect(button.disabled).toBe(true);
     });
 
@@ -478,7 +497,9 @@ describe('MySignupComponent - Registration Test Cases', () => {
       component.isLoading = true;
       fixture.detectChanges();
 
-      const button = fixture.debugElement.nativeElement.querySelector('.btn-signup');
+      const button = fixture.debugElement.nativeElement.querySelector(
+        'button[type="submit"]'
+      );
       expect(button.textContent).toContain('Creating account...');
     });
   });
@@ -498,6 +519,15 @@ describe('MySignupComponent - Registration Test Cases', () => {
 
       component.onSignUp();
       expect(component.errorMessage).toBe('');
+
+      const req = httpMock.expectOne((request) =>
+        request.url.includes('/api/auth/register')
+      );
+
+      req.flush(
+        { status: 400, message: 'Test cleanup error' },
+        { status: 400, statusText: 'Bad Request' }
+      );
     });
 
     it('Should initialize with empty form data', () => {

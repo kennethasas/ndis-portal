@@ -70,7 +70,7 @@ export class ApiService {
 
 
 
-    const userRole = localStorage.getItem('role') || '';
+    const userRole = this.getStoredValue('role') || '';
 
 
 
@@ -368,11 +368,29 @@ export class ApiService {
 
 
 
-    const token = localStorage.getItem('token');
+    const token = this.getStoredValue('token');
 
 
 
     return token ? new HttpHeaders({ Authorization: `Bearer ${token}` }) : new HttpHeaders();
+
+
+
+  }
+
+
+
+  private getStoredValue(key: string): string | null {
+
+
+
+    if (typeof window === 'undefined') {
+      return null;
+    }
+
+
+
+    return localStorage.getItem(key);
 
 
 

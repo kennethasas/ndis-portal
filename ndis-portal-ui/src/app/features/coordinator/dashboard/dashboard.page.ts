@@ -2,6 +2,7 @@ import { Component, OnInit, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { StatusCardComponent } from '../../../../shared/components/card/status-card/status-card.component';
 import { ApiService } from '../../../core/services/api-service';
+import { ToastService } from '../../../core/services/toast.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -38,7 +39,10 @@ export class DashboardComponent implements OnInit {
   // Menu state
   activeMenuId: number | null = null;
 
-  constructor(private api: ApiService) {}
+  constructor(
+    private api: ApiService,
+    private toast: ToastService
+  ) {}
 
   ngOnInit(): void {
     this.loadStats();
@@ -102,10 +106,11 @@ export class DashboardComponent implements OnInit {
         booking.status = 'Approved';
         // Refresh stats to reflect the change
         this.loadStats();
+        this.toast.show('Booking approved successfully!', 'success');
       },
       error: (err) => {
         console.error('Error approving booking:', err);
-        alert('Failed to approve booking. Please try again.');
+        this.toast.show('Failed to approve booking. Please try again.', 'error');
       }
     });
   }
@@ -117,10 +122,11 @@ export class DashboardComponent implements OnInit {
       next: () => {
         booking.status = 'Cancelled';
         this.loadStats();
+        this.toast.show('Booking cancelled successfully!', 'success');
       },
       error: (err) => {
         console.error('Error cancelling booking:', err);
-        alert('Failed to cancel booking. Please try again.');
+        this.toast.show('Failed to cancel booking. Please try again.', 'error');
       }
     });
   }

@@ -53,9 +53,9 @@
 
     <div
         *ngIf="selectedNotesBooking"
-        class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4"
+        class="fixed inset-0 z-[1000] flex items-center justify-center p-4"
     >
-        <div class="w-full max-w-md rounded-lg bg-white shadow-xl">
+        <div class="relative w-full max-w-md overflow-hidden rounded-lg border border-slate-300 bg-white shadow-2xl ring-2 ring-slate-900/10">
             <div class="flex items-center justify-between border-b border-slate-200 px-5 py-4">
                 <h2 class="text-base font-semibold text-slate-900">Booking Notes</h2>
 
@@ -78,7 +78,7 @@
                 <button
                     type="button"
                     (click)="closeNotes()"
-                    class="rounded-md bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800"
+                    class="rounded-md bg-[#6B3293] px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-[#5a2a7b]"
                 >
                     Close
                 </button>
