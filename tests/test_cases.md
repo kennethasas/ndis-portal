@@ -163,7 +163,9 @@ https://thrivesolutions-team.atlassian.net/browse/NOVA-148
 ### Execute AI Service Recommendation UI Test Case
 https://thrivesolutions-team.atlassian.net/browse/NOVA-149
 
-## Module 3 — Automation
+---
+
+## Module 4 — Automation
 
 ---
 
@@ -181,6 +183,11 @@ https://thrivesolutions-team.atlassian.net/browse/NOVA-104
 
 ### Coordinator Automation Tests
 https://thrivesolutions-team.atlassian.net/browse/NOVA-107
+
+---
+
+## Module 4 — End-to-end System Testing
+https://thrivesolutions-team.atlassian.net/browse/NOVA-126
 
 ---
 
