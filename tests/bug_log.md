@@ -1,28 +1,5 @@
 # Bug Log
 
-## NOVA-81: Mismatch Between API Documentation and Actual Validation for POST /api/services
- https://thrivesolutions-team.atlassian.net/browse/NOVA-81
-
-### Steps to Reproduce
-1. Open Postman.
-2. Set method to POST.
-3. Enter `/api/services`.
-4. Add valid Coordinator bearer token.
-5. Send request body based on API documentation.
-6. Click Send.
-
-### Expected Result
-- The API validation should match the API documentation.
-
-### Actual Result
-- API validation result does not match the API documentation. 
-
-### Severity
-- Medium
-
-### Status
-- Done
-
 
 ## NOVA-80: Register Email with Invalid Domain Name 
 https://thrivesolutions-team.atlassian.net/browse/NOVA-80
@@ -47,6 +24,30 @@ https://thrivesolutions-team.atlassian.net/browse/NOVA-80
 - Done
 
 
+## NOVA-81: Mismatch Between API Documentation and Actual Validation for POST /api/services
+ https://thrivesolutions-team.atlassian.net/browse/NOVA-81
+
+### Steps to Reproduce
+1. Open Postman.
+2. Set method to POST.
+3. Enter `/api/services`.
+4. Add valid Coordinator bearer token.
+5. Send request body based on API documentation.
+6. Click Send.
+
+### Expected Result
+- The API validation should match the API documentation.
+
+### Actual Result
+- API validation result does not match the API documentation. 
+
+### Severity
+- Medium
+
+### Status
+- Done
+
+
 ## NOVA-161: Strict Email Validation Only Accepts Gmail Domain 
 https://thrivesolutions-team.atlassian.net/browse/NOVA-161
 
@@ -61,6 +62,52 @@ https://thrivesolutions-team.atlassian.net/browse/NOVA-161
 
 ### Actual Result
 - The system only accepts `@gmail.com` and rejects valid domains like `@yahoo.com` with a generic `Bad request` error message.
+
+### Severity
+- Medium
+
+### Status
+- Done
+
+
+## NOVA-163: Breadcrumb Displays Service ID Instead of Selected Service Name on Mobile
+https://thrivesolutions-team.atlassian.net/browse/NOVA-163
+
+### Steps to Reproduce  
+ 1. Log in as a Participant.  
+ 2. Go to the Services page. 
+ 3. Select any service, such as `Community Participation Program`.  
+ 4. Proceed to the booking page. 
+ 5. Check the breadcrumb navigation. 
+
+### Expected Result
+- The breadcrumb should display the actual selected service name, such as `Community Participation Program`.
+
+### Actual Result
+-  The breadcrumb displays `Book new?serviceId=3` instead of the selected service name.
+
+### Severity
+- Medium
+
+### Status
+- Done
+
+
+## NOVA-165: Registration Page Is Not Responsive in Mobile View
+https://thrivesolutions-team.atlassian.net/browse/NOVA-165
+
+### Steps to Reproduce
+ 1. Open the NDIS portal in a browser. 
+ 2. Go to the Registration page. 
+ 3. Open Developer Tools.  
+ 4. Set the screen size to mobile view, such as width `360px` and height `800px`. 
+ 5. Observe the layout of the registration form.
+
+### Expected Result
+- The registration page should properly adjust to mobile view. The form, image, input fields, and buttons should be readable, aligned, and usable without layout issues.
+
+### Actual Result
+-  The registration page is not responsive in mobile view. The layout does not properly fit the `360px x 800px` screen size. 
 
 ### Severity
 - Medium
@@ -92,6 +139,29 @@ https://thrivesolutions-team.atlassian.net/browse/NOVA-166
 - Done
 
 
+## NOVA-170: Bookings Page Header Not Visible When Booking List Is Long 
+https://thrivesolutions-team.atlassian.net/browse/NOVA-170
+
+### Steps to Reproduce
+ 1. Log in as a Participant. 
+ 2. Go to the `My Bookings` page. 
+ 3. Make sure there are many booking records displayed.  
+ 4. Scroll down the booking list.  
+ 5. Observe the page header section, including the title and status filter.
+
+### Expected Result
+- The page header, including the title and status filter, should remain visible or easily accessible even when the booking list is long.
+
+### Actual Result
+- The table content takes over the screen when there are many booking records, and the header is no longer visible unless the user scrolls all the way up.
+
+### Severity
+- Medium
+
+### Status
+- To Do
+
+
 ## NOVA-171: Action Column Should Display Three-Dot Menu Before Approve and Cancel Buttons
 https://thrivesolutions-team.atlassian.net/browse/NOVA-171
 
@@ -111,7 +181,7 @@ https://thrivesolutions-team.atlassian.net/browse/NOVA-171
 - Low
 
 ### Status
-- In review
+- Done
 
 
 ## NOVA-172:  No “All Bookings” in Sidebar Menu of Coordinator Dashboard
@@ -133,7 +203,7 @@ https://thrivesolutions-team.atlassian.net/browse/NOVA-172
 - Medium
 
 ### Status
-- In Progress
+- Done
 
 
 ## NOVA-173: Multiple Bookings Created Due to Repeated Click on Submit Button
@@ -158,7 +228,7 @@ https://thrivesolutions-team.atlassian.net/browse/NOVA-173
 - High
 
 ### Status
-- In review
+- Done
 
 
 ## NOVA-174: Missing Book a Service Button in Sidebar Menu
@@ -180,73 +250,54 @@ https://thrivesolutions-team.atlassian.net/browse/NOVA-174
 - Medium
 
 ### Status
-- In review
+- Done
 
 
-## NOVA-163: Breadcrumb Displays Service ID Instead of Selected Service Name on Mobile
-https://thrivesolutions-team.atlassian.net/browse/NOVA-163
-
-### Steps to Reproduce  
- 1. Log in as a Participant.  
- 2. Go to the Services page. 
- 3. Select any service, such as `Community Participation Program`.  
- 4. Proceed to the booking page. 
- 5. Check the breadcrumb navigation. 
-
-### Expected Result
-- The breadcrumb should display the actual selected service name, such as `Community Participation Program`.
-
-### Actual Result
--  The breadcrumb displays `Book new?serviceId=3` instead of the selected service name.
-
-### Severity
-- Medium
-
-### Status
-- To Do
-
-
-## NOVA-165: Registration Page Is Not Responsive in Mobile View
-https://thrivesolutions-team.atlassian.net/browse/NOVA-165
+## NOVA-175:  Multiple Sidebar Items Highlighted as Active at the Same Time
+https://thrivesolutions-team.atlassian.net/browse/NOVA-175
 
 ### Steps to Reproduce
- 1. Open the NDIS portal in a browser. 
- 2. Go to the Registration page. 
- 3. Open Developer Tools.  
- 4. Set the screen size to mobile view, such as width `360px` and height `800px`. 
- 5. Observe the layout of the registration form.
+1. Log in as a Coordinator. 
+2. Go to the Coordinator Dashboard.  
+3. Navigate to the `Manage Services` page from the sidebar.  
+4. Observe the active/highlighted sidebar items. 
 
 ### Expected Result
-- The registration page should properly adjust to mobile view. The form, image, input fields, and buttons should be readable, aligned, and usable without layout issues.
+- Only the current page, `Manage Services`, should be highlighted as active in the sidebar.
 
 ### Actual Result
--  The registration page is not responsive in mobile view. The layout does not properly fit the `360px x 800px` screen size. 
+-  Both `Dashboard` and `Manage Services` sidebar items appear highlighted as active at the same time.
 
 ### Severity
-- Medium
+- Low
 
 ### Status
-- In progress
+- In Progress
 
 
-## NOVA-170: Bookings Page Header Not Visible When Booking List Is Long 
-https://thrivesolutions-team.atlassian.net/browse/NOVA-170
+## NOVA-176: No Confirmation Message and Newly Added Service Not Visible Immediately
+https://thrivesolutions-team.atlassian.net/browse/NOVA-176 
 
 ### Steps to Reproduce
- 1. Log in as a Participant. 
- 2. Go to the `My Bookings` page. 
- 3. Make sure there are many booking records displayed.  
- 4. Scroll down the booking list.  
- 5. Observe the page header section, including the title and status filter.
+1. Log in as a Coordinator.  
+2. Go to the Service Management page.  
+3. Click the button to add a new service.  
+4. Enter all required service details.
+5. Save the new service. 
+6. Observe if a confirmation message appears.  
+7. Check where the newly added service appears in the list.
 
 ### Expected Result
-- The page header, including the title and status filter, should remain visible or easily accessible even when the booking list is long.
+-  The system should display a confirmation message after the service is successfully saved, and the newly added service should appear at the top of the list for easier verification. 
 
 ### Actual Result
-- The table content takes over the screen when there are many booking records, and the header is no longer visible unless the user scrolls all the way up.
+- No confirmation message is displayed after saving, and the newly added service appears at the bottom of the list, making it difficult to immediately verify if it was saved.
 
-### Severity
+### Severity 
 - Medium
 
 ### Status
-- To Do
+- In Progress
+
+
+
