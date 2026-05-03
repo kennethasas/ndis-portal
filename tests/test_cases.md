@@ -163,6 +163,25 @@ https://thrivesolutions-team.atlassian.net/browse/NOVA-148
 ### Execute AI Service Recommendation UI Test Case
 https://thrivesolutions-team.atlassian.net/browse/NOVA-149
 
+## Module 3 — Automation
+
+---
+
+### Authentication Automation Tests
+https://thrivesolutions-team.atlassian.net/browse/NOVA-101
+
+### Service Automation Tests
+https://thrivesolutions-team.atlassian.net/browse/NOVA-102
+
+### Bookings Automation Tests
+https://thrivesolutions-team.atlassian.net/browse/NOVA-103
+
+### AI Chatbot Automation Tests
+https://thrivesolutions-team.atlassian.net/browse/NOVA-104
+
+### Coordinator Automation Tests
+https://thrivesolutions-team.atlassian.net/browse/NOVA-107
+
 ---
 
 ## Test Execution Summary
@@ -174,4 +193,5 @@ https://thrivesolutions-team.atlassian.net/browse/NOVA-149
 |  Database  |    3   |     3    |     0    |      0     |
 |    API     |    8   |     8    |     0    |      0     |
 |    UI      |    11  |    11    |     0    |      0     |
-|  **TOTAL** | **22** |  **22**  |   **0**  |    **0**   |
+| Automation |    5   |    5     |     0    |      0     |
+|  **TOTAL** | **27** |  **27**  |   **0**  |    **0**   |
