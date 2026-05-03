@@ -186,7 +186,7 @@ https://thrivesolutions-team.atlassian.net/browse/NOVA-107
 
 ---
 
-## Module 4 — End-to-end System Testing
+## Module 5 — End-to-end System Testing
 https://thrivesolutions-team.atlassian.net/browse/NOVA-126
 
 ---
