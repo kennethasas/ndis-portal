@@ -1,14 +1,19 @@
 <div class="mx-auto max-w-[2560px] space-y-5 p-4 md:space-y-6 md:p-6 2xl:p-8 min-[3840px]:max-w-[3200px] min-[3840px]:p-12">
-  <div class="flex w-full flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-    <h1 class="text-xl font-bold text-slate-900 md:text-2xl 2xl:text-3xl min-[3840px]:text-5xl">
-      All Bookings
-    </h1>
+  <div class="flex w-full gap-3 flex-row items-center justify-between">
+    <div>
+      <h1 class="text-xl font-bold text-slate-900 md:text-2xl 2xl:text-3xl min-[3840px]:text-5xl">
+        All Bookings
+      </h1>  
+    </div>
 
-    <app-status-dropdown
-      class="w-full sm:w-auto"
-      [activeStatus]="activeFilter"
-      (statusChange)="handleStatusFilter($event)">
-    </app-status-dropdown>
+    <div>
+      <app-status-dropdown
+        class="w-full sm:w-auto"
+        [activeStatus]="activeFilter"
+        (statusChange)="handleStatusFilter($event)">
+      </app-status-dropdown>      
+    </div>
+
   </div>
 
   <ng-template #statusBadge let-booking="booking">
