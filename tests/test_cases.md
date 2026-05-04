@@ -52,7 +52,7 @@ https://thrivesolutions-team.atlassian.net/browse/NOVA-18
 ### Execute Service Category API Test Case
 https://thrivesolutions-team.atlassian.net/browse/NOVA-40
 
-### Services API Test Case
+### Service API Test Case
 https://thrivesolutions-team.atlassian.net/browse/NOVA-19
 
 ### Execute Service API Test Case
