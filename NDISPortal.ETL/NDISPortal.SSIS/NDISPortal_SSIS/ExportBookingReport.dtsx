@@ -11,8 +11,8 @@
   DTS:LocaleID="18441"
   DTS:ObjectName="ExportBookingReport"
   DTS:PackageType="5"
-  DTS:VersionBuild="5"
-  DTS:VersionGUID="{E0106CFA-6569-4362-9E66-9402924E70EE}">
+  DTS:VersionBuild="8"
+  DTS:VersionGUID="{C01724D1-9C6E-4453-90A2-AF15F50602F0}">
   <DTS:Property
     DTS:Name="PackageFormatVersion">8</DTS:Property>
   <DTS:ConnectionManagers>
@@ -32,61 +32,59 @@
           DTS:RowDelimiter=""
           DTS:TextQualifier="_x003C_none_x003E_"
           DTS:CodePage="1252"
-          DTS:ConnectionString="C:\SSIS\Output\booking_report_">
+          DTS:ConnectionString="C:\SSIS\Output\booking_report.csv">
           <DTS:FlatFileColumns>
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
               DTS:ColumnDelimiter="_x002C_"
-              DTS:MaximumWidth="50"
-              DTS:DataType="129"
+              DTS:MaximumWidth="101"
+              DTS:DataType="130"
               DTS:TextQualified="True"
               DTS:ObjectName="participant_name"
-              DTS:DTSID="{C44B1A01-85A0-407C-93B9-867FBC6EBE4F}"
+              DTS:DTSID="{46727F22-E96D-4FD7-A138-ADD1FF6DEE52}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
               DTS:ColumnDelimiter="_x002C_"
               DTS:MaximumWidth="50"
-              DTS:DataType="129"
+              DTS:DataType="130"
               DTS:TextQualified="True"
               DTS:ObjectName="service_name"
-              DTS:DTSID="{0EB182BC-D579-471D-9C4D-7E9592E2B13B}"
+              DTS:DTSID="{AFE63897-C6F0-43F6-A6CA-3943102498DF}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
               DTS:ColumnDelimiter="_x002C_"
               DTS:MaximumWidth="50"
-              DTS:DataType="129"
+              DTS:DataType="130"
               DTS:TextQualified="True"
               DTS:ObjectName="category_name"
-              DTS:DTSID="{A670E128-870A-41E8-AC75-76DF0059C803}"
+              DTS:DTSID="{1FC70656-6D34-4513-A4EB-56600FFFD022}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
               DTS:ColumnDelimiter="_x002C_"
-              DTS:MaximumWidth="50"
-              DTS:DataType="129"
+              DTS:DataType="135"
               DTS:TextQualified="True"
               DTS:ObjectName="preferred_date"
-              DTS:DTSID="{5F37432B-2D40-4BC3-8C39-083388D60F57}"
+              DTS:DTSID="{69687949-A9C3-435D-BE54-A0A7EEF306B5}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
               DTS:ColumnDelimiter="_x002C_"
-              DTS:MaximumWidth="50"
+              DTS:MaximumWidth="9"
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="status"
-              DTS:DTSID="{55B813DC-32FC-43D8-9CE4-42737D996556}"
+              DTS:DTSID="{A0005465-B445-48F0-9513-260841007425}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
               DTS:ColumnDelimiter="_x000D__x000A_"
-              DTS:MaximumWidth="50"
-              DTS:DataType="129"
+              DTS:DataType="135"
               DTS:TextQualified="True"
               DTS:ObjectName="created_at"
-              DTS:DTSID="{9B64A974-D052-46CF-A3DF-6A8D2249363B}"
+              DTS:DTSID="{A9A7AC25-9A82-4B46-B09F-C70E883DA3C9}"
               DTS:CreationName="" />
           </DTS:FlatFileColumns>
         </DTS:ConnectionManager>
@@ -101,11 +99,7 @@
         <DTS:ConnectionManager
           DTS:ConnectRetryCount="1"
           DTS:ConnectRetryInterval="5"
-          DTS:ConnectionString="Data Source=JIM;User ID=Sa;Initial Catalog=ndis_portal_db;Provider=SQLOLEDB.1;Persist Security Info=True;Application Name=SSIS-ExportBookingReport-{23B059EA-F4D5-4BA6-8A91-20BE701FF010}JIM.ndis_portal_db.Sa;Auto Translate=False;">
-          <DTS:Password
-            DTS:Name="Password"
-            Sensitive="1"
-            Encrypted="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAA7IPNawDo4keRfXr64Qn+SAAAAAAIAAAARABUAFMAAAAQZgAAAAEAACAAAABI6EkNv7d8nC8cuelYzYfnmu2qzdPazHPR68aoosnXTQAAAAAOgAAAAAIAACAAAAB3keRSxpqSWDY0fuPrK3y/BcdtoV/L1sv2q4uWrYQVTyAAAACgcKfEy9JMoujec3T8TutkowWnRse+jKPkGyE+v2Utd0AAAABJhjWZzBATy+0Biof9ZC/pDPfPvAo393X0/1JkFneQ4B4e89IYD86d0LJyFUKDIgsIbM8QOtmR+EcROHeFU0u3</DTS:Password>
+          DTS:ConnectionString="Data Source=JIM;Initial Catalog=ndis_portal_db;Provider=SQLOLEDB.1;Integrated Security=SSPI;Persist Security Info=False;Application Name=SSIS-ExportBookingReport;Auto Translate=False;">
         </DTS:ConnectionManager>
       </DTS:ObjectData>
     </DTS:ConnectionManager>
@@ -115,12 +109,12 @@
       DTS:CreationName=""
       DTS:DTSID="{B68ED2E8-3692-49C1-83B5-9983111BDE92}"
       DTS:EvaluateAsExpression="True"
-      DTS:Expression="&quot;C:\\SSIS\\Output\\booking_report_&quot; "
+      DTS:Expression="&quot;C:\\SSIS\\Output\\booking_report.csv&quot;"
       DTS:IncludeInDebugDump="2345"
       DTS:Namespace="User"
       DTS:ObjectName="ReportFilePath">
       <DTS:VariableValue
-        DTS:DataType="8">C:\SSIS\Output\booking_report_</DTS:VariableValue>
+        DTS:DataType="8">C:\SSIS\Output\booking_report.csv</DTS:VariableValue>
     </DTS:Variable>
   </DTS:Variables>
   <DTS:Executables>
@@ -220,39 +214,32 @@
                     isUsed="True">
                     <externalMetadataColumn
                       refId="Package\DFT_ExportBookingReport\FFD_BookingReport.Inputs[Flat File Destination Input].ExternalColumns[participant_name]"
-                      codePage="1252"
-                      dataType="str"
-                      length="50"
+                      dataType="wstr"
+                      length="101"
                       name="participant_name" />
                     <externalMetadataColumn
                       refId="Package\DFT_ExportBookingReport\FFD_BookingReport.Inputs[Flat File Destination Input].ExternalColumns[service_name]"
-                      codePage="1252"
-                      dataType="str"
+                      dataType="wstr"
                       length="50"
                       name="service_name" />
                     <externalMetadataColumn
                       refId="Package\DFT_ExportBookingReport\FFD_BookingReport.Inputs[Flat File Destination Input].ExternalColumns[category_name]"
-                      codePage="1252"
-                      dataType="str"
+                      dataType="wstr"
                       length="50"
                       name="category_name" />
                     <externalMetadataColumn
                       refId="Package\DFT_ExportBookingReport\FFD_BookingReport.Inputs[Flat File Destination Input].ExternalColumns[preferred_date]"
-                      codePage="1252"
-                      dataType="str"
-                      length="50"
+                      dataType="dbTimeStamp"
                       name="preferred_date" />
                     <externalMetadataColumn
                       refId="Package\DFT_ExportBookingReport\FFD_BookingReport.Inputs[Flat File Destination Input].ExternalColumns[status]"
                       codePage="1252"
                       dataType="str"
-                      length="50"
+                      length="9"
                       name="status" />
                     <externalMetadataColumn
                       refId="Package\DFT_ExportBookingReport\FFD_BookingReport.Inputs[Flat File Destination Input].ExternalColumns[created_at]"
-                      codePage="1252"
-                      dataType="str"
-                      length="50"
+                      dataType="dbTimeStamp"
                       name="created_at" />
                   </externalMetadataColumns>
                 </input>
@@ -535,14 +522,14 @@ ORDER BY b.created_date DESC;</property>
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="0,74.5333325257566"
+              EndConnector="0,74.533332525757"
               Start="0,0"
-              End="0,67.0333325257566">
+              End="0,67.033332525757">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="0,67.0333325257566" />
+                    End="0,67.033332525757" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>

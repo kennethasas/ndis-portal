@@ -11,25 +11,25 @@
   DTS:LocaleID="13321"
   DTS:ObjectName="ImportServices"
   DTS:PackageType="5"
-  DTS:VersionBuild="18"
-  DTS:VersionGUID="{F2EE73BA-B56F-4D1A-ACA4-33C99D2C6646}">
+  DTS:VersionBuild="21"
+  DTS:VersionGUID="{CFCB34AD-4D89-4920-9CD9-5542AF3F2183}">
   <DTS:Property
     DTS:Name="PackageFormatVersion">8</DTS:Property>
   <DTS:ConnectionManagers>
     <DTS:ConnectionManager
-      DTS:refId="Package.ConnectionManagers[CHOKOBOT_ROBOT.ndis_portal_db.sa]"
+      DTS:refId="Package.ConnectionManagers[JIM.ndis_portal_db.sa]"
       DTS:CreationName="OLEDB"
       DTS:DTSID="{8032257C-F0E1-491A-B8DC-CFD3F5F92D04}"
-      DTS:ObjectName="CHOKOBOT_ROBOT.ndis_portal_db.sa">
+      DTS:ObjectName="JIM.ndis_portal_db.sa">
       <DTS:ObjectData>
         <DTS:ConnectionManager
           DTS:ConnectRetryCount="1"
           DTS:ConnectRetryInterval="5"
-          DTS:ConnectionString="Data Source=CHOKOBOT_ROBOT;User ID=sa;Initial Catalog=ndis_portal_db;Provider=SQLOLEDB.1;Application Name=SSIS-ImportServices-{8032257C-F0E1-491A-B8DC-CFD3F5F92D04}CHOKOBOT_ROBOT.ndis_portal_db.sa;Auto Translate=False;">
+          DTS:ConnectionString="Data Source=JIM;User ID=sa;Initial Catalog=ndis_portal_db;Provider=SQLOLEDB.1;Auto Translate=False;Application Name=SSIS-ImportServices-{8032257C-F0E1-491A-B8DC-CFD3F5F92D04}CHOKOBOT_ROBOT.ndis_portal_db.sa;">
           <DTS:Password
             DTS:Name="Password"
             Sensitive="1"
-            Encrypted="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAcW4O9CjwDU22CcYqpc20gAAAAAAIAAAARABUAFMAAAAQZgAAAAEAACAAAAD1p8OmDao2h4SSdPa0FZ+1Y/jk7Rta8NPgouG820+TQQAAAAAOgAAAAAIAACAAAADHkZUSU8l5j9gkqEA7+m2RyAvBjtgy7Nlbzlp3e3BthiAAAADGQ4/lalZlNTBkCbx5XgKwuvFlX/7+fCPiwe6cVdDqV0AAAADH4ELa7ZXAKMfPWMRIuJVv/+CnuMnyIPYj1T9+Qlgwxbw63/cPlCqNoHKYSnoElqIPFmncYIviS1RdlD/k6xNo</DTS:Password>
+            Encrypted="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAx0+/g6rK1U2WlGsEe7QZXQAAAAAIAAAARABUAFMAAAAQZgAAAAEAACAAAACwdzAbGf8TV26WisA8IVxDxn7Cft5LihK8lNzeKZBTWgAAAAAOgAAAAAIAACAAAACCpMfrSYcvntQhprlN7EDM0vb+MPhEkP8ioATKiLTXeyAAAACy2+vRtQZDkNmR+jM4nC5IFK2bbnu7TZFdiH4DC7NJ4UAAAAAqjkkcV+WAkEsNzTqf+f+LRI0ytEj2CAAZJWd7Ax3fw7jvmsqSG+pt9YYHt4qg4o7PiMKxKA66T8KfXl6ipx79</DTS:Password>
         </DTS:ConnectionManager>
       </DTS:ObjectData>
     </DTS:ConnectionManager>
@@ -47,7 +47,7 @@
           DTS:RowDelimiter=""
           DTS:TextQualifier="_x003C_none_x003E_"
           DTS:CodePage="1252"
-          DTS:ConnectionString="C:\Users\jerwi\Downloads\services_import.csv">
+          DTS:ConnectionString="C:\SSIS\Input\services_import.csv">
           <DTS:FlatFileColumns>
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -56,7 +56,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="service_name"
-              DTS:DTSID="{A9C50CDE-1DCD-45ED-9863-7BF005F16A8B}"
+              DTS:DTSID="{2B17B9CF-CB2B-4097-8324-41CBAA6C6AFA}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -65,7 +65,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="category_name"
-              DTS:DTSID="{ECD0E086-9D5C-4C58-93B3-D6A8F1A44B23}"
+              DTS:DTSID="{B050F0BA-7EF7-4D40-A863-DC1BD30E50AA}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -74,7 +74,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="description"
-              DTS:DTSID="{815A7B02-59BF-4BB2-9239-53FAB8147DA6}"
+              DTS:DTSID="{DFFA84DE-E63A-4DDC-B541-46E20853468F}"
               DTS:CreationName="" />
           </DTS:FlatFileColumns>
         </DTS:ConnectionManager>
@@ -94,7 +94,7 @@
           DTS:RowDelimiter=""
           DTS:TextQualifier="_x003C_none_x003E_"
           DTS:CodePage="1252"
-          DTS:ConnectionString="C:\Users\jerwi\Documents\NDISReports\services_import_errors.csv">
+          DTS:ConnectionString="C:\SSIS\Error\services_import_errors.csv">
           <DTS:FlatFileColumns>
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -103,7 +103,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="service_name"
-              DTS:DTSID="{7865048E-6A02-4166-8D92-B501106F4C6F}"
+              DTS:DTSID="{C3D84136-250C-41AD-954E-9B5508E91E52}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -112,7 +112,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="category_name"
-              DTS:DTSID="{E8194086-2A0F-40A0-B9B0-C43B6CE16E27}"
+              DTS:DTSID="{8E09DC89-98C1-4B60-9C20-53248A4A1B0A}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -121,7 +121,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="description"
-              DTS:DTSID="{C27D0E67-FEF3-43C0-9B87-CC694CC3CB1D}"
+              DTS:DTSID="{064011FB-A5E2-4CEB-B218-12A3EFFC1E5D}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -130,7 +130,7 @@
               DTS:DataType="130"
               DTS:TextQualified="True"
               DTS:ObjectName="Copy of service_name"
-              DTS:DTSID="{8F9874BF-C0E3-43E9-BFC6-06FD21C3AFAB}"
+              DTS:DTSID="{AD58BA10-C833-495D-9CF5-26AD81EAAF1B}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -139,7 +139,7 @@
               DTS:DataType="130"
               DTS:TextQualified="True"
               DTS:ObjectName="Copy of category_name"
-              DTS:DTSID="{037E9D28-35E1-484A-86A0-152771ECC2F8}"
+              DTS:DTSID="{203C8549-9712-40DE-9D6C-87FDC9B8E80B}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -148,7 +148,7 @@
               DTS:DataType="130"
               DTS:TextQualified="True"
               DTS:ObjectName="Copy of description"
-              DTS:DTSID="{E42329E5-21D8-49C0-B632-80A974556FF1}"
+              DTS:DTSID="{DA383BEF-7811-4288-B6C9-D01831219D3B}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -157,7 +157,7 @@
               DTS:DataType="130"
               DTS:TextQualified="True"
               DTS:ObjectName="error_reason"
-              DTS:DTSID="{49474D17-766E-41E5-92AB-AD723E321102}"
+              DTS:DTSID="{659E0B43-FF0F-48D4-B07F-F5D17EA04BC5}"
               DTS:CreationName="" />
           </DTS:FlatFileColumns>
         </DTS:ConnectionManager>
@@ -863,8 +863,8 @@ where [refTable].[name] = ?</property>
               <connections>
                 <connection
                   refId="Package\Import Service From CSV\Lookup - Match Category.Connections[OleDbConnection]"
-                  connectionManagerID="Package.ConnectionManagers[CHOKOBOT_ROBOT.ndis_portal_db.sa]"
-                  connectionManagerRefId="Package.ConnectionManagers[CHOKOBOT_ROBOT.ndis_portal_db.sa]"
+                  connectionManagerID="Package.ConnectionManagers[JIM.ndis_portal_db.sa]"
+                  connectionManagerRefId="Package.ConnectionManagers[JIM.ndis_portal_db.sa]"
                   description="Connection manager used to access lookup data."
                   name="OleDbConnection" />
               </connections>
@@ -1010,8 +1010,8 @@ where [refTable].[name] = ?</property>
               <connections>
                 <connection
                   refId="Package\Import Service From CSV\OLE DB Destination.Connections[OleDbConnection]"
-                  connectionManagerID="Package.ConnectionManagers[CHOKOBOT_ROBOT.ndis_portal_db.sa]"
-                  connectionManagerRefId="Package.ConnectionManagers[CHOKOBOT_ROBOT.ndis_portal_db.sa]"
+                  connectionManagerID="Package.ConnectionManagers[JIM.ndis_portal_db.sa]"
+                  connectionManagerRefId="Package.ConnectionManagers[JIM.ndis_portal_db.sa]"
                   description="The OLE DB runtime connection used to access the database."
                   name="OleDbConnection" />
               </connections>
