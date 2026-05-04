@@ -35,13 +35,13 @@ export class DashboardComponent implements OnInit {
   bookings: any[] = [];
   isLoading = true;
   isLoadingBookings = true;
-  
+
   // Menu state
   activeMenuId: number | null = null;
 
   constructor(
     private api: ApiService,
-    private toast: ToastService
+    private toast: ToastService,
   ) {}
 
   ngOnInit(): void {
@@ -65,7 +65,7 @@ export class DashboardComponent implements OnInit {
       error: (err) => {
         console.error('Error loading booking stats:', err);
         this.isLoading = false;
-      }
+      },
     });
   }
 
@@ -76,30 +76,30 @@ export class DashboardComponent implements OnInit {
         console.log('Bookings response:', res);
         const data = res.Data || res;
         this.bookings = Array.isArray(data) ? data.slice(0, 5) : [];
-        
+
         // Debug: Log booking details
         console.log('Bookings loaded:', this.bookings.length);
         this.bookings.forEach((booking, index) => {
           console.log(`Booking ${index}:`, {
             id: booking.id,
             status: booking.status,
-            isPending: this.isPending(booking)
+            isPending: this.isPending(booking),
           });
         });
-        
+
         this.isLoadingBookings = false;
       },
       error: (err) => {
         console.error('Error loading bookings:', err);
         this.isLoadingBookings = false;
-      }
+      },
     });
   }
 
   approveBooking(booking: any): void {
     // Close menu
     this.activeMenuId = null;
-    
+
     this.api.updateBookingStatus(booking.id, 'Approved').subscribe({
       next: () => {
         // Update UI immediately without reload
@@ -110,8 +110,11 @@ export class DashboardComponent implements OnInit {
       },
       error: (err) => {
         console.error('Error approving booking:', err);
-        this.toast.show('Failed to approve booking. Please try again.', 'error');
-      }
+        this.toast.show(
+          'Failed to approve booking. Please try again.',
+          'error',
+        );
+      },
     });
   }
 
@@ -127,7 +130,7 @@ export class DashboardComponent implements OnInit {
       error: (err) => {
         console.error('Error cancelling booking:', err);
         this.toast.show('Failed to cancel booking. Please try again.', 'error');
-      }
+      },
     });
   }
 

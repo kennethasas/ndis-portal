@@ -13,7 +13,7 @@ export class StatusCardComponent {
   @Input({ required: true }) value: number = 0;
 
   // Optional styling inputs with default fallbacks
-  @Input() iconClass: string = 'fa-solid fa-chart-line';
-  @Input() iconColor: string = '#6366f1'; // Indigo-500 default
-  @Input() bgColor: string = '#e0e7ff'; // Indigo-100 default
+  @Input() iconClass: string = '';
+  @Input() iconColor: string = ''; 
+  @Input() bgColor: string = ''; 
 }
