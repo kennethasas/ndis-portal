@@ -16,12 +16,13 @@ describe('AuthGuard - Protected Routes', () => {
           useValue: {
             isAuthenticated: jasmine.createSpy('isAuthenticated'),
             getToken: jasmine.createSpy('getToken'),
+            getRole: jasmine.createSpy('getRole'),
           },
         },
         {
           provide: Router,
           useValue: {
-            parseUrl: jasmine.createSpy('parseUrl').and.returnValue('/login'),
+            parseUrl: jasmine.createSpy('parseUrl').and.returnValue('/forbidden'),
           },
         },
       ],
@@ -32,7 +33,7 @@ describe('AuthGuard - Protected Routes', () => {
   });
 
   describe('TC-A09: Access protected page without token', () => {
-    it('Should redirect to login when accessing /services without token', () => {
+    it('Should redirect to forbidden when accessing /services without token', () => {
       (authService.isAuthenticated as jasmine.Spy).and.returnValue(false);
       (authService.getToken as jasmine.Spy).and.returnValue(null);
 
@@ -42,10 +43,10 @@ describe('AuthGuard - Protected Routes', () => {
       const result = AuthGuard(mockRoute, mockState);
 
       expect(authService.isAuthenticated).toHaveBeenCalled();
-      expect(router.parseUrl).toHaveBeenCalledWith('/login');
+      expect(router.parseUrl).toHaveBeenCalledWith('/forbidden');
     });
 
-    it('Should redirect to login when accessing /bookings without token', () => {
+    it('Should redirect to forbidden when accessing /bookings without token', () => {
       (authService.isAuthenticated as jasmine.Spy).and.returnValue(false);
 
       const mockRoute = {} as any;
@@ -53,7 +54,7 @@ describe('AuthGuard - Protected Routes', () => {
 
       const result = AuthGuard(mockRoute, mockState);
 
-      expect(router.parseUrl).toHaveBeenCalledWith('/login');
+      expect(router.parseUrl).toHaveBeenCalledWith('/forbidden');
     });
 
     it('Should deny access when token is not in localStorage', () => {
@@ -69,7 +70,7 @@ describe('AuthGuard - Protected Routes', () => {
 
     it('Should return UrlTree (redirect) when not authenticated', () => {
       (authService.isAuthenticated as jasmine.Spy).and.returnValue(false);
-      (router.parseUrl as jasmine.Spy).and.returnValue('/login' as any);
+      (router.parseUrl as jasmine.Spy).and.returnValue('/forbidden' as any);
 
       const mockRoute = {} as any;
       const mockState = { url: '/services' } as any;
@@ -77,7 +78,7 @@ describe('AuthGuard - Protected Routes', () => {
       const result = AuthGuard(mockRoute, mockState);
 
       expect(result).toBeTruthy();
-      expect(router.parseUrl).toHaveBeenCalledWith('/login');
+      expect(router.parseUrl).toHaveBeenCalledWith('/forbidden');
     });
   });
 
@@ -122,7 +123,7 @@ describe('AuthGuard - Protected Routes', () => {
   });
 
   describe('Token Expiration', () => {
-    it('Should redirect to login if token becomes invalid', () => {
+    it('Should redirect to forbidden if token becomes invalid', () => {
       (authService.isAuthenticated as jasmine.Spy).and.returnValue(false);
 
       const mockRoute = {} as any;
@@ -130,7 +131,59 @@ describe('AuthGuard - Protected Routes', () => {
 
       AuthGuard(mockRoute, mockState);
 
-      expect(router.parseUrl).toHaveBeenCalledWith('/login');
+      expect(router.parseUrl).toHaveBeenCalledWith('/forbidden');
+    });
+  });
+
+  describe('Role-Based Access', () => {
+    it('Should allow participant access to participant routes', () => {
+      (authService.isAuthenticated as jasmine.Spy).and.returnValue(true);
+      (authService.getRole as jasmine.Spy).and.returnValue('Participant');
+
+      const mockRoute = { data: { role: 'participant' } } as any;
+      const mockState = { url: '/services' } as any;
+
+      const result = AuthGuard(mockRoute, mockState);
+
+      expect(result).toBe(true);
+    });
+
+    it('Should allow coordinator access to coordinator routes', () => {
+      (authService.isAuthenticated as jasmine.Spy).and.returnValue(true);
+      (authService.getRole as jasmine.Spy).and.returnValue('Coordinator');
+
+      const mockRoute = { data: { role: 'coordinator' } } as any;
+      const mockState = { url: '/dashboard' } as any;
+
+      const result = AuthGuard(mockRoute, mockState);
+
+      expect(result).toBe(true);
+    });
+
+    it('Should redirect participant away from coordinator routes', () => {
+      (authService.isAuthenticated as jasmine.Spy).and.returnValue(true);
+      (authService.getRole as jasmine.Spy).and.returnValue('Participant');
+
+      const mockRoute = { data: { role: 'coordinator' } } as any;
+      const mockState = { url: '/dashboard' } as any;
+
+      const result = AuthGuard(mockRoute, mockState);
+
+      expect(result).toBe('/forbidden' as any);
+      expect(router.parseUrl).toHaveBeenCalledWith('/forbidden');
+    });
+
+    it('Should redirect coordinator away from participant routes', () => {
+      (authService.isAuthenticated as jasmine.Spy).and.returnValue(true);
+      (authService.getRole as jasmine.Spy).and.returnValue('Coordinator');
+
+      const mockRoute = { data: { role: 'participant' } } as any;
+      const mockState = { url: '/services' } as any;
+
+      const result = AuthGuard(mockRoute, mockState);
+
+      expect(result).toBe('/forbidden' as any);
+      expect(router.parseUrl).toHaveBeenCalledWith('/forbidden');
     });
   });
 
