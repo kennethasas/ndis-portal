@@ -1,5 +1,5 @@
+import { Page, expect } from '@playwright/test';
 
-//Reusable login function used by all spec files 
 export async function loginAs( 
 
 page: Page, 
@@ -28,22 +28,13 @@ password: 'Test@1234'
 
 }; 
 
-await page.goto('/login'); 
+await page.goto('/login');
 
-await page.fill('[data-testid="email-input"]', 
+await page.locator('input[type="email"]').fill(credentials[role].email);
 
-credentials[role].email);
+await page.locator('input[type="password"]').fill(credentials[role].password);
 
-await page.fill('[data-testid="password-input"]', 
+await page.getByRole('button', { name: 'Log in' }).click();
 
-credentials[role].password); 
-
-await page.click('[data-testid="login-btn"]'); 
-
-await page.waitForURL( 
-
-role === 'coordinator' ? '/dashboard' : '/services' 
-
-); 
-
+await expect(page).toHaveURL(role === 'coordinator' ? /.*\/dashboard/ : /.*\/services/, { timeout: 15000 });
 }
