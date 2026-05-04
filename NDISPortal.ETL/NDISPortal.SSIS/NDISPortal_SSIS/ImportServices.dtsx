@@ -11,8 +11,8 @@
   DTS:LocaleID="13321"
   DTS:ObjectName="ImportServices"
   DTS:PackageType="5"
-  DTS:VersionBuild="16"
-  DTS:VersionGUID="{B38BBA6A-272F-4B46-9794-DCF5A240C050}">
+  DTS:VersionBuild="18"
+  DTS:VersionGUID="{F2EE73BA-B56F-4D1A-ACA4-33C99D2C6646}">
   <DTS:Property
     DTS:Name="PackageFormatVersion">8</DTS:Property>
   <DTS:ConnectionManagers>
@@ -29,7 +29,7 @@
           <DTS:Password
             DTS:Name="Password"
             Sensitive="1"
-            Encrypted="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAcW4O9CjwDU22CcYqpc20gAAAAAAIAAAARABUAFMAAAAQZgAAAAEAACAAAACl+5lFJblaOnxX/ODTFUr0uggavQPfNlH7YfIxFFgH8AAAAAAOgAAAAAIAACAAAABO/v1E3wzV3WW59VdCc7DbaSkF2ABJluGqYbP9EAW9JCAAAABYJuqlyD7wISBPj0h9DXnCaH3pynW+jHZMUgnz2aYpo0AAAAAf38ABwBMtq8VBrz13JnLydVGS9soVWzuZNaf2rc4QwPclGsylr1ooNHWB4s6k/u+rLsY4goDRsZ64FlyPvHlL</DTS:Password>
+            Encrypted="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAcW4O9CjwDU22CcYqpc20gAAAAAAIAAAARABUAFMAAAAQZgAAAAEAACAAAAD1p8OmDao2h4SSdPa0FZ+1Y/jk7Rta8NPgouG820+TQQAAAAAOgAAAAAIAACAAAADHkZUSU8l5j9gkqEA7+m2RyAvBjtgy7Nlbzlp3e3BthiAAAADGQ4/lalZlNTBkCbx5XgKwuvFlX/7+fCPiwe6cVdDqV0AAAADH4ELa7ZXAKMfPWMRIuJVv/+CnuMnyIPYj1T9+Qlgwxbw63/cPlCqNoHKYSnoElqIPFmncYIviS1RdlD/k6xNo</DTS:Password>
         </DTS:ConnectionManager>
       </DTS:ObjectData>
     </DTS:ConnectionManager>
@@ -94,7 +94,7 @@
           DTS:RowDelimiter=""
           DTS:TextQualifier="_x003C_none_x003E_"
           DTS:CodePage="1252"
-          DTS:ConnectionString="C:\Users\jerwi\Desktop\ndis-portal\NDISPortal.ETL\services_import_errors.csv">
+          DTS:ConnectionString="C:\Users\jerwi\Documents\NDISReports\services_import_errors.csv">
           <DTS:FlatFileColumns>
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -103,7 +103,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="service_name"
-              DTS:DTSID="{3D9DD39B-DF9A-4AE4-AE93-AB87ACEF78C3}"
+              DTS:DTSID="{7865048E-6A02-4166-8D92-B501106F4C6F}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -112,25 +112,25 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="category_name"
-              DTS:DTSID="{5E87A254-CBC5-464B-A1DD-BC0A5D3D8468}"
+              DTS:DTSID="{E8194086-2A0F-40A0-B9B0-C43B6CE16E27}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
               DTS:ColumnDelimiter="_x002C_"
-              DTS:MaximumWidth="50"
+              DTS:MaximumWidth="200"
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="description"
-              DTS:DTSID="{41A92177-D732-469F-89DF-C29738EB1D44}"
+              DTS:DTSID="{C27D0E67-FEF3-43C0-9B87-CC694CC3CB1D}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
               DTS:ColumnDelimiter="_x002C_"
               DTS:MaximumWidth="50"
-              DTS:DataType="129"
+              DTS:DataType="130"
               DTS:TextQualified="True"
               DTS:ObjectName="Copy of service_name"
-              DTS:DTSID="{7E014E7A-0D6D-49FF-BA5D-498DFEF13DE3}"
+              DTS:DTSID="{8F9874BF-C0E3-43E9-BFC6-06FD21C3AFAB}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -139,16 +139,16 @@
               DTS:DataType="130"
               DTS:TextQualified="True"
               DTS:ObjectName="Copy of category_name"
-              DTS:DTSID="{A9DD957C-C197-449B-889D-612A273F5824}"
+              DTS:DTSID="{037E9D28-35E1-484A-86A0-152771ECC2F8}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
               DTS:ColumnDelimiter="_x002C_"
-              DTS:MaximumWidth="50"
-              DTS:DataType="129"
+              DTS:MaximumWidth="200"
+              DTS:DataType="130"
               DTS:TextQualified="True"
               DTS:ObjectName="Copy of description"
-              DTS:DTSID="{1FCEF2F9-1D0D-4A2D-A253-0977BC099BFD}"
+              DTS:DTSID="{E42329E5-21D8-49C0-B632-80A974556FF1}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -157,7 +157,7 @@
               DTS:DataType="130"
               DTS:TextQualified="True"
               DTS:ObjectName="error_reason"
-              DTS:DTSID="{C4367348-1C84-4EAB-9267-230C38AC5C71}"
+              DTS:DTSID="{49474D17-766E-41E5-92AB-AD723E321102}"
               DTS:CreationName="" />
           </DTS:FlatFileColumns>
         </DTS:ConnectionManager>
@@ -612,12 +612,11 @@
                       refId="Package\Import Service From CSV\Flat File Destination.Inputs[Flat File Destination Input].ExternalColumns[description]"
                       codePage="1252"
                       dataType="str"
-                      length="50"
+                      length="200"
                       name="description" />
                     <externalMetadataColumn
                       refId="Package\Import Service From CSV\Flat File Destination.Inputs[Flat File Destination Input].ExternalColumns[Copy of service_name]"
-                      codePage="1252"
-                      dataType="str"
+                      dataType="wstr"
                       length="50"
                       name="Copy of service_name" />
                     <externalMetadataColumn
@@ -627,9 +626,8 @@
                       name="Copy of category_name" />
                     <externalMetadataColumn
                       refId="Package\Import Service From CSV\Flat File Destination.Inputs[Flat File Destination Input].ExternalColumns[Copy of description]"
-                      codePage="1252"
-                      dataType="str"
-                      length="50"
+                      dataType="wstr"
+                      length="200"
                       name="Copy of description" />
                     <externalMetadataColumn
                       refId="Package\Import Service From CSV\Flat File Destination.Inputs[Flat File Destination Input].ExternalColumns[error_reason]"
@@ -725,7 +723,7 @@
                       length="200"
                       lineageId="Package\Import Service From CSV\Flat File Source.Outputs[Flat File Source Output].Columns[description]"
                       name="description"
-                      truncationRowDisposition="RedirectRow">
+                      truncationRowDisposition="FailComponent">
                       <properties>
                         <property
                           dataType="System.Boolean"
@@ -1245,7 +1243,7 @@ where [refTable].[name] = ?</property>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
             <mssgm:EdgeLabel
-              BoundingBox="-121.406383331219,25.2718906033964,111.6127734375,11.609375"
+              BoundingBox="-121.40638333122,25.2718906033964,111.6127734375,11.609375"
               RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>
@@ -1281,7 +1279,7 @@ where [refTable].[name] = ?</property>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
             <mssgm:EdgeLabel
-              BoundingBox="38.9308338188132,17.6688068164644,96.3827734375,11.609375"
+              BoundingBox="38.930833818813,17.6688068164644,96.3827734375,11.609375"
               RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>

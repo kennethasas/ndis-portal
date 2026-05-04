@@ -26,7 +26,7 @@
           <SSIS:Property SSIS:Name="CreatorComputerName">JIM</SSIS:Property>
           <SSIS:Property SSIS:Name="Description">
           </SSIS:Property>
-          <SSIS:Property SSIS:Name="PasswordVerifier" SSIS:Sensitive="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAcW4O9CjwDU22CcYqpc20gAAAAAACAAAAAAAQZgAAAAEAACAAAAC6YEn0Oj973F6u9cewFgihDrZbaX5hK94En7BjbBNrBQAAAAAOgAAAAAIAACAAAAB3MiKdMoHCIaTb9qeF4XkKAcG8bLQoi0IP/t7PFXfz1JAAAAD6uf7T0+GvymHiTUHN0NbLAJCZGLJs5rk4zRm5TS9TmrFh+dEWES/3qxULAnkKTJ2HZ6R4cOqIhfK2ElR1jN54kUFLDiuUKP/Z07N0c3qn7VCRam1tqHt+3rlnHV2xv/SQR0EeRn2FLBR2M1v61Qi+UmgXcyxpmTgUvqcFEXip1QXezYw3XbXsRGgJNueDueJAAAAAQ2wYeTfxu7/DEy3efwvUOKdegTc77DwtgSWqv3POZ8VNekIS7txov7rmv3Rl6VW5seW3u5/VILbq0mJtzS+e/A==</SSIS:Property>
+          <SSIS:Property SSIS:Name="PasswordVerifier" SSIS:Sensitive="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAcW4O9CjwDU22CcYqpc20gAAAAAACAAAAAAAQZgAAAAEAACAAAABKME3XOBoCQJZNbRnbUpKrAfKBTB3JFT1Urbk0/Utz6wAAAAAOgAAAAAIAACAAAACNltUPMNoXsrUP032CsSUtV+brxHHPGuQZvru2HUSqlpAAAACFAycWBBLRn8lZltt3d1DSWbtjQ62I2PpRPWPzxxYfb4ZWN9SDvKuqxHK5+dUHyxZlIVl9QlK1vjJqVRYV+QY62/DwA3PFi19AzqecSrN1I/gwl7rauD1f78Lr6eWPTogh5eSm/iA7tpMOaDYboK8L62wXWWsVejzeC7+YpY15A898/Ty3ZA/S/BoTUYb+iCVAAAAAPDCZByx/IDY+UZmDKdD8n/swGz+Jg+WApusLHDXR+NJ0K9hhnEgVWKlEuAuA/xEWxXZRiQMmPTbdPFCs70/cPQ==</SSIS:Property>
           <SSIS:Property SSIS:Name="FormatVersion">1</SSIS:Property>
         </SSIS:Properties>
         <SSIS:Packages>
@@ -1115,10 +1115,10 @@
                 <SSIS:Property SSIS:Name="Name">ImportServices</SSIS:Property>
                 <SSIS:Property SSIS:Name="VersionMajor">1</SSIS:Property>
                 <SSIS:Property SSIS:Name="VersionMinor">0</SSIS:Property>
-                <SSIS:Property SSIS:Name="VersionBuild">15</SSIS:Property>
+                <SSIS:Property SSIS:Name="VersionBuild">17</SSIS:Property>
                 <SSIS:Property SSIS:Name="VersionComments">
                 </SSIS:Property>
-                <SSIS:Property SSIS:Name="VersionGUID">{698AB3E1-CBAA-475A-9F57-3AEE9885E669}</SSIS:Property>
+                <SSIS:Property SSIS:Name="VersionGUID">{4AD173DA-6B90-4327-9407-9A3D2425D13A}</SSIS:Property>
                 <SSIS:Property SSIS:Name="PackageFormatVersion">8</SSIS:Property>
                 <SSIS:Property SSIS:Name="Description">
                 </SSIS:Property>
@@ -1436,6 +1436,8 @@
                     <SSIS:Property SSIS:Name="IncludeInDebugDump">0</SSIS:Property>
                     <SSIS:Property SSIS:Name="Required">0</SSIS:Property>
                     <SSIS:Property SSIS:Name="Sensitive">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Value">
+                    </SSIS:Property>
                     <SSIS:Property SSIS:Name="DataType">18</SSIS:Property>
                   </SSIS:Properties>
                 </SSIS:Parameter>
@@ -1540,7 +1542,7 @@
                     <SSIS:Property SSIS:Name="IncludeInDebugDump">0</SSIS:Property>
                     <SSIS:Property SSIS:Name="Required">0</SSIS:Property>
                     <SSIS:Property SSIS:Name="Sensitive">0</SSIS:Property>
-                    <SSIS:Property SSIS:Name="Value">C:\Users\jerwi\Desktop\ndis-portal\NDISPortal.ETL\services_import_errors.csv</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Value">C:\Users\jerwi\Documents\NDISReports\services_import_errors.csv</SSIS:Property>
                     <SSIS:Property SSIS:Name="DataType">18</SSIS:Property>
                   </SSIS:Properties>
                 </SSIS:Parameter>
@@ -1631,6 +1633,8 @@
                     <SSIS:Property SSIS:Name="IncludeInDebugDump">0</SSIS:Property>
                     <SSIS:Property SSIS:Name="Required">0</SSIS:Property>
                     <SSIS:Property SSIS:Name="Sensitive">0</SSIS:Property>
+                    <SSIS:Property SSIS:Name="Value">
+                    </SSIS:Property>
                     <SSIS:Property SSIS:Name="DataType">18</SSIS:Property>
                   </SSIS:Properties>
                 </SSIS:Parameter>
