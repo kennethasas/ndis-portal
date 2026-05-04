@@ -68,15 +68,20 @@ export class SidebarUi implements OnInit, OnDestroy {
   }
 
   private checkScreenSize() {
+    const wasMobile = this.isMobile;
     this.isMobile = window.innerWidth < 768;
 
-    if (this.isMobile) {
-      this.sidebarService.setCollapsed(true); // always closed on mobile
-    } else {
-      this.sidebarService.setCollapsed(false); // always open on desktop
+    // Only react when switching between mobile ↔ desktop
+    if (this.isMobile && !wasMobile) {
+      this.sidebarService.setCollapsed(true); // entering mobile
+    }
+
+    if (!this.isMobile && wasMobile) {
+      // leaving mobile → restore saved desktop state
+      const saved = localStorage.getItem('sidebar-collapsed');
+      this.sidebarService.setCollapsed(saved ? JSON.parse(saved) : false);
     }
   }
-
   ngOnInit() {
     this.checkScreenSize();
     this.sub.add(

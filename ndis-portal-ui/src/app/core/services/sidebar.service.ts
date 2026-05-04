@@ -3,17 +3,27 @@ import { BehaviorSubject } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class SidebarService {
-  // Start expanded on desktop, logic in component will handle mobile auto-hide
-  private collapsed = new BehaviorSubject<boolean>(
-    window.innerWidth < 768, // detect mobile immediately
-  );
+  private getInitialState(): boolean {
+    const saved = localStorage.getItem('sidebar-collapsed');
+
+    // If mobile → always collapsed
+    if (window.innerWidth < 768) return true;
+
+    // If desktop → use saved state
+    return saved ? JSON.parse(saved) : false;
+  }
+
+  private collapsed = new BehaviorSubject<boolean>(this.getInitialState());
   collapsed$ = this.collapsed.asObservable();
 
   toggle() {
-    this.collapsed.next(!this.collapsed.value);
+    const newState = !this.collapsed.value;
+    this.collapsed.next(newState);
+    localStorage.setItem('sidebar-collapsed', JSON.stringify(newState));
   }
 
   setCollapsed(state: boolean) {
     this.collapsed.next(state);
+    localStorage.setItem('sidebar-collapsed', JSON.stringify(state));
   }
 }
