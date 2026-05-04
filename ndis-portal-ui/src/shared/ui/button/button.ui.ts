@@ -28,6 +28,6 @@ export class ButtonUiComponent {
 
     // 2. New Dynamic Variant: Fits content, minimal padding, no fixed width
     ghost:
-      'w-fit bg-[#6B3293] hover:bg-[#5a2a7b] text-white rounded-md px-3 py-2 text-sm transition-all',
+      'bg-[#6B3293] hover:bg-[#5a2a7b] text-white rounded-lg px-3 py-2 text-sm md:text-base font-medium whitespace-nowrap',
   };
 }

@@ -17,7 +17,10 @@
 
   <!-- NAVIGATION -->
   <nav class="flex-1 flex flex-col gap-2 px-3 mt-4 md:mt-0">
-    <a *ngFor="let item of navItems" [routerLink]="item.path" routerLinkActive="bg-[#f3f0ff] text-[#6b21a8]"
+    <a 
+      *ngFor="let item of navItems" 
+      [routerLink]="item.path" routerLinkActive="bg-[#f3f0ff] text-[#6b21a8]"
+      (click)="isMobile && closeSidebar()"
       [routerLinkActiveOptions]="{ exact: true }"
       class="relative flex items-center h-12 rounded-xl transition-all duration-200 group"
       [class.justify-center]="isCollapsed" [class.px-3]="!isCollapsed">
@@ -83,4 +86,4 @@
 </app-dialog-ui>
 
 <!-- Mobile Backdrop -->
-<div *ngIf="!isCollapsed && isMobile" (click)="toggle()" class="fixed inset-0 bg-black/20 z-40 md:hidden"></div>
+<div *ngIf="!isCollapsed && isMobile" (click)="closeSidebar()" class="fixed inset-0 bg-black/20 z-40 md:hidden"></div>
