@@ -169,20 +169,8 @@ https://thrivesolutions-team.atlassian.net/browse/NOVA-149
 
 ---
 
-### Authentication Automation Tests
-https://thrivesolutions-team.atlassian.net/browse/NOVA-101
-
-### Service Automation Tests
-https://thrivesolutions-team.atlassian.net/browse/NOVA-102
-
-### Bookings Automation Tests
-https://thrivesolutions-team.atlassian.net/browse/NOVA-103
-
-### AI Chatbot Automation Tests
-https://thrivesolutions-team.atlassian.net/browse/NOVA-104
-
-### Coordinator Automation Tests
-https://thrivesolutions-team.atlassian.net/browse/NOVA-107
+### Playwright HTML Report
+https://thrivesolutions-team.atlassian.net/browse/NOVA-113
 
 ---
 
