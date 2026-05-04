@@ -52,7 +52,7 @@ export class BookingTableComponent implements OnChanges {
     if (this.currentFilter.toLowerCase() === 'pending') {
       this.visibleColumns = [
         ...this.baseColumns,
-        { key: 'action', label: '', type: 'action' },
+        { key: 'action', label: 'Action', type: 'action' },
       ];
     } else {
       this.visibleColumns = [...this.baseColumns];

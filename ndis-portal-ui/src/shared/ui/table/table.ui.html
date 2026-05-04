@@ -186,7 +186,11 @@
 
     </div>
 
-    <div *ngIf="hasActionColumn" class="relative z-10 flex justify-end items-center p-3 border-t border-slate-100 bg-slate-50/70">
+    <div *ngIf="hasActionColumn" class="relative z-10 flex justify-between items-center p-3 border-t border-slate-100 bg-slate-50/70">
+
+      <span class="text-slate-500 text-xs">
+        {{ getActionColumnLabel() }}
+      </span>
 
       <ng-container *ngTemplateOutlet="actionMenu; context: { row: row }">
       </ng-container>

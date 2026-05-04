@@ -132,6 +132,13 @@ export class TableComponent {
       : 'Cancel';
   }
 
+  /* Get action column header label */
+  getActionColumnLabel(): string {
+    const actionCol = this.columns?.find((col) => col.type === 'action');
+
+    return actionCol?.label || 'Action';
+  }
+
   /* ==========================================================
      STATUS COLOR LOGIC
      ========================================================== */
