@@ -194,8 +194,6 @@ export const routes: Routes = [
 
     component: ForbiddenComponent,
 
-    title: '403 - Access Denied',
-
   },
 
 
