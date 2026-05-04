@@ -1,8 +1,8 @@
 <div class="p-4 md:p-6 space-y-6 max-w-[2560px] mx-auto">
 
-    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 w-full">
+    <div class="flex flex-row sm:items-center sm:justify-between gap-3 w-full">
         <h1 class="text-lg md:text-xl 2xl:text-3xl 4xl:text-5xl font-bold text-slate-900">
-            My Bookings
+            {{ pageTitle }}
         </h1>
 
         <app-status-dropdown class="w-full sm:w-auto" [activeStatus]="activeFilter" (statusChange)="handleStatusFilter($event)">

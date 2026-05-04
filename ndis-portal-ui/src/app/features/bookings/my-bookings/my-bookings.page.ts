@@ -29,13 +29,11 @@ import { CancelDialogComponent } from '../../../../shared/components/dialog/canc
 
 
 @Component({
-
   selector: 'app-my-bookings',
 
   standalone: true,
 
   imports: [
-
     CommonModule,
 
     BookingTableComponent,
@@ -45,15 +43,11 @@ import { CancelDialogComponent } from '../../../../shared/components/dialog/canc
     PaginationComponent,
 
     CancelDialogComponent, // Integrated for responsive cancellation
-
   ],
 
   templateUrl: './my-bookings.page.html',
-
 })
-
 export class MyBookingsComponent implements OnInit {
-
   // --- Data State ---
 
   bookings: BookingViewModel[] = [];
@@ -67,12 +61,14 @@ export class MyBookingsComponent implements OnInit {
   pageSize = 10;
 
   activeFilter = 'all';
+  pageTitle = 'My Bookings';
+  private capitalize(text: string): string {
+    return text.charAt(0).toUpperCase() + text.slice(1);
+  }
 
   isLoading = false;
 
   errorMessage = '';
-
-
 
   // --- Dialog State ---
 
@@ -82,31 +78,19 @@ export class MyBookingsComponent implements OnInit {
 
   selectedNotesBooking: BookingViewModel | null = null;
 
-
-
   constructor(
+    private bookingService: BookingService,
 
-    private bookingService: BookingService, 
+    private router: Router,
 
-    private router: Router, 
-
-    private http: HttpClient
-
+    private http: HttpClient,
   ) {}
 
-
-
   ngOnInit() {
-
     console.log('MyBookingsComponent ngOnInit() called');
 
-    
-
     this.fetchBookings();
-
   }
-
-
 
   /**
 
@@ -115,33 +99,25 @@ export class MyBookingsComponent implements OnInit {
    */
 
   fetchBookings() {
-
     console.log('fetchBookings() called - loading bookings...');
 
     this.isLoading = true;
 
     this.errorMessage = '';
 
-
-
     const statusFilter =
-
       this.activeFilter === 'all' ? undefined : this.activeFilter;
 
-
-
-    console.log('Calling bookingService.getBookings with filter:', statusFilter);
-
-    
+    console.log(
+      'Calling bookingService.getBookings with filter:',
+      statusFilter,
+    );
 
     // First test if the backend is reachable
 
     this.testBackendConnection().subscribe({
-
       next: (isReachable) => {
-
         if (!isReachable) {
-
           console.log('Backend not reachable, showing empty bookings');
 
           this.isLoading = false;
@@ -153,30 +129,22 @@ export class MyBookingsComponent implements OnInit {
           this.totalPages = 1;
 
           return;
-
         }
-
-        
 
         // Backend is reachable, try to get bookings
 
         this.bookingService.getBookings(statusFilter).subscribe({
-
           next: (bookings: Booking[]) => {
-
             this.isLoading = false;
 
-            
-
             console.log('[MyBookings] Received bookings:', bookings.length);
-
-            
 
             // If no bookings, check if it's due to backend issue
 
             if (bookings.length === 0) {
-
-              console.log('[MyBookings] No bookings found - could be backend issue or no actual bookings');
+              console.log(
+                '[MyBookings] No bookings found - could be backend issue or no actual bookings',
+              );
 
               // Don't show error message for empty bookings - it could be legitimate
 
@@ -187,81 +155,83 @@ export class MyBookingsComponent implements OnInit {
               this.totalPages = 1;
 
               return;
-
             }
-
-            
 
             // Transform raw data to ViewModel for the table
 
-            this.bookings = bookings.map((booking) => this.mapToViewModel(booking));
-
-            
+            this.bookings = bookings.map((booking) =>
+              this.mapToViewModel(booking),
+            );
 
             // Sort bookings by created date in descending order (newest booking first)
 
             this.bookings.sort((a, b) => {
-
               const dateA = new Date(a.rawData.createdDate);
 
               const dateB = new Date(b.rawData.createdDate);
-
-              
 
               // Debug logging to check dates
 
               console.log('Sorting comparison:');
 
-              console.log('Booking A:', a.rawData.id, 'createdDate:', a.rawData.createdDate, 'parsed:', dateA, 'timestamp:', dateA.getTime());
+              console.log(
+                'Booking A:',
+                a.rawData.id,
+                'createdDate:',
+                a.rawData.createdDate,
+                'parsed:',
+                dateA,
+                'timestamp:',
+                dateA.getTime(),
+              );
 
-              console.log('Booking B:', b.rawData.id, 'createdDate:', b.rawData.createdDate, 'parsed:', dateB, 'timestamp:', dateB.getTime());
-
-              
+              console.log(
+                'Booking B:',
+                b.rawData.id,
+                'createdDate:',
+                b.rawData.createdDate,
+                'parsed:',
+                dateB,
+                'timestamp:',
+                dateB.getTime(),
+              );
 
               // If dates are equal, sort by ID (higher ID = newer booking)
 
               if (dateA.getTime() === dateB.getTime()) {
-
                 console.log('Dates are equal, sorting by ID');
 
-                console.log('ID comparison result:', b.rawData.id - a.rawData.id);
+                console.log(
+                  'ID comparison result:',
+                  b.rawData.id - a.rawData.id,
+                );
 
                 return b.rawData.id - a.rawData.id;
-
               }
-
-              
 
               const result = dateB.getTime() - dateA.getTime();
 
               console.log('Date comparison result:', result);
 
               return result;
-
             });
-
-            
 
             // Debug: log final sorted order
 
             console.log('Final sorted order:');
 
             this.bookings.forEach((booking, index) => {
-
-              console.log(`${index + 1}. ID: ${booking.rawData.id}, Preferred Date: ${booking.rawData.preferredDate}`);
-
+              console.log(
+                `${index + 1}. ID: ${booking.rawData.id}, Preferred Date: ${booking.rawData.preferredDate}`,
+              );
             });
-
-            
 
             this.totalItems = bookings.length;
 
             this.totalPages = Math.ceil(this.totalItems / this.pageSize) || 1;
-
           },
 
           error: (error: Error) => {
-
             this.isLoading = false;
 
             this.errorMessage = error.message;
@@ -271,45 +241,31 @@ export class MyBookingsComponent implements OnInit {
             this.totalItems = 0;
 
             this.totalPages = 1;
-
           },
-
         });
-
       },
 
       error: (error: any) => {
-
         console.log('Backend connection test failed:', error);
 
         this.isLoading = false;
 
-        this.errorMessage = 'Cannot connect to server. Please check if the backend is running.';
+        this.errorMessage =
+          'Cannot connect to server. Please check if the backend is running.';
 
         this.bookings = [];
 
         this.totalItems = 0;
 
         this.totalPages = 1;
-
-      }
-
+      },
     });
-
   }
 
-
-
   testAvailableEndpoints() {
-
-    console.log('Testing available endpoints...');
-
-    
-
     // Test common endpoint patterns
 
     const endpoints = [
-
       `${environment.apiUrl}/bookings`,
 
       `${environment.apiUrl}/booking`,
@@ -319,81 +275,59 @@ export class MyBookingsComponent implements OnInit {
       `${environment.apiUrl}/api/booking`,
 
       `${environment.apiUrl}`,
-
     ];
 
-    
-
-    endpoints.forEach(endpoint => {
-
+    endpoints.forEach((endpoint) => {
       console.log(`Testing endpoint: ${endpoint}`);
 
-      this.http.get(endpoint, { 
+      this.http
+        .get(endpoint, {
+          headers: { 'X-Test-Endpoint': 'true' },
 
-        headers: { 'X-Test-Endpoint': 'true' },
-
-        responseType: 'text'
-
-      }).pipe(
-
-        timeout(3000),
-
-        catchError((error) => {
-
-          console.log(`❌ ${endpoint} - Error:`, error.status || error.message);
-
-          return of(null);
-
+          responseType: 'text',
         })
+        .pipe(
+          timeout(3000),
 
-      ).subscribe(response => {
+          catchError((error) => {
+            console.log(
+              `❌ ${endpoint} - Error:`,
+              error.status || error.message,
+            );
 
-        if (response) {
-
-          console.log(`✅ ${endpoint} - Response:`, response);
-
-        }
-
-      });
-
+            return of(null);
+          }),
+        )
+        .subscribe((response) => {
+          if (response) {
+            console.log(`✅ ${endpoint} - Response:`, response);
+          }
+        });
     });
-
   }
-
-
 
   testBackendConnection(): Observable<boolean> {
+    return this.http
+      .get(`${environment.apiUrl}/bookings`, {
+        headers: { 'X-Connection-Check': 'true' },
 
-    return this.http.get(`${environment.apiUrl}/bookings`, { 
-
-      headers: { 'X-Connection-Check': 'true' },
-
-      responseType: 'text'
-
-    }).pipe(
-
-      timeout(5000),
-
-      map(() => true),
-
-      catchError((error) => {
-
-        console.log('Backend connection check failed:', error);
-
-        return of(false);
-
+        responseType: 'text',
       })
+      .pipe(
+        timeout(5000),
 
-    );
+        map(() => true),
 
+        catchError((error) => {
+          console.log('Backend connection check failed:', error);
+
+          return of(false);
+        }),
+      );
   }
 
-
-
   mapToViewModel(booking: Booking): BookingViewModel {
-
     return {
-
       id: booking.id,
 
       name: booking.participantName,
@@ -409,19 +343,15 @@ export class MyBookingsComponent implements OnInit {
       notes: booking.notes,
 
       rawData: booking,
-
     };
-
   }
-
-
 
   private getServiceCategory(
     booking: Booking & {
       ServiceCategory?: string;
       categoryName?: string;
       CategoryName?: string;
-    }
+    },
   ): string {
     const category =
       booking.serviceCategory ??
@@ -432,41 +362,27 @@ export class MyBookingsComponent implements OnInit {
     return category?.trim() || 'Uncategorized';
   }
 
-
-
   private formatBookingDate(dateValue: string): string {
-
     const match = dateValue?.match(/^(\d{4})-(\d{2})-(\d{2})/);
 
     const date = match
-
       ? new Date(Number(match[1]), Number(match[2]) - 1, Number(match[3]))
-
       : new Date(dateValue);
 
     if (Number.isNaN(date.getTime())) {
-
       return dateValue || '';
-
     }
 
     return date.toLocaleDateString('en-US', {
-
       year: 'numeric',
 
       month: 'short',
 
       day: 'numeric',
-
     });
-
   }
 
-
-
   // --- Event Handlers ---
-
-
 
   /**
 
@@ -475,14 +391,10 @@ export class MyBookingsComponent implements OnInit {
    */
 
   handleCancel(booking: BookingViewModel) {
-
     this.selectedBookingForCancel = booking;
 
     this.isCancelDialogOpen = true;
-
   }
-
-
 
   /**
 
@@ -491,20 +403,14 @@ export class MyBookingsComponent implements OnInit {
    */
 
   closeCancelDialog() {
-
     this.isCancelDialogOpen = false;
 
     // Delay nulling to prevent content flashing during close animation
 
     setTimeout(() => {
-
       this.selectedBookingForCancel = null;
-
     }, 200);
-
   }
-
-
 
   /**
 
@@ -513,14 +419,9 @@ export class MyBookingsComponent implements OnInit {
    */
 
   confirmCancellation() {
-
     if (!this.selectedBookingForCancel) return;
 
-
-
     const idToDelete = this.selectedBookingForCancel.id;
-
-
 
     // Close UI immediately for snappy feel
 
@@ -528,71 +429,48 @@ export class MyBookingsComponent implements OnInit {
 
     this.isLoading = true;
 
-
-
     this.bookingService.deleteBooking(idToDelete).subscribe({
-
       next: () => {
-
         this.selectedBookingForCancel = null;
 
         this.fetchBookings(); // Refresh the data list
-
       },
 
       error: (error: Error) => {
-
         this.isLoading = false;
 
         this.errorMessage = error.message;
-
       },
-
     });
-
   }
 
-
-
   handleStatusFilter(status: string) {
-
     this.activeFilter = status;
 
     this.currentPage = 1;
+    const formatted =
+      status === 'all' ? 'My Bookings' : `${this.capitalize(status)} Bookings`;
+
+    this.pageTitle = formatted;
 
     this.fetchBookings();
-
   }
 
-
-
   handlePageChange(page: number) {
-
     this.currentPage = page;
 
     this.fetchBookings();
-
   }
 
-
-
   handleView(booking: BookingViewModel) {
-
     this.selectedNotesBooking = booking;
-
   }
 
   closeNotes() {
-
     this.selectedNotesBooking = null;
-
   }
 
-
-
   // --- Mapping & Data Logic ---
-
-
 
   /**
 
@@ -601,28 +479,29 @@ export class MyBookingsComponent implements OnInit {
    */
 
   private deriveCategory(serviceName: string): string {
-
     const name = serviceName.toLowerCase();
 
     if (name.includes('hygiene') || name.includes('personal'))
-
       return 'Daily Personal Activities';
 
-    if (name.includes('community') || name.includes('social') || name.includes('transport') || name.includes('drive'))
-
+    if (
+      name.includes('community') ||
+      name.includes('social') ||
+      name.includes('transport') ||
+      name.includes('drive')
+    )
       return 'Community Access';
 
-    if (name.includes('therapy') || name.includes('occupational') || name.includes('speech'))
-
+    if (
+      name.includes('therapy') ||
+      name.includes('occupational') ||
+      name.includes('speech')
+    )
       return 'Therapy Supports';
 
-    if (name.includes('respite'))
-
-      return 'Respite Care';
+    if (name.includes('respite')) return 'Respite Care';
 
     return 'Support Coordination';
-
   }
-
 }
 
