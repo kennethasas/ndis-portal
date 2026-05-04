@@ -1,2 +1,0 @@
-service_name,category_name,description,Copy of service_name,Copy of category_name,Copy of description,error_reason
-Invalid Test Service,Fake Category,This row should go to services_import_errors.csv,Invalid Test Service,Fake Category,This row should go to services_import_errors.csv,Category not found
