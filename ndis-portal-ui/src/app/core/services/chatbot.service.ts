@@ -115,14 +115,32 @@ export class ChatService {
   }
 
   /**
+   * Check if we're in an active recommendation conversation
+   */
+  private isInRecommendationConversation(messages: ChatMessage[]): boolean {
+    if (messages.length === 0) return false;
+    
+    // Find the last assistant message
+    const lastAssistantMessage = [...messages].reverse().find(m => m.role === 'assistant');
+    if (!lastAssistantMessage) return false;
+    
+    // Check if it had service recommendations or was the AI welcome message
+    const hasRecommendations = lastAssistantMessage.recommendations && lastAssistantMessage.recommendations.length > 0;
+    const isAiWelcome = lastAssistantMessage.content.includes('ai-service-buttons');
+    
+    return hasRecommendations || isAiWelcome;
+  }
+
+  /**
    * Check if message is a recommendation request and route accordingly
    */
   private async checkAndHandleRecommendationRequest(text: string, currentMessages: ChatMessage[]) {
     const isRecommendationRequest = await this.isAiRecommendationRequest(text);
+    const isFollowUpInRecommendationFlow = this.isInRecommendationConversation(currentMessages);
 
-    if (isRecommendationRequest || this.isAiRecommendationMode) {
+    if (isRecommendationRequest || isFollowUpInRecommendationFlow) {
       console.log('[ChatService] Calling AI recommendation API...');
-      this.callAiRecommendationApi(text);
+      this.callAiRecommendationApi(text, currentMessages, isFollowUpInRecommendationFlow);
     } else {
       // Call regular chat API
       console.log('[ChatService] Calling regular chat API...');
@@ -282,10 +300,10 @@ export class ChatService {
   /**
    * Call AI recommendation API
    */
-  private callAiRecommendationApi(message: string) {
+  private callAiRecommendationApi(message: string, currentMessages: ChatMessage[], isFollowUp: boolean = false) {
     const typingStartedAt = Date.now();
     this.loadingSubject.next(true);
-    console.log('[ChatService] callAiRecommendationApi - API URL:', this.aiRecommendationUrl);
+    console.log('[ChatService] callAiRecommendationApi - API URL:', this.aiRecommendationUrl, 'isFollowUp:', isFollowUp);
 
     const request: AiRecommendationRequest = {
       message: message.trim()
@@ -315,7 +333,15 @@ export class ChatService {
           const data = response.Data || response;
           
           if (data.isOutOfScope) {
-            // Handle out-of-scope response
+            // If this was a follow-up in a recommendation conversation, fall back to regular chat
+            if (isFollowUp) {
+              console.log('[ChatService] Recommendation API returned out-of-scope for follow-up, falling back to chat API');
+              this.loadingSubject.next(false);
+              this.callChatApi(message, currentMessages);
+              return;
+            }
+
+            // Handle out-of-scope response for initial recommendation requests
             const botMessage: ChatMessage = {
               id: Date.now().toString(),
               role: 'assistant',
@@ -328,13 +354,34 @@ export class ChatService {
             this.messagesSubject.next(updatedMessages);
             this.saveMessages(updatedMessages);
           } else if (data.recommendations && data.recommendations.length > 0) {
+            // Debug: Log raw recommendations
+            console.log('[ChatService] Raw recommendations:', data.recommendations.map((r: any) => ({
+              id: r.serviceId ?? r.ServiceId,
+              name: r.serviceName ?? r.ServiceName
+            })));
+
+            // Deduplicate recommendations by serviceId (handle both PascalCase and camelCase)
+            const uniqueRecommendations = data.recommendations.filter(
+              (rec: any, index: number, self: any[]) => {
+                const recId = rec.serviceId ?? rec.ServiceId;
+                const recName = (rec.serviceName ?? rec.ServiceName ?? '').toLowerCase();
+                const isFirst = index === self.findIndex((r: any) =>
+                  (r.serviceId ?? r.ServiceId) === recId ||
+                  (r.serviceName ?? r.ServiceName ?? '').toLowerCase() === recName
+                );
+                return isFirst;
+              }
+            );
+
+            console.log('[ChatService] After deduplication:', uniqueRecommendations.length, 'unique services');
+
             // Store recommendations as structured data
             const botMessage: ChatMessage = {
               id: Date.now().toString(),
               role: 'assistant',
-              content: `Based on your needs, I found ${data.recommendations.length} service${data.recommendations.length > 1 ? 's' : ''} that might be perfect for you. Click on any service card to book it:`,
+              content: `Based on your needs, I found ${uniqueRecommendations.length} service${uniqueRecommendations.length > 1 ? 's' : ''} that might be perfect for you. Click on any service card to book it:`,
               timestamp: new Date(),
-              recommendations: data.recommendations,
+              recommendations: uniqueRecommendations,
             };
 
             const updatedMessages = [...this.messagesSubject.value, botMessage];
@@ -430,8 +477,11 @@ Click on any button above, or tell me in your own words what you need help with!
       timestamp: new Date(),
     };
 
-    this.messagesSubject.next([aiWelcomeMessage]);
-    this.saveMessages([aiWelcomeMessage]);
+    // Preserve existing conversation history and append the welcome message
+    const currentMessages = this.messagesSubject.value;
+    const updatedMessages = [...currentMessages, aiWelcomeMessage];
+    this.messagesSubject.next(updatedMessages);
+    this.saveMessages(updatedMessages);
     console.log('[ChatService] AI recommendation initialized with', categories.length, 'categories');
   }
 
