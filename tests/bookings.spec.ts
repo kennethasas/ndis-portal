@@ -71,17 +71,20 @@ test.describe('Bookings - Participant', () => {
     const pendingRow = await findBookingRow(page, booking);
     await openCancelDialogForRow(page, pendingRow);
 
-    // Target the dialog element to guarantee we assert against the modal content
-    await page.locator('div').filter({ hasText: 'Are you sure you want to' }).nth(5)
-    await page.locator('div').filter({ hasText: 'You will permanently cancel' }).nth(5).click();
-    await page.locator('div').filter({ hasText: 'Dismiss Yes, Cancel Booking' }).nth(5).click();
+    const dialog = page.locator('app-cancel-dialog');
+
+    await expect(
+      dialog.getByRole('heading', { name: 'Are you sure you want to cancel this booking?' })
+    ).toBeVisible();
+    await expect(dialog.getByText('You will permanently cancel this scheduled booking.')).toBeVisible();
     await expect(pendingRow).toBeVisible();
 
-    await confirmCancelBooking(page);
+    await confirmCancelBooking(page, booking);
   });
 });
 
 type CreatedBooking = {
+  id: number;
   serviceName: string;
   preferredDate: string;
 };
@@ -113,13 +116,21 @@ async function createBookingThroughUi(page: Page, preferredDate: string): Promis
   );
 
   await submitBooking(page);
-  expect((await createBookingResponse).ok()).toBeTruthy();
+
+  const response = await createBookingResponse;
+  expect(response.ok()).toBeTruthy();
+
+  const body = await response.json();
+  const created = body.Data ?? body;
+  const id = Number(created.id ?? created.Id);
+
+  expect(id).toBeTruthy();
 
   // Let the application automatically navigate to /bookings via its internal timeout
   await page.waitForURL('**/bookings', { timeout: 10000 });
   await expect(page.getByRole('heading', { name: 'My Bookings' })).toBeVisible();
 
-  return { serviceName, preferredDate };
+  return { id, serviceName, preferredDate };
 }
 
 async function selectFirstService(page: Page) {
@@ -150,14 +161,26 @@ async function submitBooking(page: Page) {
 async function openPendingBookings(page: Page) {
   await openMyBookings(page);
 
-  // Allow initial bookings API fetch to settle before interacting with the dropdown
-  await page.waitForTimeout(1000);
-  await page.locator('app-status-dropdown button').first().click();
-  await page.getByRole('button', { name: 'Pending', exact: true }).click();
-  
-  // Allow the table to re-render after applying the filter
-  await page.waitForTimeout(500);
-  await expect(page.getByRole('heading', { name: 'My Bookings' })).toBeVisible();
+  const statusDropdown = page.locator('app-status-dropdown');
+  const statusButton = statusDropdown.getByRole('button', { name: 'Status' });
+
+  await expect(statusButton).toBeVisible();
+  await statusButton.click();
+
+  const pendingBookingsResponse = page.waitForResponse((response) => {
+    const url = new URL(response.url());
+
+    return (
+      response.request().method() === 'GET' &&
+      /\/bookings$/i.test(url.pathname) &&
+      url.searchParams.get('status')?.toLowerCase() === 'pending'
+    );
+  });
+
+  await statusDropdown.getByRole('button', { name: 'Pending', exact: true }).click();
+
+  expect((await pendingBookingsResponse).ok()).toBeTruthy();
+  await expect(page.getByRole('heading', { name: 'Pending Bookings', exact: true })).toBeVisible();
 }
 
 async function findBookingRow(page: Page, booking: CreatedBooking) {
@@ -182,18 +205,42 @@ async function cancelBookingThroughUi(page: Page, booking: CreatedBooking) {
   await openPendingBookings(page);
   const pendingRow = await findBookingRow(page, booking);
   await openCancelDialogForRow(page, pendingRow);
-  await confirmCancelBooking(page);
-  await expect(pendingRow).toBeHidden();
+  await confirmCancelBooking(page, booking);
 }
 
-async function confirmCancelBooking(page: Page) {
-  const deleteBookingResponse = page.waitForResponse((response) =>
-    response.request().method() === 'DELETE' &&
-    /\/api\/bookings\/\d+$/i.test(new URL(response.url()).pathname)
-  );
+async function confirmCancelBooking(page: Page, booking: CreatedBooking) {
+  const confirmButton = page
+    .locator('app-cancel-dialog')
+    .getByRole('button', { name: 'Yes, Cancel Booking', exact: true });
 
-  await page.getByRole('button', { name: 'Yes, Cancel Booking' }).click();
-  expect((await deleteBookingResponse).ok()).toBeTruthy();
+  await expect(confirmButton).toBeVisible();
+
+  const [deleteResponse, refreshedResponse] = await Promise.all([
+    page.waitForResponse((response) =>
+      response.request().method() === 'DELETE' &&
+      new URL(response.url()).pathname.toLowerCase().endsWith(`/api/bookings/${booking.id}`)
+    ),
+    page.waitForResponse((response) => {
+      const url = new URL(response.url());
+
+      return (
+        response.request().method() === 'GET' &&
+        /\/bookings$/i.test(url.pathname) &&
+        url.searchParams.get('status')?.toLowerCase() === 'pending'
+      );
+    }),
+    confirmButton.click(),
+  ]);
+
+  expect(deleteResponse.ok()).toBeTruthy();
+  expect(refreshedResponse.ok()).toBeTruthy();
+
+  const body = await refreshedResponse.json();
+  const bookings = Array.isArray(body) ? body : body.Data ?? [];
+
+  expect(
+    bookings.some((item: { id?: number; Id?: number }) => Number(item.id ?? item.Id) === booking.id)
+  ).toBe(false);
 }
 
 
